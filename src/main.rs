@@ -14,6 +14,7 @@ use infrastructure::{
 };
 use rocket::http::Status;
 use rocket_contrib::json::Json;
+use rocket_cors::CorsOptions;
 
 #[get("/")]
 fn index() -> &'static str {
@@ -65,5 +66,6 @@ fn post_hotel(hotel_req: Json<HotelRequest>) -> Result<Json<HotelResponse>, Stat
 fn main() {
     rocket::ignite()
         .mount("/", routes![index, get_hotels, get_hotel, post_hotel])
+        .attach(CorsOptions::default().to_cors().expect("error"))
         .launch();
 }
