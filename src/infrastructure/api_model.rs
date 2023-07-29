@@ -4,7 +4,14 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct HotelResponse {
-    pub id: u32,
+    pub id: i32,
+    pub name: String,
+    pub has_washitsu: bool,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HotelRequest {
     pub name: String,
     pub has_washitsu: bool,
 }
