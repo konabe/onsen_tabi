@@ -1,9 +1,6 @@
 use diesel::*;
-use rocket_contrib::json::Json;
 
-use super::{
-    api_model::HotelRequest, diesel_connection::establish_connection, diesel_models::Hotel,
-};
+use super::{mysql::diesel_connection::establish_connection, mysql::diesel_models::Hotel};
 use crate::{
     domain::hotel_entity::HotelEntity,
     schema::hotel::{self},

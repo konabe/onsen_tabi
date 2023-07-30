@@ -3,15 +3,14 @@
 #[macro_use]
 extern crate rocket;
 
+mod application;
 mod domain;
-pub mod infrastructure;
+mod infrastructure;
 mod schema;
 
+use application::api_model::{HotelRequest, HotelResponse};
 use domain::hotel_entity::HotelEntity;
-use infrastructure::{
-    api_model::{HotelRequest, HotelResponse},
-    hotel_repository,
-};
+use infrastructure::hotel_repository;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
 use rocket_cors::CorsOptions;
