@@ -22,7 +22,7 @@ pub struct OnsenResponse {
     pub id: u32,
     pub name: String,
     pub sprint_quality: String,
-    pub liquid: String,
-    pub ostomic_pressure: String,
+    pub liquid: Option<String>,
+    pub ostomic_pressure: Option<String>,
     pub form: String,
 }

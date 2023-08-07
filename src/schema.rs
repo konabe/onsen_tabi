@@ -17,9 +17,9 @@ diesel::table! {
         #[max_length = 255]
         spring_quality -> Varchar,
         #[max_length = 255]
-        liquid -> Varchar,
+        liquid -> Nullable<Varchar>,
         #[max_length = 255]
-        osmotic_pressure -> Varchar,
+        osmotic_pressure -> Nullable<Varchar>,
         #[max_length = 255]
         category -> Varchar,
         hotel_id -> Nullable<Unsigned<Integer>>,
