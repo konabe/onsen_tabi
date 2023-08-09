@@ -26,21 +26,16 @@ impl OnsenEntity {
         if name.is_empty() {
             return None;
         }
-        let mut result_liquid = None;
-        if let Some(some_liquid) = liquid {
-            result_liquid = SpringLiquid::from_str(some_liquid).ok();
-        }
-        let mut result_osmotic_pressure = None;
-        if let Some(some_osmotic_pressure) = osmotic_pressure {
-            result_osmotic_pressure = SpringOsmoticPressure::from_str(some_osmotic_pressure).ok();
-        }
+        let liquid = liquid.and_then(|v| SpringLiquid::from_str(v).ok());
+        let osmotic_pressure =
+            osmotic_pressure.and_then(|v| SpringOsmoticPressure::from_str(v).ok());
         let form = SpringForm::from_str(form).ok()?;
         return Some(Self {
             id,
             name: name.to_string(),
             spring_quality: spring_quality.to_string(),
-            liquid: result_liquid,
-            osmotic_pressure: result_osmotic_pressure,
+            liquid,
+            osmotic_pressure,
             form,
         });
     }
