@@ -1,6 +1,6 @@
-use diesel::{Insertable, Queryable, Selectable};
+use diesel::{Associations, Identifiable, Insertable, Queryable, Selectable};
 
-#[derive(Queryable, Selectable, Insertable)]
+#[derive(Queryable, Selectable, Identifiable, Insertable, Debug)]
 #[diesel(table_name=crate::schema::hotel)]
 pub struct Hotel {
     pub id: u32,
@@ -8,7 +8,8 @@ pub struct Hotel {
     pub has_washitsu: bool,
 }
 
-#[derive(Queryable, Selectable, Insertable)]
+#[derive(Queryable, Selectable, Identifiable, Insertable, Associations, Debug)]
+#[diesel(belongs_to(Hotel))]
 #[diesel(table_name=crate::schema::onsen)]
 pub struct Onsen {
     pub id: u32,

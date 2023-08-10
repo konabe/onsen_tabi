@@ -14,6 +14,7 @@ pub struct HotelResponse {
     pub id: i32,
     pub name: String,
     pub has_washitsu: bool,
+    pub onsens: Vec<OnsenResponse>,
 }
 
 #[derive(Debug, Serialize)]

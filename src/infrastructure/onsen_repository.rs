@@ -17,8 +17,8 @@ pub fn get_onsens() -> Vec<OnsenEntity> {
                 v.id,
                 &v.name,
                 &v.spring_quality,
-                v.liquid.as_ref().map(|v| v.as_str()),
-                v.osmotic_pressure.as_ref().map(|v| v.as_str()),
+                v.liquid.clone(),
+                v.osmotic_pressure.clone(),
                 &v.category,
             )
             .expect("")
@@ -37,8 +37,8 @@ pub fn get_onsen(id: u32) -> Option<OnsenEntity> {
         result.id,
         &result.name,
         &result.spring_quality,
-        result.liquid.as_ref().map(|v| v.as_str()),
-        result.osmotic_pressure.as_ref().map(|v| v.as_str()),
+        result.liquid.clone(),
+        result.osmotic_pressure.clone(),
         &result.category,
     )
 }

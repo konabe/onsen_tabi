@@ -38,6 +38,7 @@ diesel::table! {
 
 diesel::joinable!(hotel -> area (area_id));
 diesel::joinable!(onsen -> area (area_id));
+diesel::joinable!(onsen -> hotel (hotel_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     area,

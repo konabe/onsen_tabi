@@ -1,11 +1,14 @@
+use super::onsen_entity::OnsenEntity;
+
 pub struct HotelEntity {
     pub id: u32,
     pub name: String,
     pub has_washitsu: bool,
+    pub onsens: Vec<OnsenEntity>,
 }
 
 impl HotelEntity {
-    pub fn new(id: u32, name: &str, has_washitsu: bool) -> Option<Self> {
+    pub fn new(id: u32, name: &str, has_washitsu: bool, onsens: &Vec<OnsenEntity>) -> Option<Self> {
         if name.is_empty() {
             return None;
         }
@@ -13,13 +16,14 @@ impl HotelEntity {
             id,
             name: name.to_string(),
             has_washitsu,
+            onsens: onsens.to_vec(),
         });
     }
 }
 
 #[test]
 fn new_test() {
-    let hotel = HotelEntity::new(1, "積善館", true);
+    let hotel = HotelEntity::new(1, "積善館", true, &vec![]);
     let inside: HotelEntity = hotel.expect("");
     assert!(inside.name == "積善館");
     assert!(inside.has_washitsu == true);
@@ -28,6 +32,6 @@ fn new_test() {
 #[test]
 #[should_panic]
 fn new_test_none() {
-    let hotel = HotelEntity::new(1, "", true);
+    let hotel = HotelEntity::new(1, "", true, &vec![]);
     hotel.unwrap();
 }

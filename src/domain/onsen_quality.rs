@@ -1,7 +1,7 @@
 use strum_macros::{Display, EnumString};
 
 /// 液性
-#[derive(Display, Debug, PartialEq, EnumString)]
+#[derive(Display, Debug, PartialEq, EnumString, Clone)]
 pub enum SpringLiquid {
     #[strum(serialize = "acidic")]
     Acidic, // 酸性
@@ -16,7 +16,7 @@ pub enum SpringLiquid {
 }
 
 /// 浸透圧
-#[derive(Display, Debug, PartialEq, EnumString)]
+#[derive(Display, Debug, PartialEq, EnumString, Clone)]
 pub enum SpringOsmoticPressure {
     #[strum(serialize = "hypotonic")]
     Hypotonic, // 低張性
@@ -27,7 +27,7 @@ pub enum SpringOsmoticPressure {
 }
 
 /// 営業形態
-#[derive(Display, Debug, PartialEq, EnumString)]
+#[derive(Display, Debug, PartialEq, EnumString, Clone)]
 pub enum SpringForm {
     #[strum(serialize = "uchiyu")]
     Uchiyu, // 内湯

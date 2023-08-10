@@ -1,9 +1,15 @@
 use diesel::*;
 
-use super::{mysql::diesel_connection::establish_connection, mysql::diesel_models::Hotel};
+use super::{
+    mysql::diesel_connection::establish_connection,
+    mysql::diesel_models::{Hotel, Onsen},
+};
 use crate::{
-    domain::hotel_entity::HotelEntity,
-    schema::hotel::{self},
+    domain::{hotel_entity::HotelEntity, onsen_entity::OnsenEntity},
+    schema::{
+        hotel::{self},
+        onsen,
+    },
 };
 
 pub fn get_hotels() -> Vec<HotelEntity> {
@@ -14,23 +20,43 @@ pub fn get_hotels() -> Vec<HotelEntity> {
         .expect("error");
     return results
         .iter()
-        .map(|v: &Hotel| HotelEntity::new(v.id, &v.name, v.has_washitsu).expect(""))
+        .map(|v: &Hotel| HotelEntity::new(v.id, &v.name, v.has_washitsu, &vec![]).expect(""))
         .collect();
 }
 
 pub fn get_hotel(id: u32) -> Option<HotelEntity> {
     let connection = &mut establish_connection();
-    let results = hotel::table
-        .select(Hotel::as_select())
-        .load(connection)
-        .expect("error");
-    let result = results.iter().find(|r| r.id == id);
-    match result {
-        Some(result) => {
-            Some(HotelEntity::new(result.id, &result.name, result.has_washitsu).expect(""))
-        }
-        None => None,
+    let hotels_onsens: Vec<(Hotel, Option<Onsen>)> = hotel::table
+        .left_join(onsen::table)
+        .select((Hotel::as_select(), Option::<Onsen>::as_select()))
+        .load::<(Hotel, Option<Onsen>)>(connection)
+        .expect("");
+    let result: Vec<&(Hotel, Option<Onsen>)> =
+        hotels_onsens.iter().filter(|r| r.0.id == id).collect();
+    if result.len() == 0 {
+        return None;
     }
+    let hotel = &result[0].0;
+    let related_onsens: Vec<&Option<Onsen>> = result.iter().map(|r| &r.1).collect();
+    let mut onsen_entities: Vec<OnsenEntity> = vec![];
+    for o in related_onsens {
+        if let Some(o) = o {
+            if let Some(entity) = OnsenEntity::new(
+                o.id,
+                &o.name,
+                &o.spring_quality,
+                o.liquid.clone(),
+                o.osmotic_pressure.clone(),
+                &o.category,
+            ) {
+                onsen_entities.push(entity);
+            }
+        }
+    }
+
+    return Some(
+        HotelEntity::new(hotel.id, &hotel.name, hotel.has_washitsu, &onsen_entities).expect(""),
+    );
 }
 
 pub fn post_hotel(hotel_enitty: HotelEntity) -> HotelEntity {
@@ -44,7 +70,12 @@ pub fn post_hotel(hotel_enitty: HotelEntity) -> HotelEntity {
         .values(&new_hotel)
         .execute(connection)
         .expect("error");
-    let hotel_entity =
-        HotelEntity::new(new_hotel.id, &new_hotel.name, new_hotel.has_washitsu).expect("");
+    let hotel_entity = HotelEntity::new(
+        new_hotel.id,
+        &new_hotel.name,
+        new_hotel.has_washitsu,
+        &vec![],
+    )
+    .expect("");
     return hotel_entity;
 }

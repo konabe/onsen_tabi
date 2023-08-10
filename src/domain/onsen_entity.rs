@@ -4,6 +4,7 @@ use super::onsen_quality::{SpringForm, SpringLiquid, SpringOsmoticPressure};
 
 /// 温泉法が定義する温泉。
 /// ◯◯温泉とは別
+#[derive(Clone)]
 pub struct OnsenEntity {
     pub id: u32,
     pub name: String,
@@ -19,16 +20,16 @@ impl OnsenEntity {
         id: u32,
         name: &str,
         spring_quality: &str,
-        liquid: Option<&str>,
-        osmotic_pressure: Option<&str>,
+        liquid: Option<String>,
+        osmotic_pressure: Option<String>,
         form: &str,
     ) -> Option<Self> {
         if name.is_empty() {
             return None;
         }
-        let liquid = liquid.and_then(|v| SpringLiquid::from_str(v).ok());
+        let liquid = liquid.and_then(|v| SpringLiquid::from_str(v.as_str()).ok());
         let osmotic_pressure =
-            osmotic_pressure.and_then(|v| SpringOsmoticPressure::from_str(v).ok());
+            osmotic_pressure.and_then(|v| SpringOsmoticPressure::from_str(v.as_str()).ok());
         let form = SpringForm::from_str(form).ok()?;
         return Some(Self {
             id,
@@ -47,8 +48,8 @@ fn new_test() {
         1,
         "元禄の湯",
         "ナトリウム・カルシウム 塩化物硫酸塩温泉",
-        Some("neutral"),
-        Some("hypotonic"),
+        Some("neutral".to_string()),
+        Some("hypotonic".to_string()),
         "uchiyu",
     );
     let inside: OnsenEntity = onsen.expect("");
@@ -62,8 +63,8 @@ fn new_test_none() {
         1,
         "",
         "ナトリウム・カルシウム 塩化物硫酸塩温泉",
-        Some("neutral"),
-        Some("hypotonic"),
+        Some("neutral".to_string()),
+        Some("hypotonic".to_string()),
         "uchiyu",
     );
     onsen.expect("");
