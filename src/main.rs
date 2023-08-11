@@ -8,6 +8,7 @@ mod domain;
 mod infrastructure;
 mod schema;
 
+use application::area_controller::static_rocket_route_info_for_get_areas;
 use application::hotel_controller::{
     static_rocket_route_info_for_get_hotel, static_rocket_route_info_for_get_hotels,
     static_rocket_route_info_for_post_hotel,
@@ -26,7 +27,7 @@ fn main() {
     rocket::ignite()
         .mount(
             "/",
-            routes![index, get_hotels, get_hotel, post_hotel, get_onsens, get_onsen],
+            routes![index, get_hotels, get_hotel, post_hotel, get_onsens, get_onsen, get_areas],
         )
         .attach(CorsOptions::default().to_cors().expect("error"))
         .launch();

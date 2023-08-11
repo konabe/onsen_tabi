@@ -20,3 +20,10 @@ pub struct Onsen {
     pub category: String,
     pub hotel_id: Option<u32>,
 }
+
+#[derive(Queryable, Selectable, Identifiable, Insertable, Debug)]
+#[diesel(table_name=crate::schema::area)]
+pub struct Area {
+    pub id: u32,
+    pub name: String,
+}

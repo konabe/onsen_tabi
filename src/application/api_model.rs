@@ -27,3 +27,10 @@ pub struct OnsenResponse {
     pub ostomic_pressure: Option<String>,
     pub form: String,
 }
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AreaResponse {
+    pub id: u32,
+    pub name: String,
+}
