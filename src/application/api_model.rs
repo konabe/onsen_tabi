@@ -33,4 +33,5 @@ pub struct OnsenResponse {
 pub struct AreaResponse {
     pub id: u32,
     pub name: String,
+    pub prefecture: String,
 }

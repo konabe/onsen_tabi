@@ -5,6 +5,8 @@ diesel::table! {
         id -> Unsigned<Integer>,
         #[max_length = 255]
         name -> Varchar,
+        #[max_length = 255]
+        prefecture -> Varchar,
     }
 }
 

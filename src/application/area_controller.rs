@@ -12,6 +12,7 @@ pub fn get_areas() -> Json<Vec<AreaResponse>> {
         .map(|r| AreaResponse {
             id: r.id,
             name: r.name.to_string(),
+            prefecture: r.prefecture.to_string(),
         })
         .collect();
     Json(response)

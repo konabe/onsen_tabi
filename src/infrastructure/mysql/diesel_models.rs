@@ -26,4 +26,5 @@ pub struct Onsen {
 pub struct Area {
     pub id: u32,
     pub name: String,
+    pub prefecture: String,
 }
