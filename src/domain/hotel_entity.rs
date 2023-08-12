@@ -8,22 +8,35 @@ pub struct HotelEntity {
 }
 
 impl HotelEntity {
-    pub fn new(id: u32, name: &str, has_washitsu: bool, onsens: &Vec<OnsenEntity>) -> Option<Self> {
+    pub fn new(id: u32, name: &str, has_washitsu: bool, onsens: &[OnsenEntity]) -> Option<Self> {
         if name.is_empty() {
             return None;
         }
-        return Some(Self {
+        Some(Self {
             id,
             name: name.to_string(),
             has_washitsu,
             onsens: onsens.to_vec(),
-        });
+        })
     }
 }
 
 #[test]
 fn new_test() {
-    let hotel = HotelEntity::new(1, "積善館", true, &vec![]);
+    let hotel = HotelEntity::new(
+        1,
+        "積善館",
+        true,
+        &vec![OnsenEntity::new(
+            1,
+            "テスト温泉",
+            "単純温泉",
+            Some("neutral"),
+            Some("isotonic"),
+            "sotoyu",
+        )
+        .expect("")],
+    );
     let inside: HotelEntity = hotel.expect("");
     assert!(inside.name == "積善館");
     assert!(inside.has_washitsu == true);

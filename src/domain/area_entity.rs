@@ -12,19 +12,19 @@ impl AreaEntity {
         if prefecture.is_empty() {
             return None;
         }
-        return Some(Self {
+        Some(Self {
             id,
             name: name.to_string(),
             prefecture: prefecture.to_string(),
-        });
+        })
     }
 }
 
 #[test]
 fn new_test() {
-    let area = AreaEntity::new(1, "四万温泉", "群馬県");
+    let area = AreaEntity::new(1, "四万", "群馬県");
     let inside: AreaEntity = area.expect("");
-    assert!(inside.name == "四万温泉");
+    assert!(inside.name == "四万");
 }
 
 #[test]
@@ -37,6 +37,6 @@ fn new_test_none_name() {
 #[test]
 #[should_panic]
 fn new_test_none_prefecture() {
-    let area = AreaEntity::new(1, "四万温泉", "");
+    let area = AreaEntity::new(1, "四万", "");
     area.unwrap();
 }

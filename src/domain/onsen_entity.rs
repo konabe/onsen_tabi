@@ -20,25 +20,25 @@ impl OnsenEntity {
         id: u32,
         name: &str,
         spring_quality: &str,
-        liquid: Option<String>,
-        osmotic_pressure: Option<String>,
+        liquid: Option<&str>,
+        osmotic_pressure: Option<&str>,
         form: &str,
     ) -> Option<Self> {
         if name.is_empty() {
             return None;
         }
-        let liquid = liquid.and_then(|v| SpringLiquid::from_str(v.as_str()).ok());
+        let liquid = liquid.and_then(|v| SpringLiquid::from_str(v).ok());
         let osmotic_pressure =
-            osmotic_pressure.and_then(|v| SpringOsmoticPressure::from_str(v.as_str()).ok());
+            osmotic_pressure.and_then(|v| SpringOsmoticPressure::from_str(v).ok());
         let form = SpringForm::from_str(form).ok()?;
-        return Some(Self {
+        Some(Self {
             id,
             name: name.to_string(),
             spring_quality: spring_quality.to_string(),
             liquid,
             osmotic_pressure,
             form,
-        });
+        })
     }
 }
 
@@ -48,8 +48,8 @@ fn new_test() {
         1,
         "元禄の湯",
         "ナトリウム・カルシウム 塩化物硫酸塩温泉",
-        Some("neutral".to_string()),
-        Some("hypotonic".to_string()),
+        Some("neutral"),
+        Some("hypotonic"),
         "uchiyu",
     );
     let inside: OnsenEntity = onsen.expect("");
@@ -63,8 +63,8 @@ fn new_test_none() {
         1,
         "",
         "ナトリウム・カルシウム 塩化物硫酸塩温泉",
-        Some("neutral".to_string()),
-        Some("hypotonic".to_string()),
+        Some("neutral"),
+        Some("hypotonic"),
         "uchiyu",
     );
     onsen.expect("");

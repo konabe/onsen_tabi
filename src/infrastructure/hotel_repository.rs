@@ -45,8 +45,8 @@ pub fn get_hotel(id: u32) -> Option<HotelEntity> {
                 o.id,
                 &o.name,
                 &o.spring_quality,
-                o.liquid.clone(),
-                o.osmotic_pressure.clone(),
+                o.liquid.as_deref(),
+                o.osmotic_pressure.as_deref(),
                 &o.category,
             ) {
                 onsen_entities.push(entity);

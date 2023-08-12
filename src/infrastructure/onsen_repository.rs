@@ -6,7 +6,7 @@ use super::mysql::{diesel_connection::establish_connection, diesel_models::Onsen
 
 pub fn get_onsens() -> Vec<OnsenEntity> {
     let connection = &mut establish_connection();
-    let results = onsen::table
+    let results: Vec<Onsen> = onsen::table
         .select(Onsen::as_select())
         .load(connection)
         .expect("error");
@@ -17,8 +17,8 @@ pub fn get_onsens() -> Vec<OnsenEntity> {
                 v.id,
                 &v.name,
                 &v.spring_quality,
-                v.liquid.clone(),
-                v.osmotic_pressure.clone(),
+                v.liquid.as_deref(),
+                v.osmotic_pressure.as_deref(),
                 &v.category,
             )
             .expect("")
@@ -28,7 +28,7 @@ pub fn get_onsens() -> Vec<OnsenEntity> {
 
 pub fn get_onsen(id: u32) -> Option<OnsenEntity> {
     let connection = &mut establish_connection();
-    let results = onsen::table
+    let results: Vec<Onsen> = onsen::table
         .select(Onsen::as_select())
         .load(connection)
         .expect("error");
@@ -37,8 +37,8 @@ pub fn get_onsen(id: u32) -> Option<OnsenEntity> {
         result.id,
         &result.name,
         &result.spring_quality,
-        result.liquid.clone(),
-        result.osmotic_pressure.clone(),
+        result.liquid.as_deref(),
+        result.osmotic_pressure.as_deref(),
         &result.category,
     )
 }
