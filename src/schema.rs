@@ -33,6 +33,7 @@ diesel::table! {
         osmotic_pressure -> Nullable<Varchar>,
         #[max_length = 255]
         category -> Varchar,
+        description -> Text,
         hotel_id -> Nullable<Unsigned<Integer>>,
         area_id -> Nullable<Unsigned<Integer>>,
     }

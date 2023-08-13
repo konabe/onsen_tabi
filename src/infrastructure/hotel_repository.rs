@@ -48,6 +48,7 @@ pub fn get_hotel(id: u32) -> Option<HotelEntity> {
                 o.liquid.as_deref(),
                 o.osmotic_pressure.as_deref(),
                 &o.category,
+                &o.description,
             ) {
                 onsen_entities.push(entity);
             }

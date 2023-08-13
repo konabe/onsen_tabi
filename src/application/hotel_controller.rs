@@ -14,18 +14,7 @@ pub fn get_hotels() -> Json<Vec<HotelResponse>> {
             id: r.id as i32,
             name: r.name.to_string(),
             has_washitsu: r.has_washitsu,
-            onsens: r
-                .onsens
-                .iter()
-                .map(|v| OnsenResponse {
-                    id: v.id,
-                    name: v.name.clone(),
-                    sprint_quality: v.spring_quality.clone(),
-                    liquid: v.liquid.as_ref().map(|v| v.to_string()),
-                    ostomic_pressure: v.osmotic_pressure.as_ref().map(|v| v.to_string()),
-                    form: v.form.to_string(),
-                })
-                .collect(),
+            onsens: r.onsens.iter().map(|v| OnsenResponse::create(v)).collect(),
         })
         .collect();
     Json(response)
@@ -42,14 +31,7 @@ pub fn get_hotel(hotel_id: u32) -> Result<Json<HotelResponse>, Status> {
             onsens: other_hotel
                 .onsens
                 .iter()
-                .map(|v| OnsenResponse {
-                    id: v.id,
-                    name: v.name.clone(),
-                    sprint_quality: v.spring_quality.clone(),
-                    liquid: v.liquid.as_ref().map(|v| v.to_string()),
-                    ostomic_pressure: v.osmotic_pressure.as_ref().map(|v| v.to_string()),
-                    form: v.form.to_string(),
-                })
+                .map(|v| OnsenResponse::create(v))
                 .collect(),
         })),
         None => Err(Status::NotFound),
