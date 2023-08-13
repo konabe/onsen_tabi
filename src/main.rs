@@ -15,6 +15,7 @@ use application::hotel_controller::{
 };
 use application::onsen_controller::{
     static_rocket_route_info_for_get_onsen, static_rocket_route_info_for_get_onsens,
+    static_rocket_route_info_for_put_onsen_description,
 };
 use rocket_cors::CorsOptions;
 
@@ -27,7 +28,16 @@ fn main() {
     rocket::ignite()
         .mount(
             "/",
-            routes![index, get_hotels, get_hotel, post_hotel, get_onsens, get_onsen, get_areas],
+            routes![
+                index,
+                get_hotels,
+                get_hotel,
+                post_hotel,
+                get_onsens,
+                get_onsen,
+                get_areas,
+                put_onsen_description
+            ],
         )
         .attach(CorsOptions::default().to_cors().expect("error"))
         .launch();

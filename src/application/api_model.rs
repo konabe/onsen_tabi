@@ -19,6 +19,12 @@ pub struct HotelResponse {
     pub onsens: Vec<OnsenResponse>,
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OnsenDescriptionRequest {
+    pub description: String,
+}
+
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OnsenResponse {

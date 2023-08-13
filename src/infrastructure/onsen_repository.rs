@@ -44,3 +44,11 @@ pub fn get_onsen(id: u32) -> Option<OnsenEntity> {
         &result.description,
     )
 }
+
+pub fn put_onsen_description(id: u32, description: &str) -> () {
+    let connection = &mut establish_connection();
+    let _ = diesel::update(onsen::dsl::onsen.find(id))
+        .set(onsen::dsl::description.eq(description))
+        .execute(connection)
+        .expect("");
+}
