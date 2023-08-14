@@ -1,5 +1,6 @@
 use super::onsen_entity::OnsenEntity;
 
+#[derive(Clone)]
 pub struct HotelEntity {
     pub id: u32,
     pub name: String,

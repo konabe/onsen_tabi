@@ -1,7 +1,7 @@
 use rocket_dyn_templates::serde;
 use serde::{Deserialize, Serialize};
 
-use crate::domain::onsen_entity::OnsenEntity;
+use crate::domain::{hotel_entity::HotelEntity, onsen_entity::OnsenEntity};
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -17,6 +17,21 @@ pub struct HotelResponse {
     pub name: String,
     pub has_washitsu: bool,
     pub onsens: Vec<OnsenResponse>,
+}
+
+impl From<HotelEntity> for HotelResponse {
+    fn from(value: HotelEntity) -> Self {
+        Self {
+            id: value.id as i32,
+            name: value.name.to_string(),
+            has_washitsu: value.has_washitsu,
+            onsens: value
+                .onsens
+                .iter()
+                .map(|v| OnsenResponse::create(v))
+                .collect(),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]
