@@ -9,11 +9,7 @@ pub fn get_areas() -> Json<Vec<AreaResponse>> {
     let areas = area_repository::get_areas();
     let response: Vec<AreaResponse> = areas
         .iter()
-        .map(|r| AreaResponse {
-            id: r.id,
-            name: r.name.to_string(),
-            prefecture: r.prefecture.to_string(),
-        })
+        .map(|v| AreaResponse::from(v.clone()))
         .collect();
     Json(response)
 }

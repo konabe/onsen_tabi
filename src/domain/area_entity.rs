@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub struct AreaEntity {
     pub id: u32,
     pub name: String,

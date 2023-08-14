@@ -1,7 +1,9 @@
 use rocket_dyn_templates::serde;
 use serde::{Deserialize, Serialize};
 
-use crate::domain::{hotel_entity::HotelEntity, onsen_entity::OnsenEntity};
+use crate::domain::{
+    area_entity::AreaEntity, hotel_entity::HotelEntity, onsen_entity::OnsenEntity,
+};
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -72,4 +74,14 @@ pub struct AreaResponse {
     pub id: u32,
     pub name: String,
     pub prefecture: String,
+}
+
+impl From<AreaEntity> for AreaResponse {
+    fn from(value: AreaEntity) -> Self {
+        Self {
+            id: value.id,
+            name: value.name.to_string(),
+            prefecture: value.prefecture.to_string(),
+        }
+    }
 }
