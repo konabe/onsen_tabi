@@ -28,7 +28,7 @@ impl From<HotelEntity> for HotelResponse {
             onsens: value
                 .onsens
                 .iter()
-                .map(|v| OnsenResponse::create(v))
+                .map(|v| OnsenResponse::from(v.clone()))
                 .collect(),
         }
     }
@@ -52,16 +52,16 @@ pub struct OnsenResponse {
     pub description: String,
 }
 
-impl OnsenResponse {
-    pub fn create(onsen: &OnsenEntity) -> Self {
+impl From<OnsenEntity> for OnsenResponse {
+    fn from(value: OnsenEntity) -> Self {
         Self {
-            id: onsen.id,
-            name: onsen.name.clone(),
-            sprint_quality: onsen.spring_quality.clone(),
-            liquid: onsen.liquid.as_ref().map(|v| v.to_string()),
-            ostomic_pressure: onsen.osmotic_pressure.as_ref().map(|v| v.to_string()),
-            form: onsen.form.to_string(),
-            description: onsen.description.to_string(),
+            id: value.id,
+            name: value.name.clone(),
+            sprint_quality: value.spring_quality.clone(),
+            liquid: value.liquid.as_ref().map(|v| v.to_string()),
+            ostomic_pressure: value.osmotic_pressure.as_ref().map(|v| v.to_string()),
+            form: value.form.to_string(),
+            description: value.description.to_string(),
         }
     }
 }
