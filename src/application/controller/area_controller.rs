@@ -2,7 +2,7 @@ use rocket_contrib::json::Json;
 
 use crate::infrastructure::area_repository;
 
-use super::api_model::AreaResponse;
+use crate::application::api_model::area_api_model::*;
 
 #[get("/area")]
 pub fn get_areas() -> Json<Vec<AreaResponse>> {

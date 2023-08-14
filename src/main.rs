@@ -8,12 +8,12 @@ mod domain;
 mod infrastructure;
 mod schema;
 
-use application::area_controller::static_rocket_route_info_for_get_areas;
-use application::hotel_controller::{
+use application::controller::area_controller::static_rocket_route_info_for_get_areas;
+use application::controller::hotel_controller::{
     static_rocket_route_info_for_get_hotel, static_rocket_route_info_for_get_hotels,
     static_rocket_route_info_for_post_hotel,
 };
-use application::onsen_controller::{
+use application::controller::onsen_controller::{
     static_rocket_route_info_for_get_onsen, static_rocket_route_info_for_get_onsens,
     static_rocket_route_info_for_put_onsen_description,
 };

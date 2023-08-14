@@ -3,7 +3,7 @@ use rocket_contrib::json::Json;
 
 use crate::infrastructure::onsen_repository;
 
-use super::api_model::{OnsenDescriptionRequest, OnsenResponse};
+use crate::application::api_model::onsen_api_model::*;
 
 #[get("/onsen")]
 pub fn get_onsens() -> Json<Vec<OnsenResponse>> {

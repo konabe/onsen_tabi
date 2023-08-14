@@ -3,7 +3,7 @@ use rocket_contrib::json::Json;
 
 use crate::{domain::hotel_entity::HotelEntity, infrastructure::hotel_repository};
 
-use super::api_model::{HotelRequest, HotelResponse};
+use crate::application::api_model::hotel_api_model::*;
 
 #[get("/hotel")]
 pub fn get_hotels() -> Json<Vec<HotelResponse>> {
