@@ -17,7 +17,7 @@ pub fn get_hotels() -> Json<Vec<HotelResponse>> {
 
 #[get("/hotel/<hotel_id>")]
 pub fn get_hotel(hotel_id: u32) -> Result<Json<HotelResponse>, Status> {
-    let hotel = hotel_repository::get_hotel(hotel_id);
+    let hotel = hotel_repository::get_hotel_with_onsen(hotel_id);
     match &hotel {
         Some(hotel) => Ok(Json(HotelResponse::from(hotel.clone()))),
         None => Err(Status::NotFound),

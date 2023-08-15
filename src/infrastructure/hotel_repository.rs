@@ -14,46 +14,43 @@ use crate::{
 
 pub fn get_hotels() -> Vec<HotelEntity> {
     let connection = &mut establish_connection();
-    let results = hotel::table
+    let results: Vec<Hotel> = hotel::table
         .select(Hotel::as_select())
         .load(connection)
-        .expect("error");
+        .expect("DB error");
     return results
         .iter()
         .map(|v: &Hotel| {
-            HotelEntity::new(v.id, &v.name, v.has_washitsu, &v.url, &vec![]).expect("")
+            HotelEntity::new(v.id, &v.name, v.has_washitsu, &v.url, &vec![])
+                .expect("Saved data violates HotelEntity")
         })
         .collect();
 }
 
-pub fn get_hotel(id: u32) -> Option<HotelEntity> {
+pub fn get_hotel_with_onsen(id: u32) -> Option<HotelEntity> {
     let connection = &mut establish_connection();
     let hotels_onsens: Vec<(Hotel, Option<Onsen>)> = hotel::table
         .left_join(onsen::table)
         .select((Hotel::as_select(), Option::<Onsen>::as_select()))
-        .load::<(Hotel, Option<Onsen>)>(connection)
-        .expect("");
-    let result: Vec<&(Hotel, Option<Onsen>)> =
-        hotels_onsens.iter().filter(|r| r.0.id == id).collect();
-    if result.len() == 0 {
-        return None;
-    }
-    let hotel = &result[0].0;
-    let related_onsens: Vec<&Option<Onsen>> = result.iter().map(|r| &r.1).collect();
+        .filter(hotel::dsl::id.eq(id))
+        .load(connection)
+        .expect("DB error");
+    let hotel = &hotels_onsens.first()?.0;
+    let related_onsens: Vec<&Option<Onsen>> = hotels_onsens.iter().map(|r| &r.1).collect();
     let mut onsen_entities: Vec<OnsenEntity> = vec![];
-    for o in related_onsens {
-        if let Some(o) = o {
-            if let Some(entity) = OnsenEntity::new(
-                o.id,
-                &o.name,
-                &o.spring_quality,
-                o.liquid.as_deref(),
-                o.osmotic_pressure.as_deref(),
-                &o.category,
-                &o.url,
-                &o.description,
+    for onsen in related_onsens {
+        if let Some(onsen) = onsen {
+            if let Some(onsen) = OnsenEntity::new(
+                onsen.id,
+                &onsen.name,
+                &onsen.spring_quality,
+                onsen.liquid.as_deref(),
+                onsen.osmotic_pressure.as_deref(),
+                &onsen.category,
+                &onsen.url,
+                &onsen.description,
             ) {
-                onsen_entities.push(entity);
+                onsen_entities.push(onsen);
             }
         }
     }
@@ -66,7 +63,7 @@ pub fn get_hotel(id: u32) -> Option<HotelEntity> {
             &hotel.url,
             &onsen_entities,
         )
-        .expect(""),
+        .expect("Saved data violates HotelEntity"),
     );
 }
 
@@ -81,7 +78,7 @@ pub fn post_hotel(hotel_enitty: HotelEntity) -> HotelEntity {
     diesel::insert_into(hotel::table)
         .values(&new_hotel)
         .execute(connection)
-        .expect("error");
+        .expect("DB error");
     let hotel_entity = HotelEntity::new(
         new_hotel.id,
         &new_hotel.name,
@@ -89,6 +86,6 @@ pub fn post_hotel(hotel_enitty: HotelEntity) -> HotelEntity {
         &new_hotel.url,
         &vec![],
     )
-    .expect("");
+    .expect("Saved data violates HotelEntity");
     return hotel_entity;
 }
