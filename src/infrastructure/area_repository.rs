@@ -15,3 +15,17 @@ pub fn get_areas() -> Vec<AreaEntity> {
         .map(|v: &Area| AreaEntity::new(v.id, &v.name, &v.prefecture).expect(""))
         .collect();
 }
+
+pub fn get_area(id: u32) -> Option<AreaEntity> {
+    let connection = &mut establish_connection();
+    let results: Vec<Area> = area::table
+        .select(Area::as_select())
+        .filter(area::dsl::id.eq(id))
+        .load(connection)
+        .expect("error");
+    if results.len() == 0 {
+        return None;
+    }
+    let result = &results[0];
+    AreaEntity::new(result.id, &result.name, &result.prefecture)
+}

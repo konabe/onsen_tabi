@@ -1,3 +1,4 @@
+use rocket::http::Status;
 use rocket_contrib::json::Json;
 
 use crate::infrastructure::area_repository;
@@ -12,4 +13,13 @@ pub fn get_areas() -> Json<Vec<AreaResponse>> {
         .map(|v| AreaResponse::from(v.clone()))
         .collect();
     Json(response)
+}
+
+#[get("/area/<area_id>")]
+pub fn get_area(area_id: u32) -> Result<Json<AreaResponse>, Status> {
+    let area = area_repository::get_area(area_id);
+    match &area {
+        Some(area) => Ok(Json(AreaResponse::from(area.clone()))),
+        None => Err(Status::NotFound),
+    }
 }

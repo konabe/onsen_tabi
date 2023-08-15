@@ -8,7 +8,9 @@ mod domain;
 mod infrastructure;
 mod schema;
 
-use application::controller::area_controller::static_rocket_route_info_for_get_areas;
+use application::controller::area_controller::{
+    static_rocket_route_info_for_get_area, static_rocket_route_info_for_get_areas,
+};
 use application::controller::hotel_controller::{
     static_rocket_route_info_for_get_hotel, static_rocket_route_info_for_get_hotels,
     static_rocket_route_info_for_post_hotel,
@@ -36,6 +38,7 @@ fn main() {
                 get_onsens,
                 get_onsen,
                 get_areas,
+                get_area,
                 put_onsen_description
             ],
         )
