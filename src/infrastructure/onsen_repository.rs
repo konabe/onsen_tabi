@@ -9,22 +9,10 @@ pub fn get_onsens() -> Vec<OnsenEntity> {
     let results: Vec<Onsen> = onsen::table
         .select(Onsen::as_select())
         .load(connection)
-        .expect("error");
+        .expect("DB error");
     return results
         .iter()
-        .map(|v: &Onsen| {
-            OnsenEntity::new(
-                v.id,
-                &v.name,
-                &v.spring_quality,
-                v.liquid.as_deref(),
-                v.osmotic_pressure.as_deref(),
-                &v.category,
-                &v.url,
-                &v.description,
-            )
-            .expect("")
-        })
+        .map(|v: &Onsen| OnsenEntity::from(v.clone()))
         .collect();
 }
 
@@ -32,19 +20,11 @@ pub fn get_onsen(id: u32) -> Option<OnsenEntity> {
     let connection = &mut establish_connection();
     let results: Vec<Onsen> = onsen::table
         .select(Onsen::as_select())
+        .filter(onsen::dsl::id.eq(id))
         .load(connection)
-        .expect("error");
-    let result = results.iter().find(|r| r.id == id)?;
-    OnsenEntity::new(
-        result.id,
-        &result.name,
-        &result.spring_quality,
-        result.liquid.as_deref(),
-        result.osmotic_pressure.as_deref(),
-        &result.category,
-        &result.url,
-        &result.description,
-    )
+        .expect("DB error");
+    let onsen = results.first()?;
+    Some(OnsenEntity::from(onsen.clone()))
 }
 
 pub fn put_onsen_description(id: u32, description: &str) -> () {
@@ -52,5 +32,5 @@ pub fn put_onsen_description(id: u32, description: &str) -> () {
     let _ = diesel::update(onsen::dsl::onsen.find(id))
         .set(onsen::dsl::description.eq(description))
         .execute(connection)
-        .expect("");
+        .expect("DB error");
 }

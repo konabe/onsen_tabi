@@ -1,5 +1,7 @@
 use diesel::{Associations, Identifiable, Insertable, Queryable, Selectable};
 
+use crate::domain::onsen_entity::OnsenEntity;
+
 #[derive(Queryable, Selectable, Identifiable, Insertable, Debug)]
 #[diesel(table_name=crate::schema::hotel)]
 pub struct Hotel {
@@ -9,7 +11,7 @@ pub struct Hotel {
     pub url: String,
 }
 
-#[derive(Queryable, Selectable, Identifiable, Insertable, Associations, Debug)]
+#[derive(Queryable, Selectable, Identifiable, Insertable, Associations, Debug, Clone)]
 #[diesel(belongs_to(Hotel))]
 #[diesel(table_name=crate::schema::onsen)]
 pub struct Onsen {
@@ -22,6 +24,22 @@ pub struct Onsen {
     pub url: String,
     pub description: String,
     pub hotel_id: Option<u32>,
+}
+
+impl From<Onsen> for OnsenEntity {
+    fn from(value: Onsen) -> Self {
+        OnsenEntity::new(
+            value.id,
+            &value.name,
+            &value.spring_quality,
+            value.liquid.as_deref(),
+            value.osmotic_pressure.as_deref(),
+            &value.category,
+            &value.url,
+            &value.description,
+        )
+        .expect("Saved data violates OnsenEntity")
+    }
 }
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Debug)]

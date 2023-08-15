@@ -40,22 +40,10 @@ pub fn get_hotel_with_onsen(id: u32) -> Option<HotelEntity> {
     let mut onsen_entities: Vec<OnsenEntity> = vec![];
     for onsen in related_onsens {
         if let Some(onsen) = onsen {
-            if let Some(onsen) = OnsenEntity::new(
-                onsen.id,
-                &onsen.name,
-                &onsen.spring_quality,
-                onsen.liquid.as_deref(),
-                onsen.osmotic_pressure.as_deref(),
-                &onsen.category,
-                &onsen.url,
-                &onsen.description,
-            ) {
-                onsen_entities.push(onsen);
-            }
+            onsen_entities.push(OnsenEntity::from(onsen.clone()));
         }
     }
-
-    return Some(
+    Some(
         HotelEntity::new(
             hotel.id,
             &hotel.name,
@@ -64,13 +52,13 @@ pub fn get_hotel_with_onsen(id: u32) -> Option<HotelEntity> {
             &onsen_entities,
         )
         .expect("Saved data violates HotelEntity"),
-    );
+    )
 }
 
 pub fn post_hotel(hotel_enitty: HotelEntity) -> HotelEntity {
     let new_hotel = Hotel {
         id: 0,
-        name: hotel_enitty.name.clone(),
+        name: hotel_enitty.name,
         has_washitsu: hotel_enitty.has_washitsu,
         url: hotel_enitty.url,
     };
