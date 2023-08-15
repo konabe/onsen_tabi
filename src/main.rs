@@ -17,7 +17,7 @@ use application::controller::hotel_controller::{
 };
 use application::controller::onsen_controller::{
     static_rocket_route_info_for_get_onsen, static_rocket_route_info_for_get_onsens,
-    static_rocket_route_info_for_put_onsen_description,
+    static_rocket_route_info_for_post_onsen, static_rocket_route_info_for_put_onsen_description,
 };
 use rocket_cors::CorsOptions;
 
@@ -37,6 +37,7 @@ fn main() {
                 post_hotel,
                 get_onsens,
                 get_onsen,
+                post_onsen,
                 get_areas,
                 get_area,
                 put_onsen_description

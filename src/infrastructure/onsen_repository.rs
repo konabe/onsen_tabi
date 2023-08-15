@@ -34,3 +34,23 @@ pub fn put_onsen_description(id: u32, description: &str) -> () {
         .execute(connection)
         .expect("DB error");
 }
+
+pub fn post_onsen(onsen_entity: OnsenEntity) -> OnsenEntity {
+    let new_onsen = Onsen {
+        id: 0,
+        name: onsen_entity.name,
+        spring_quality: onsen_entity.spring_quality,
+        liquid: onsen_entity.liquid.map(|v| v.to_string()),
+        osmotic_pressure: onsen_entity.osmotic_pressure.map(|v| v.to_string()),
+        category: onsen_entity.form.to_string(),
+        url: onsen_entity.url,
+        description: onsen_entity.description,
+        hotel_id: None,
+    };
+    let connection = &mut establish_connection();
+    diesel::insert_into(onsen::table)
+        .values(&new_onsen)
+        .execute(connection)
+        .expect("DB error");
+    OnsenEntity::from(new_onsen)
+}

@@ -4,6 +4,18 @@ use crate::domain::onsen_entity::OnsenEntity;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct OnsenRequest {
+    pub name: String,
+    pub sprint_quality: String,
+    pub liquid: Option<String>,
+    pub ostomic_pressure: Option<String>,
+    pub form: String,
+    pub url: String,
+    pub description: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct OnsenDescriptionRequest {
     pub description: String,
 }

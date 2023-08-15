@@ -37,6 +37,6 @@ pub fn post_hotel(hotel_req: Json<HotelRequest>) -> Result<Json<HotelResponse>, 
         let created_hotel = hotel_repository::post_hotel(hotel_entity);
         return Ok(Json(HotelResponse::from(created_hotel.clone())));
     } else {
-        return Err(Status::InternalServerError);
+        return Err(Status::BadRequest);
     };
 }
