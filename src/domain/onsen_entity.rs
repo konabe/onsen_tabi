@@ -13,6 +13,7 @@ pub struct OnsenEntity {
     pub liquid: Option<SpringLiquid>,
     pub osmotic_pressure: Option<SpringOsmoticPressure>,
     pub form: SpringForm,
+    pub url: String,
     pub description: String,
 }
 
@@ -24,6 +25,7 @@ impl OnsenEntity {
         liquid: Option<&str>,
         osmotic_pressure: Option<&str>,
         form: &str,
+        url: &str,
         description: &str,
     ) -> Option<Self> {
         if name.is_empty() {
@@ -40,6 +42,7 @@ impl OnsenEntity {
             liquid,
             osmotic_pressure,
             form,
+            url: url.to_string(),
             description: description.to_string(),
         })
     }
@@ -54,6 +57,7 @@ fn new_test() {
         Some("neutral"),
         Some("hypotonic"),
         "uchiyu",
+        "https://www.sekizenkan.co.jp/spa/#ank-spa1",
         "",
     );
     let inside: OnsenEntity = onsen.expect("");
@@ -70,6 +74,7 @@ fn new_test_none() {
         Some("neutral"),
         Some("hypotonic"),
         "uchiyu",
+        "https://www.sekizenkan.co.jp/spa/#ank-spa1",
         "",
     );
     onsen.expect("");

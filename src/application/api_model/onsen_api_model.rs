@@ -17,6 +17,7 @@ pub struct OnsenResponse {
     pub liquid: Option<String>,
     pub ostomic_pressure: Option<String>,
     pub form: String,
+    pub url: String,
     pub description: String,
 }
 
@@ -29,6 +30,7 @@ impl From<OnsenEntity> for OnsenResponse {
             liquid: value.liquid.as_ref().map(|v| v.to_string()),
             ostomic_pressure: value.osmotic_pressure.as_ref().map(|v| v.to_string()),
             form: value.form.to_string(),
+            url: value.url.to_string(),
             description: value.description.to_string(),
         }
     }

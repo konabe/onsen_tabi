@@ -5,11 +5,18 @@ pub struct HotelEntity {
     pub id: u32,
     pub name: String,
     pub has_washitsu: bool,
+    pub url: String,
     pub onsens: Vec<OnsenEntity>,
 }
 
 impl HotelEntity {
-    pub fn new(id: u32, name: &str, has_washitsu: bool, onsens: &[OnsenEntity]) -> Option<Self> {
+    pub fn new(
+        id: u32,
+        name: &str,
+        has_washitsu: bool,
+        url: &str,
+        onsens: &[OnsenEntity],
+    ) -> Option<Self> {
         if name.is_empty() {
             return None;
         }
@@ -17,6 +24,7 @@ impl HotelEntity {
             id,
             name: name.to_string(),
             has_washitsu,
+            url: url.to_string(),
             onsens: onsens.to_vec(),
         })
     }
@@ -28,6 +36,7 @@ fn new_test() {
         1,
         "積善館",
         true,
+        "https://www.sekizenkan.co.jp/",
         &vec![OnsenEntity::new(
             1,
             "テスト温泉",
@@ -35,6 +44,7 @@ fn new_test() {
             Some("neutral"),
             Some("isotonic"),
             "sotoyu",
+            "https://www.sekizenkan.co.jp/spa/#ank-spa1",
             "",
         )
         .expect("")],
@@ -47,6 +57,6 @@ fn new_test() {
 #[test]
 #[should_panic]
 fn new_test_none() {
-    let hotel = HotelEntity::new(1, "", true, &vec![]);
+    let hotel = HotelEntity::new(1, "", true, "https://www.sekizenkan.co.jp/", &vec![]);
     hotel.unwrap();
 }

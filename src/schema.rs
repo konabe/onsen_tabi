@@ -7,6 +7,8 @@ diesel::table! {
         name -> Varchar,
         #[max_length = 255]
         prefecture -> Varchar,
+        #[max_length = 255]
+        url -> Varchar,
     }
 }
 
@@ -16,6 +18,8 @@ diesel::table! {
         #[max_length = 255]
         name -> Varchar,
         has_washitsu -> Bool,
+        #[max_length = 255]
+        url -> Varchar,
         area_id -> Nullable<Unsigned<Integer>>,
     }
 }
@@ -33,6 +37,8 @@ diesel::table! {
         osmotic_pressure -> Nullable<Varchar>,
         #[max_length = 255]
         category -> Varchar,
+        #[max_length = 255]
+        url -> Varchar,
         description -> Text,
         hotel_id -> Nullable<Unsigned<Integer>>,
         area_id -> Nullable<Unsigned<Integer>>,

@@ -8,6 +8,7 @@ pub struct AreaResponse {
     pub id: u32,
     pub name: String,
     pub prefecture: String,
+    pub url: String,
 }
 
 impl From<AreaEntity> for AreaResponse {
@@ -16,6 +17,7 @@ impl From<AreaEntity> for AreaResponse {
             id: value.id,
             name: value.name.to_string(),
             prefecture: value.prefecture.to_string(),
+            url: value.url.to_string(),
         }
     }
 }

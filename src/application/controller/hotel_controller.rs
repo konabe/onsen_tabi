@@ -26,7 +26,13 @@ pub fn get_hotel(hotel_id: u32) -> Result<Json<HotelResponse>, Status> {
 
 #[post("/hotel", format = "json", data = "<hotel_req>")]
 pub fn post_hotel(hotel_req: Json<HotelRequest>) -> Result<Json<HotelResponse>, Status> {
-    let hotel_entity = HotelEntity::new(0, &hotel_req.name, hotel_req.has_washitsu, &vec![]);
+    let hotel_entity = HotelEntity::new(
+        0,
+        &hotel_req.name,
+        hotel_req.has_washitsu,
+        &hotel_req.url,
+        &vec![],
+    );
     if let Some(hotel_entity) = hotel_entity {
         let created_hotel = hotel_repository::post_hotel(hotel_entity);
         return Ok(Json(HotelResponse::from(created_hotel.clone())));

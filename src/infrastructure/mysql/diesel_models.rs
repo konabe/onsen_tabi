@@ -6,6 +6,7 @@ pub struct Hotel {
     pub id: u32,
     pub name: String,
     pub has_washitsu: bool,
+    pub url: String,
 }
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Associations, Debug)]
@@ -18,6 +19,7 @@ pub struct Onsen {
     pub liquid: Option<String>,
     pub osmotic_pressure: Option<String>,
     pub category: String,
+    pub url: String,
     pub description: String,
     pub hotel_id: Option<u32>,
 }
@@ -28,4 +30,5 @@ pub struct Area {
     pub id: u32,
     pub name: String,
     pub prefecture: String,
+    pub url: String,
 }

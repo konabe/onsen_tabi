@@ -20,6 +20,7 @@ pub fn get_onsens() -> Vec<OnsenEntity> {
                 v.liquid.as_deref(),
                 v.osmotic_pressure.as_deref(),
                 &v.category,
+                &v.url,
                 &v.description,
             )
             .expect("")
@@ -41,6 +42,7 @@ pub fn get_onsen(id: u32) -> Option<OnsenEntity> {
         result.liquid.as_deref(),
         result.osmotic_pressure.as_deref(),
         &result.category,
+        &result.url,
         &result.description,
     )
 }

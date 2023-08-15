@@ -20,7 +20,9 @@ pub fn get_hotels() -> Vec<HotelEntity> {
         .expect("error");
     return results
         .iter()
-        .map(|v: &Hotel| HotelEntity::new(v.id, &v.name, v.has_washitsu, &vec![]).expect(""))
+        .map(|v: &Hotel| {
+            HotelEntity::new(v.id, &v.name, v.has_washitsu, &v.url, &vec![]).expect("")
+        })
         .collect();
 }
 
@@ -48,6 +50,7 @@ pub fn get_hotel(id: u32) -> Option<HotelEntity> {
                 o.liquid.as_deref(),
                 o.osmotic_pressure.as_deref(),
                 &o.category,
+                &o.url,
                 &o.description,
             ) {
                 onsen_entities.push(entity);
@@ -56,7 +59,14 @@ pub fn get_hotel(id: u32) -> Option<HotelEntity> {
     }
 
     return Some(
-        HotelEntity::new(hotel.id, &hotel.name, hotel.has_washitsu, &onsen_entities).expect(""),
+        HotelEntity::new(
+            hotel.id,
+            &hotel.name,
+            hotel.has_washitsu,
+            &hotel.url,
+            &onsen_entities,
+        )
+        .expect(""),
     );
 }
 
@@ -65,6 +75,7 @@ pub fn post_hotel(hotel_enitty: HotelEntity) -> HotelEntity {
         id: 0,
         name: hotel_enitty.name.clone(),
         has_washitsu: hotel_enitty.has_washitsu,
+        url: hotel_enitty.url,
     };
     let connection = &mut establish_connection();
     diesel::insert_into(hotel::table)
@@ -75,6 +86,7 @@ pub fn post_hotel(hotel_enitty: HotelEntity) -> HotelEntity {
         new_hotel.id,
         &new_hotel.name,
         new_hotel.has_washitsu,
+        &new_hotel.url,
         &vec![],
     )
     .expect("");

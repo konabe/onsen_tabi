@@ -12,7 +12,7 @@ pub fn get_areas() -> Vec<AreaEntity> {
         .expect("error");
     return results
         .iter()
-        .map(|v: &Area| AreaEntity::new(v.id, &v.name, &v.prefecture).expect(""))
+        .map(|v: &Area| AreaEntity::new(v.id, &v.name, &v.prefecture, &v.url).expect(""))
         .collect();
 }
 
@@ -27,5 +27,5 @@ pub fn get_area(id: u32) -> Option<AreaEntity> {
         return None;
     }
     let result = &results[0];
-    AreaEntity::new(result.id, &result.name, &result.prefecture)
+    AreaEntity::new(result.id, &result.name, &result.prefecture, &result.url)
 }
