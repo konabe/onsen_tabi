@@ -5,9 +5,10 @@ use crate::application::api_model::onsen_api_model::*;
 use crate::domain::onsen_entity::OnsenEntity;
 use crate::infrastructure::onsen_repository;
 
-#[get("/onsen")]
-pub fn get_onsens() -> Json<Vec<OnsenResponse>> {
-    let onsens = onsen_repository::get_onsens();
+#[get("/onsen?<area_id>")]
+pub fn get_onsens(area_id: Option<String>) -> Json<Vec<OnsenResponse>> {
+    let area_id: Option<u32> = area_id.and_then(|v| v.parse().ok());
+    let onsens = onsen_repository::get_onsens(area_id);
     let response = onsens
         .iter()
         .map(|v| OnsenResponse::from(v.clone()))

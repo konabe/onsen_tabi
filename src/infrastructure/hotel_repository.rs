@@ -12,9 +12,13 @@ use crate::{
     },
 };
 
-pub fn get_hotels() -> Vec<HotelEntity> {
+pub fn get_hotels(area_id: Option<u32>) -> Vec<HotelEntity> {
     let connection = &mut establish_connection();
-    let results: Vec<Hotel> = hotel::table
+    let mut query = hotel::table.into_boxed();
+    if let Some(area_id) = area_id {
+        query = query.filter(hotel::dsl::area_id.eq(area_id));
+    }
+    let results: Vec<Hotel> = query
         .select(Hotel::as_select())
         .load(connection)
         .expect("DB error");

@@ -4,9 +4,13 @@ use crate::{domain::onsen_entity::OnsenEntity, schema::onsen};
 
 use super::mysql::{diesel_connection::establish_connection, diesel_models::Onsen};
 
-pub fn get_onsens() -> Vec<OnsenEntity> {
+pub fn get_onsens(area_id: Option<u32>) -> Vec<OnsenEntity> {
     let connection = &mut establish_connection();
-    let results: Vec<Onsen> = onsen::table
+    let mut query = onsen::table.into_boxed();
+    if let Some(area_id) = area_id {
+        query = query.filter(onsen::dsl::area_id.eq(area_id));
+    }
+    let results: Vec<Onsen> = query
         .select(Onsen::as_select())
         .load(connection)
         .expect("DB error");

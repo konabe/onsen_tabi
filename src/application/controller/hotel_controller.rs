@@ -5,9 +5,10 @@ use crate::{domain::hotel_entity::HotelEntity, infrastructure::hotel_repository}
 
 use crate::application::api_model::hotel_api_model::*;
 
-#[get("/hotel")]
-pub fn get_hotels() -> Json<Vec<HotelResponse>> {
-    let hotels = hotel_repository::get_hotels();
+#[get("/hotel?<area_id>")]
+pub fn get_hotels(area_id: Option<String>) -> Json<Vec<HotelResponse>> {
+    let area_id: Option<u32> = area_id.and_then(|v| v.parse().ok());
+    let hotels = hotel_repository::get_hotels(area_id);
     let response = hotels
         .iter()
         .map(|v| HotelResponse::from(v.clone()))
