@@ -5,10 +5,11 @@ use crate::application::api_model::onsen_api_model::*;
 use crate::domain::onsen_entity::OnsenEntity;
 use crate::infrastructure::onsen_repository;
 
-#[get("/onsen?<area_id>")]
-pub fn get_onsens(area_id: Option<String>) -> Json<Vec<OnsenResponse>> {
+#[get("/onsen?<area_id>&<hotel_id>")]
+pub fn get_onsens(area_id: Option<String>, hotel_id: Option<String>) -> Json<Vec<OnsenResponse>> {
     let area_id: Option<u32> = area_id.and_then(|v| v.parse().ok());
-    let onsens = onsen_repository::get_onsens(area_id);
+    let hotel_id: Option<u32> = hotel_id.and_then(|v| v.parse().ok());
+    let onsens = onsen_repository::get_onsens(area_id, hotel_id);
     let response = onsens
         .iter()
         .map(|v| OnsenResponse::from(v.clone()))

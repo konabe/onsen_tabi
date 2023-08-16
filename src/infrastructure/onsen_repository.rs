@@ -4,11 +4,14 @@ use crate::{domain::onsen_entity::OnsenEntity, schema::onsen};
 
 use super::mysql::{diesel_connection::establish_connection, diesel_models::Onsen};
 
-pub fn get_onsens(area_id: Option<u32>) -> Vec<OnsenEntity> {
+pub fn get_onsens(area_id: Option<u32>, hotel_id: Option<u32>) -> Vec<OnsenEntity> {
     let connection = &mut establish_connection();
     let mut query = onsen::table.into_boxed();
     if let Some(area_id) = area_id {
         query = query.filter(onsen::dsl::area_id.eq(area_id));
+    }
+    if let Some(hotel_id) = hotel_id {
+        query = query.filter(onsen::dsl::hotel_id.eq(hotel_id));
     }
     let results: Vec<Onsen> = query
         .select(Onsen::as_select())
