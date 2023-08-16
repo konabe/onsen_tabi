@@ -38,7 +38,7 @@ pub fn post_onsen(onsen_req: Json<OnsenRequest>) -> Result<Json<OnsenResponse>, 
     let onsen_entity = OnsenEntity::new(
         0,
         &onsen_req.name,
-        &onsen_req.sprint_quality,
+        &onsen_req.spring_quality,
         onsen_req.liquid.as_deref(),
         onsen_req.ostomic_pressure.as_deref(),
         &onsen_req.form,

@@ -6,7 +6,7 @@ use crate::domain::onsen_entity::OnsenEntity;
 #[serde(rename_all = "camelCase")]
 pub struct OnsenRequest {
     pub name: String,
-    pub sprint_quality: String,
+    pub spring_quality: String,
     pub liquid: Option<String>,
     pub ostomic_pressure: Option<String>,
     pub form: String,
@@ -25,7 +25,7 @@ pub struct OnsenDescriptionRequest {
 pub struct OnsenResponse {
     pub id: u32,
     pub name: String,
-    pub sprint_quality: String,
+    pub spring_quality: String,
     pub liquid: Option<String>,
     pub ostomic_pressure: Option<String>,
     pub form: String,
@@ -38,7 +38,7 @@ impl From<OnsenEntity> for OnsenResponse {
         Self {
             id: value.id,
             name: value.name.clone(),
-            sprint_quality: value.spring_quality.clone(),
+            spring_quality: value.spring_quality.clone(),
             liquid: value.liquid.as_ref().map(|v| v.to_string()),
             ostomic_pressure: value.osmotic_pressure.as_ref().map(|v| v.to_string()),
             form: value.form.to_string(),
