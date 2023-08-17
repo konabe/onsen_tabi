@@ -103,3 +103,36 @@ fn test_na_cl_onsen() {
     println!("{}", quality.to_string());
     assert!(quality.to_string() == "ナトリウム－塩化物泉");
 }
+
+#[test]
+fn test_na_mg_cl_onsen() {
+    let quality = OnsenQuality::new(
+        &vec![Chemical::NaIon, Chemical::MgIon, Chemical::ClIon],
+        None,
+    );
+    println!("{}", quality.to_string());
+    assert!(quality.to_string() == "ナトリウム・マグネシウム－塩化物泉");
+}
+
+#[test]
+fn test_na_ca_cl_onsen() {
+    let quality = OnsenQuality::new(
+        &vec![Chemical::NaIon, Chemical::CaIon, Chemical::ClIon],
+        None,
+    );
+    println!("{}", quality.to_string());
+    assert!(quality.to_string() == "ナトリウム・カルシウム－塩化物泉");
+}
+
+#[test]
+fn test_ca_hco3_onsen() {
+    let quality = OnsenQuality::new(&vec![Chemical::CaIon, Chemical::HCO3Ion], None);
+    println!("{}", quality.to_string());
+    assert!(quality.to_string() == "カルシウム－炭酸水素塩泉");
+}
+#[test]
+fn test_na_hco3_onsen() {
+    let quality = OnsenQuality::new(&vec![Chemical::NaIon, Chemical::HCO3Ion], None);
+    println!("{}", quality.to_string());
+    assert!(quality.to_string() == "ナトリウム－炭酸水素塩泉");
+}
