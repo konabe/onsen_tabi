@@ -1,5 +1,5 @@
 use crate::application::api_model::user_api_model::*;
-use crate::infrastructure::user_repository;
+use crate::infrastructure::repository::user_repository;
 use argon2::{self, Config, Variant, Version};
 use chrono::{Duration, Utc};
 use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
@@ -40,7 +40,7 @@ pub fn post_signup(auth_req: Json<AuthRequest>) -> Result<Json<AuthResponse>, St
     let hashed_password =
         argon2::hash_encoded(&auth_req.password.as_bytes(), &salt.as_bytes(), &config).unwrap();
 
-    user_repository::post_user(auth_req.email.clone(), hashed_password, salt);
+    user_repository::post_user(auth_req.email.clone(), hashed_password);
 
     Ok(Json(AuthResponse {
         token: encode_jwt(&auth_req.email),

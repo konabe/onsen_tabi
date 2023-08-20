@@ -53,8 +53,6 @@ diesel::table! {
         #[max_length = 255]
         hashed_password -> Varchar,
         #[max_length = 255]
-        salt -> Varchar,
-        #[max_length = 255]
         role -> Varchar,
     }
 }

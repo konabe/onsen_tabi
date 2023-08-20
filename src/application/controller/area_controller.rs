@@ -1,5 +1,5 @@
 use crate::application::api_model::area_api_model::*;
-use crate::infrastructure::area_repository;
+use crate::infrastructure::repository::area_repository;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
 

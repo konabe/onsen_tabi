@@ -1,4 +1,4 @@
-use super::mysql::{diesel_connection::establish_connection, diesel_models::Area};
+use super::super::mysql::{diesel_connection::establish_connection, diesel_models::Area};
 use crate::{domain::area_entity::AreaEntity, schema::area};
 use diesel::*;
 

@@ -1,4 +1,4 @@
-use super::mysql::{diesel_connection::establish_connection, diesel_models::User};
+use super::super::mysql::{diesel_connection::establish_connection, diesel_models::User};
 use crate::schema::user;
 use diesel::*;
 
@@ -22,12 +22,11 @@ pub fn get_user(email: String) -> Option<User> {
     results.first().map(|v| v.clone())
 }
 
-pub fn post_user(email: String, hashed_password: String, salt: String) {
+pub fn post_user(email: String, hashed_password: String) {
     let new_user = User {
         id: 0,
         email,
         hashed_password,
-        salt,
         role: "user".to_string(),
     };
     let connection = &mut establish_connection();

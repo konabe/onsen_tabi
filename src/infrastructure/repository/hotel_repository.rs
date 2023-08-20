@@ -1,9 +1,9 @@
-use super::{
-    mysql::diesel_connection::establish_connection,
-    mysql::diesel_models::{Hotel, Onsen},
-};
 use crate::{
     domain::{hotel_entity::HotelEntity, onsen_entity::OnsenEntity},
+    infrastructure::mysql::{
+        diesel_connection::establish_connection,
+        diesel_models::{Hotel, Onsen},
+    },
     schema::{
         hotel::{self},
         onsen,

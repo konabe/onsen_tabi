@@ -1,4 +1,4 @@
-use super::mysql::{diesel_connection::establish_connection, diesel_models::Onsen};
+use super::super::mysql::{diesel_connection::establish_connection, diesel_models::Onsen};
 use crate::{domain::onsen_entity::OnsenEntity, schema::onsen};
 use diesel::*;
 

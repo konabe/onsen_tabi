@@ -1,6 +1,6 @@
 use crate::application::api_model::hotel_api_model::*;
 use crate::domain::hotel_entity::HotelEntity;
-use crate::infrastructure::hotel_repository;
+use crate::infrastructure::repository::hotel_repository;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
 
