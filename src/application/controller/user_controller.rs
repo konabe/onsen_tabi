@@ -1,3 +1,4 @@
+use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
 use rocket::http::Status;
 use rocket_contrib::json::Json;
 
@@ -5,9 +6,17 @@ use crate::{
     application::api_model::user_api_model::{AuthRequest, AuthResponse},
     infrastructure::user_repository,
 };
-
 use argon2::{self, Config, Variant, Version};
+use chrono::{Duration, Utc};
 use rand::{distributions::Alphanumeric, Rng};
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Claims {
+    email: String,
+    iat: i64,
+    exp: i64,
+}
 
 #[post("/signup", format = "json", data = "<auth_req>")]
 pub fn post_signup(auth_req: Json<AuthRequest>) -> Result<Json<AuthResponse>, Status> {
@@ -33,8 +42,23 @@ pub fn post_signup(auth_req: Json<AuthRequest>) -> Result<Json<AuthResponse>, St
 
     user_repository::post_user(auth_req.email.clone(), hashed_password, salt);
 
-    // TODO: emailをJWTに添加して署名
-    Ok(Json(AuthResponse {
-        token: "test".to_string(),
-    }))
+    let mut header = Header::default();
+    header.typ = Some("JWT".to_string());
+    header.alg = Algorithm::HS256;
+    let now = Utc::now();
+    let iat = now.timestamp();
+    let exp = (now + Duration::hours(24)).timestamp();
+    let my_claims = Claims {
+        email: auth_req.email.clone(),
+        iat,
+        exp,
+    };
+    let jwt_token = encode(
+        &header,
+        &my_claims,
+        &EncodingKey::from_secret("test".as_bytes()),
+    )
+    .unwrap();
+
+    Ok(Json(AuthResponse { token: jwt_token }))
 }
