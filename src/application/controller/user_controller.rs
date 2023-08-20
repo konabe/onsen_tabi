@@ -1,5 +1,5 @@
 use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
-use rocket::http::Status;
+use rocket::http::{hyper::StatusCode, Status};
 use rocket_contrib::json::Json;
 
 use crate::{
@@ -20,7 +20,10 @@ pub struct Claims {
 
 #[post("/signup", format = "json", data = "<auth_req>")]
 pub fn post_signup(auth_req: Json<AuthRequest>) -> Result<Json<AuthResponse>, Status> {
-    // TODO: すでにemailが存在するか確認
+    let exists_user = user_repository::exists_user(auth_req.email.clone());
+    if exists_user {
+        return Err(Status::Conflict);
+    }
 
     let salt: String = rand::thread_rng()
         .sample_iter(&Alphanumeric)
