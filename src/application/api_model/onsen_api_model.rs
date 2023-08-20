@@ -1,6 +1,5 @@
-use serde::{Deserialize, Serialize};
-
 use crate::domain::onsen_entity::OnsenEntity;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]

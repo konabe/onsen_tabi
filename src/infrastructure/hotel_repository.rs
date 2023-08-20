@@ -1,5 +1,3 @@
-use diesel::*;
-
 use super::{
     mysql::diesel_connection::establish_connection,
     mysql::diesel_models::{Hotel, Onsen},
@@ -11,6 +9,7 @@ use crate::{
         onsen,
     },
 };
+use diesel::*;
 
 pub fn get_hotels(area_id: Option<u32>) -> Vec<HotelEntity> {
     let connection = &mut establish_connection();

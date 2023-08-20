@@ -1,7 +1,6 @@
-use diesel::*;
-
 use super::mysql::{diesel_connection::establish_connection, diesel_models::User};
 use crate::schema::user;
+use diesel::*;
 
 pub fn exists_user(email: String) -> bool {
     let connection = &mut establish_connection();

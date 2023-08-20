@@ -1,14 +1,11 @@
-use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
-use rocket::http::Status;
-use rocket_contrib::json::Json;
-
-use crate::{
-    application::api_model::user_api_model::{AuthRequest, AuthResponse},
-    infrastructure::user_repository,
-};
+use crate::application::api_model::user_api_model::*;
+use crate::infrastructure::user_repository;
 use argon2::{self, Config, Variant, Version};
 use chrono::{Duration, Utc};
+use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
 use rand::{distributions::Alphanumeric, Rng};
+use rocket::http::Status;
+use rocket_contrib::json::Json;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]

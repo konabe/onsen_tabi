@@ -1,9 +1,8 @@
-use rocket::http::Status;
-use rocket_contrib::json::Json;
-
 use crate::application::api_model::onsen_api_model::*;
 use crate::domain::onsen_entity::OnsenEntity;
 use crate::infrastructure::onsen_repository;
+use rocket::http::Status;
+use rocket_contrib::json::Json;
 
 #[get("/onsen?<area_id>&<hotel_id>")]
 pub fn get_onsens(area_id: Option<String>, hotel_id: Option<String>) -> Json<Vec<OnsenResponse>> {

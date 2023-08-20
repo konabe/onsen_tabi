@@ -1,6 +1,5 @@
-use serde::Serialize;
-
 use crate::domain::area_entity::AreaEntity;
+use serde::Serialize;
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]

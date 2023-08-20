@@ -1,6 +1,5 @@
-use diesel::{Associations, Identifiable, Insertable, Queryable, Selectable};
-
 use crate::domain::onsen_entity::OnsenEntity;
+use diesel::{Associations, Identifiable, Insertable, Queryable, Selectable};
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Debug)]
 #[diesel(table_name=crate::schema::hotel)]

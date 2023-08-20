@@ -1,8 +1,6 @@
-use diesel::*;
-
-use crate::{domain::onsen_entity::OnsenEntity, schema::onsen};
-
 use super::mysql::{diesel_connection::establish_connection, diesel_models::Onsen};
+use crate::{domain::onsen_entity::OnsenEntity, schema::onsen};
+use diesel::*;
 
 pub fn get_onsens(area_id: Option<u32>, hotel_id: Option<u32>) -> Vec<OnsenEntity> {
     let connection = &mut establish_connection();

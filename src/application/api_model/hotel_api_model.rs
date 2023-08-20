@@ -1,8 +1,6 @@
-use serde::{Deserialize, Serialize};
-
+use crate::application::api_model::onsen_api_model::OnsenResponse;
 use crate::domain::hotel_entity::HotelEntity;
-
-use super::onsen_api_model::OnsenResponse;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]

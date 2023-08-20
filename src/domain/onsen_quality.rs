@@ -1,6 +1,5 @@
-use std::{fmt, vec};
-
 use super::{chemical::Chemical, onsen_entity::SpringLiquid};
+use std::{fmt, vec};
 
 struct OnsenQuality {
     is_simple: bool,

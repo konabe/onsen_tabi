@@ -1,9 +1,8 @@
+use crate::application::api_model::hotel_api_model::*;
+use crate::domain::hotel_entity::HotelEntity;
+use crate::infrastructure::hotel_repository;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
-
-use crate::{domain::hotel_entity::HotelEntity, infrastructure::hotel_repository};
-
-use crate::application::api_model::hotel_api_model::*;
 
 #[get("/hotel?<area_id>")]
 pub fn get_hotels(area_id: Option<String>) -> Json<Vec<HotelResponse>> {
