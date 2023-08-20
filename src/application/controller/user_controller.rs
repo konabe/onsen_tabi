@@ -7,6 +7,7 @@ use rand::{distributions::Alphanumeric, Rng};
 use rocket::http::Status;
 use rocket_contrib::json::Json;
 use serde::{Deserialize, Serialize};
+use std::env;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
@@ -81,7 +82,11 @@ fn encode_jwt(email: &str) -> String {
     encode(
         &header,
         &my_claims,
-        &EncodingKey::from_secret("test".as_bytes()),
+        &EncodingKey::from_secret(
+            env::var("DATABASE_URL")
+                .expect("DATABASE_URL must be set")
+                .as_bytes(),
+        ),
     )
     .unwrap()
 }
