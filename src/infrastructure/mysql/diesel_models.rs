@@ -51,7 +51,7 @@ pub struct Area {
     pub url: String,
 }
 
-#[derive(Queryable, Selectable, Identifiable, Insertable, Debug)]
+#[derive(Queryable, Selectable, Identifiable, Insertable, Debug, Clone)]
 #[diesel(table_name=crate::schema::user)]
 pub struct User {
     pub id: u32,

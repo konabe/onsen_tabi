@@ -1,5 +1,5 @@
 use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
-use rocket::http::{hyper::StatusCode, Status};
+use rocket::http::Status;
 use rocket_contrib::json::Json;
 
 use crate::{
@@ -45,6 +45,31 @@ pub fn post_signup(auth_req: Json<AuthRequest>) -> Result<Json<AuthResponse>, St
 
     user_repository::post_user(auth_req.email.clone(), hashed_password, salt);
 
+    Ok(Json(AuthResponse {
+        token: encode_jwt(&auth_req.email),
+    }))
+}
+
+#[post("/signin", format = "json", data = "<auth_req>")]
+pub fn post_signin(auth_req: Json<AuthRequest>) -> Result<Json<AuthResponse>, Status> {
+    let user = user_repository::get_user(auth_req.email.clone());
+    if user.is_none() {
+        return Err(Status::Unauthorized);
+    }
+    let user = user.unwrap();
+
+    let matches =
+        argon2::verify_encoded(&user.hashed_password, auth_req.password.as_bytes()).unwrap();
+    if !matches {
+        return Err(Status::Unauthorized);
+    }
+
+    Ok(Json(AuthResponse {
+        token: encode_jwt(&auth_req.email),
+    }))
+}
+
+fn encode_jwt(email: &str) -> String {
     let mut header = Header::default();
     header.typ = Some("JWT".to_string());
     header.alg = Algorithm::HS256;
@@ -52,16 +77,14 @@ pub fn post_signup(auth_req: Json<AuthRequest>) -> Result<Json<AuthResponse>, St
     let iat = now.timestamp();
     let exp = (now + Duration::hours(24)).timestamp();
     let my_claims = Claims {
-        email: auth_req.email.clone(),
+        email: email.to_string(),
         iat,
         exp,
     };
-    let jwt_token = encode(
+    encode(
         &header,
         &my_claims,
         &EncodingKey::from_secret("test".as_bytes()),
     )
-    .unwrap();
-
-    Ok(Json(AuthResponse { token: jwt_token }))
+    .unwrap()
 }

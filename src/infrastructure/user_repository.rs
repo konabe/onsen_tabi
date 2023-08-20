@@ -13,6 +13,16 @@ pub fn exists_user(email: String) -> bool {
     !results.is_empty()
 }
 
+pub fn get_user(email: String) -> Option<User> {
+    let connection = &mut establish_connection();
+    let results: Vec<User> = user::table
+        .select(User::as_select())
+        .filter(user::dsl::email.eq(email))
+        .load(connection)
+        .expect("DB Error");
+    results.first().map(|v| v.clone())
+}
+
 pub fn post_user(email: String, hashed_password: String, salt: String) {
     let new_user = User {
         id: 0,

@@ -19,7 +19,9 @@ use application::controller::onsen_controller::{
     static_rocket_route_info_for_get_onsen, static_rocket_route_info_for_get_onsens,
     static_rocket_route_info_for_post_onsen, static_rocket_route_info_for_put_onsen_description,
 };
-use application::controller::user_controller::static_rocket_route_info_for_post_signup;
+use application::controller::user_controller::{
+    static_rocket_route_info_for_post_signin, static_rocket_route_info_for_post_signup,
+};
 use rocket_cors::CorsOptions;
 
 #[get("/")]
@@ -42,7 +44,8 @@ fn main() {
                 get_areas,
                 get_area,
                 put_onsen_description,
-                post_signup
+                post_signup,
+                post_signin,
             ],
         )
         .attach(CorsOptions::default().to_cors().expect("error"))
