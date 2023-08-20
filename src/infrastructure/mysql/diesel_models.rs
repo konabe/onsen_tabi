@@ -50,3 +50,13 @@ pub struct Area {
     pub prefecture: String,
     pub url: String,
 }
+
+#[derive(Queryable, Selectable, Identifiable, Insertable, Debug)]
+#[diesel(table_name=crate::schema::user)]
+pub struct User {
+    pub id: u32,
+    pub email: String,
+    pub hashed_password: String,
+    pub salt: String,
+    pub role: String,
+}

@@ -45,6 +45,20 @@ diesel::table! {
     }
 }
 
+diesel::table! {
+    user (id) {
+        id -> Unsigned<Integer>,
+        #[max_length = 255]
+        email -> Varchar,
+        #[max_length = 255]
+        hashed_password -> Varchar,
+        #[max_length = 255]
+        salt -> Varchar,
+        #[max_length = 255]
+        role -> Varchar,
+    }
+}
+
 diesel::joinable!(hotel -> area (area_id));
 diesel::joinable!(onsen -> area (area_id));
 diesel::joinable!(onsen -> hotel (hotel_id));
@@ -53,4 +67,5 @@ diesel::allow_tables_to_appear_in_same_query!(
     area,
     hotel,
     onsen,
+    user,
 );
