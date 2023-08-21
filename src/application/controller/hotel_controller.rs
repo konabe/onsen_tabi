@@ -30,7 +30,7 @@ pub fn post_hotel(
     hotel_req: Json<HotelRequest>,
     user: ValidatedUser,
 ) -> Result<Json<HotelResponse>, Status> {
-    if user.role == "user" {
+    if user.role != "admin" {
         return Err(Status::Forbidden);
     }
     let hotel_entity = HotelEntity::new(

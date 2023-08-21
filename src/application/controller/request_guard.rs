@@ -22,7 +22,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for ValidatedUser {
         let bearer_token = request.headers().get_one("Authorization");
 
         if let Some(bearer_token) = bearer_token {
-            let prefix = &bearer_token[..7];
+            let prefix = &bearer_token[..6];
             if prefix != "Bearer" {
                 return Outcome::Failure((Status::Unauthorized, ApiTokenError::Missing));
             }
@@ -30,7 +30,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for ValidatedUser {
             if let Some(claims) = decode_jwt(token) {
                 let email = claims.email;
                 let exp = Utc.timestamp_opt(claims.exp as i64, 0).unwrap();
-                if exp > Utc::now() {
+                if exp < Utc::now() {
                     return Outcome::Failure((Status::Unauthorized, ApiTokenError::Missing));
                 }
 

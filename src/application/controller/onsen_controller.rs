@@ -1,3 +1,4 @@
+use super::request_guard::ValidatedUser;
 use crate::application::api_model::onsen_api_model::*;
 use crate::domain::onsen_entity::OnsenEntity;
 use crate::infrastructure::repository::onsen_repository;
@@ -29,13 +30,23 @@ pub fn get_onsen(onsen_id: u32) -> Result<Json<OnsenResponse>, Status> {
 pub fn put_onsen_description(
     onsen_id: u32,
     req: Json<OnsenDescriptionRequest>,
+    user: ValidatedUser,
 ) -> Result<(), Status> {
+    if user.role != "admin" {
+        return Err(Status::Forbidden);
+    }
     onsen_repository::put_onsen_description(onsen_id, &req.description);
     Ok(())
 }
 
 #[post("/onsen", format = "json", data = "<onsen_req>")]
-pub fn post_onsen(onsen_req: Json<OnsenRequest>) -> Result<Json<OnsenResponse>, Status> {
+pub fn post_onsen(
+    onsen_req: Json<OnsenRequest>,
+    user: ValidatedUser,
+) -> Result<Json<OnsenResponse>, Status> {
+    if user.role != "admin" {
+        return Err(Status::Forbidden);
+    }
     let onsen_entity = OnsenEntity::new(
         0,
         &onsen_req.name,
