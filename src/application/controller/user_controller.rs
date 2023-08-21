@@ -11,9 +11,9 @@ use std::env;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
-    email: String,
-    iat: i64,
-    exp: i64,
+    pub email: String,
+    pub iat: i64,
+    pub exp: i64,
 }
 
 #[post("/signup", format = "json", data = "<auth_req>")]
@@ -83,8 +83,8 @@ fn encode_jwt(email: &str) -> String {
         &header,
         &my_claims,
         &EncodingKey::from_secret(
-            env::var("DATABASE_URL")
-                .expect("DATABASE_URL must be set")
+            env::var("JWT_SECRET_KEY")
+                .expect("JWT_SECRET_KEY must be set")
                 .as_bytes(),
         ),
     )

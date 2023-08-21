@@ -1,3 +1,4 @@
+use super::request_guard::ValidatedUser;
 use crate::application::api_model::hotel_api_model::*;
 use crate::domain::hotel_entity::HotelEntity;
 use crate::infrastructure::repository::hotel_repository;
@@ -25,7 +26,13 @@ pub fn get_hotel(hotel_id: u32) -> Result<Json<HotelResponse>, Status> {
 }
 
 #[post("/hotel", format = "json", data = "<hotel_req>")]
-pub fn post_hotel(hotel_req: Json<HotelRequest>) -> Result<Json<HotelResponse>, Status> {
+pub fn post_hotel(
+    hotel_req: Json<HotelRequest>,
+    user: ValidatedUser,
+) -> Result<Json<HotelResponse>, Status> {
+    if user.role == "user" {
+        return Err(Status::Forbidden);
+    }
     let hotel_entity = HotelEntity::new(
         0,
         &hotel_req.name,
