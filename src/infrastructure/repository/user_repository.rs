@@ -2,7 +2,7 @@ use super::super::mysql::{diesel_connection::establish_connection, diesel_models
 use crate::schema::user;
 use diesel::*;
 
-pub fn exists_user(email: String) -> bool {
+pub fn exists_user(email: &str) -> bool {
     let connection = &mut establish_connection();
     let results: Vec<User> = user::table
         .select(User::as_select())
@@ -12,7 +12,7 @@ pub fn exists_user(email: String) -> bool {
     !results.is_empty()
 }
 
-pub fn get_user(email: String) -> Option<User> {
+pub fn get_user(email: &str) -> Option<User> {
     let connection = &mut establish_connection();
     let results: Vec<User> = user::table
         .select(User::as_select())
@@ -22,11 +22,11 @@ pub fn get_user(email: String) -> Option<User> {
     results.first().map(|v| v.clone())
 }
 
-pub fn post_user(email: String, hashed_password: String) {
+pub fn post_user(email: &str, hashed_password: &str) {
     let new_user = User {
         id: 0,
-        email,
-        hashed_password,
+        email: email.to_string(),
+        hashed_password: hashed_password.to_string(),
         role: "user".to_string(),
     };
     let connection = &mut establish_connection();
