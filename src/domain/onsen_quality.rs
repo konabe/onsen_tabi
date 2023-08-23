@@ -1,4 +1,6 @@
+use super::chemical::Chemical;
 use super::chemical::Chemical::*;
+use super::onsen_entity::SpringLiquid;
 use super::onsen_entity::SpringLiquid::*;
 use std::{fmt, vec};
 
