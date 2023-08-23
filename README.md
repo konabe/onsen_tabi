@@ -6,5 +6,8 @@
 
 ## システム構成
 
-vercel [React.js] <-> render.com [WEB SERVICE / rust / rocket] <-> MySQL [AWS]
+vercel <-> render.com WEB SERVICE <-> MySQL [AWS]
+
 // TODO: AWSに移行
+
+- [frontend source](https://github.com/konabe/onsen-tabi-web)
