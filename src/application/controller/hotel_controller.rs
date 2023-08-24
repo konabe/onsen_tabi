@@ -38,6 +38,7 @@ pub fn post_hotel(
         &hotel_req.name,
         hotel_req.has_washitsu,
         &hotel_req.url,
+        &hotel_req.description,
         &vec![],
     );
     if let Some(hotel_entity) = hotel_entity {

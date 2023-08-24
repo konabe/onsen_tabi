@@ -8,6 +8,7 @@ pub struct HotelRequest {
     pub name: String,
     pub has_washitsu: bool,
     pub url: String,
+    pub description: String,
 }
 
 #[derive(Debug, Serialize)]
@@ -17,6 +18,7 @@ pub struct HotelResponse {
     pub name: String,
     pub has_washitsu: bool,
     pub url: String,
+    pub description: String,
     pub onsens: Vec<OnsenResponse>,
 }
 
@@ -27,6 +29,7 @@ impl From<HotelEntity> for HotelResponse {
             name: value.name.to_string(),
             has_washitsu: value.has_washitsu,
             url: value.url,
+            description: value.description,
             onsens: value
                 .onsens
                 .iter()

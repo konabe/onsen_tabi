@@ -8,15 +8,17 @@ pub struct AreaResponse {
     pub name: String,
     pub prefecture: String,
     pub url: String,
+    pub description: String,
 }
 
 impl From<AreaEntity> for AreaResponse {
     fn from(value: AreaEntity) -> Self {
         Self {
             id: value.id,
-            name: value.name.to_string(),
-            prefecture: value.prefecture.to_string(),
-            url: value.url.to_string(),
+            name: value.name,
+            prefecture: value.prefecture,
+            url: value.url,
+            description: value.description,
         }
     }
 }

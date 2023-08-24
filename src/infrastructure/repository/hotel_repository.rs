@@ -24,8 +24,15 @@ pub fn get_hotels(area_id: Option<u32>) -> Vec<HotelEntity> {
     return results
         .iter()
         .map(|v: &Hotel| {
-            HotelEntity::new(v.id, &v.name, v.has_washitsu, &v.url, &vec![])
-                .expect("Saved data violates HotelEntity")
+            HotelEntity::new(
+                v.id,
+                &v.name,
+                v.has_washitsu,
+                &v.url,
+                &v.description,
+                &vec![],
+            )
+            .expect("Saved data violates HotelEntity")
         })
         .collect();
 }
@@ -52,6 +59,7 @@ pub fn get_hotel_with_onsen(id: u32) -> Option<HotelEntity> {
             &hotel.name,
             hotel.has_washitsu,
             &hotel.url,
+            &hotel.description,
             &onsen_entities,
         )
         .expect("Saved data violates HotelEntity"),
@@ -63,6 +71,7 @@ pub fn post_hotel(hotel_enitty: HotelEntity) -> HotelEntity {
         id: 0,
         name: hotel_enitty.name,
         has_washitsu: hotel_enitty.has_washitsu,
+        description: hotel_enitty.description,
         url: hotel_enitty.url,
     };
     let connection = &mut establish_connection();
@@ -75,6 +84,7 @@ pub fn post_hotel(hotel_enitty: HotelEntity) -> HotelEntity {
         &new_hotel.name,
         new_hotel.has_washitsu,
         &new_hotel.url,
+        &new_hotel.description,
         &vec![],
     )
     .expect("Saved data violates HotelEntity");

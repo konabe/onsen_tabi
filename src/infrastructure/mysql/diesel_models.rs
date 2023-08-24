@@ -8,6 +8,7 @@ pub struct Hotel {
     pub name: String,
     pub has_washitsu: bool,
     pub url: String,
+    pub description: String,
 }
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Associations, Debug, Clone)]
@@ -48,6 +49,7 @@ pub struct Area {
     pub name: String,
     pub prefecture: String,
     pub url: String,
+    pub description: String,
 }
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Debug, Clone)]
