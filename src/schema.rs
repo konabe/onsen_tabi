@@ -9,6 +9,7 @@ diesel::table! {
         prefecture -> Varchar,
         #[max_length = 255]
         url -> Varchar,
+        description -> Text,
     }
 }
 
@@ -20,6 +21,7 @@ diesel::table! {
         has_washitsu -> Bool,
         #[max_length = 255]
         url -> Varchar,
+        description -> Text,
         area_id -> Nullable<Unsigned<Integer>>,
     }
 }

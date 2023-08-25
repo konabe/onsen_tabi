@@ -1,4 +1,5 @@
 use crate::application::api_model::area_api_model::*;
+use crate::application::controller::request_guard::ValidatedUser;
 use crate::infrastructure::repository::area_repository;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
@@ -20,4 +21,17 @@ pub fn get_area(area_id: u32) -> Result<Json<AreaResponse>, Status> {
         Some(area) => Ok(Json(AreaResponse::from(area.clone()))),
         None => Err(Status::NotFound),
     }
+}
+
+#[put("/area/<area_id>/description", format = "json", data = "<req>")]
+pub fn put_area_description(
+    area_id: u32,
+    req: Json<AreaDescriptionRequest>,
+    user: ValidatedUser,
+) -> Result<(), Status> {
+    if user.role != "admin" {
+        return Err(Status::Forbidden);
+    }
+    area_repository::put_area_description(area_id, &req.description);
+    Ok(())
 }

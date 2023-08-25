@@ -6,6 +6,7 @@ pub struct HotelEntity {
     pub name: String,
     pub has_washitsu: bool,
     pub url: String,
+    pub description: String,
     pub onsens: Vec<OnsenEntity>,
 }
 
@@ -15,6 +16,7 @@ impl HotelEntity {
         name: &str,
         has_washitsu: bool,
         url: &str,
+        description: &str,
         onsens: &[OnsenEntity],
     ) -> Option<Self> {
         if name.is_empty() {
@@ -25,6 +27,7 @@ impl HotelEntity {
             name: name.to_string(),
             has_washitsu,
             url: url.to_string(),
+            description: description.to_string(),
             onsens: onsens.to_vec(),
         })
     }
@@ -37,6 +40,7 @@ fn new_test() {
         "積善館",
         true,
         "https://www.sekizenkan.co.jp/",
+        "",
         &vec![OnsenEntity::new(
             1,
             "テスト温泉",
@@ -57,6 +61,6 @@ fn new_test() {
 #[test]
 #[should_panic]
 fn new_test_none() {
-    let hotel = HotelEntity::new(1, "", true, "https://www.sekizenkan.co.jp/", &vec![]);
+    let hotel = HotelEntity::new(1, "", true, "https://www.sekizenkan.co.jp/", "", &vec![]);
     hotel.unwrap();
 }

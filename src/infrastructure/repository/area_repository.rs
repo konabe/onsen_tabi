@@ -10,7 +10,9 @@ pub fn get_areas() -> Vec<AreaEntity> {
         .expect("error");
     return results
         .iter()
-        .map(|v: &Area| AreaEntity::new(v.id, &v.name, &v.prefecture, &v.url).expect(""))
+        .map(|v: &Area| {
+            AreaEntity::new(v.id, &v.name, &v.prefecture, &v.url, &v.description).expect("")
+        })
         .collect();
 }
 
@@ -25,5 +27,19 @@ pub fn get_area(id: u32) -> Option<AreaEntity> {
         return None;
     }
     let result = &results[0];
-    AreaEntity::new(result.id, &result.name, &result.prefecture, &result.url)
+    AreaEntity::new(
+        result.id,
+        &result.name,
+        &result.prefecture,
+        &result.url,
+        &result.description,
+    )
+}
+
+pub fn put_area_description(id: u32, description: &str) -> () {
+    let connection = &mut establish_connection();
+    let _ = diesel::update(area::dsl::area.find(id))
+        .set(area::dsl::description.eq(description))
+        .execute(connection)
+        .expect("DB error");
 }
