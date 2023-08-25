@@ -90,3 +90,11 @@ pub fn post_hotel(hotel_enitty: HotelEntity) -> HotelEntity {
     .expect("Saved data violates HotelEntity");
     return hotel_entity;
 }
+
+pub fn put_hotel_description(id: u32, description: &str) -> () {
+    let connection = &mut establish_connection();
+    let _ = diesel::update(hotel::dsl::hotel.find(id))
+        .set(hotel::dsl::description.eq(description))
+        .execute(connection)
+        .expect("DB error");
+}

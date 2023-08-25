@@ -1,5 +1,5 @@
 use crate::domain::area_entity::AreaEntity;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -8,6 +8,12 @@ pub struct AreaResponse {
     pub name: String,
     pub prefecture: String,
     pub url: String,
+    pub description: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AreaDescriptionRequest {
     pub description: String,
 }
 

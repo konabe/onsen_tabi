@@ -8,20 +8,10 @@ mod domain;
 mod infrastructure;
 mod schema;
 
-use application::controller::area_controller::{
-    static_rocket_route_info_for_get_area, static_rocket_route_info_for_get_areas,
-};
-use application::controller::hotel_controller::{
-    static_rocket_route_info_for_get_hotel, static_rocket_route_info_for_get_hotels,
-    static_rocket_route_info_for_post_hotel,
-};
-use application::controller::onsen_controller::{
-    static_rocket_route_info_for_get_onsen, static_rocket_route_info_for_get_onsens,
-    static_rocket_route_info_for_post_onsen, static_rocket_route_info_for_put_onsen_description,
-};
-use application::controller::user_controller::{
-    static_rocket_route_info_for_post_signin, static_rocket_route_info_for_post_signup,
-};
+use application::controller::area_controller::*;
+use application::controller::hotel_controller::*;
+use application::controller::onsen_controller::*;
+use application::controller::user_controller::*;
 use rocket_cors::CorsOptions;
 
 #[get("/")]
@@ -38,12 +28,14 @@ fn main() {
                 get_hotels,
                 get_hotel,
                 post_hotel,
+                put_hotel_description,
                 get_onsens,
                 get_onsen,
                 post_onsen,
+                put_onsen_description,
                 get_areas,
                 get_area,
-                put_onsen_description,
+                put_area_description,
                 post_signup,
                 post_signin,
             ],

@@ -11,6 +11,12 @@ pub struct HotelRequest {
     pub description: String,
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HotelDescriptionRequest {
+    pub description: String,
+}
+
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct HotelResponse {

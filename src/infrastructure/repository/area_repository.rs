@@ -35,3 +35,11 @@ pub fn get_area(id: u32) -> Option<AreaEntity> {
         &result.description,
     )
 }
+
+pub fn put_area_description(id: u32, description: &str) -> () {
+    let connection = &mut establish_connection();
+    let _ = diesel::update(area::dsl::area.find(id))
+        .set(area::dsl::description.eq(description))
+        .execute(connection)
+        .expect("DB error");
+}
