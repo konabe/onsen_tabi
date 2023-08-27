@@ -43,7 +43,7 @@ pub fn put_hotel(
         &vec![],
     );
     if let Some(hotel_entity) = hotel_entity {
-        hotel_repository::post_hotel(hotel_entity);
+        hotel_repository::put_hotel(hotel_entity);
     } else {
         return Err(Status::BadRequest);
     }
