@@ -25,6 +25,31 @@ pub fn get_hotel(hotel_id: u32) -> Result<Json<HotelResponse>, Status> {
     }
 }
 
+#[put("/hotel/<hotel_id>", format = "json", data = "<hotel_req>")]
+pub fn put_hotel(
+    hotel_id: u32,
+    hotel_req: Json<HotelRequest>,
+    user: ValidatedUser,
+) -> Result<(), Status> {
+    if user.role != "admin" {
+        return Err(Status::Forbidden);
+    }
+    let hotel_entity = HotelEntity::new(
+        hotel_id,
+        &hotel_req.name,
+        hotel_req.has_washitsu,
+        &hotel_req.url,
+        &hotel_req.description,
+        &vec![],
+    );
+    if let Some(hotel_entity) = hotel_entity {
+        hotel_repository::post_hotel(hotel_entity);
+    } else {
+        return Err(Status::BadRequest);
+    }
+    Ok(())
+}
+
 #[put("/hotel/<hotel_id>/description", format = "json", data = "<req>")]
 pub fn put_hotel_description(
     hotel_id: u32,

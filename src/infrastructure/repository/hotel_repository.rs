@@ -91,6 +91,26 @@ pub fn post_hotel(hotel_enitty: HotelEntity) -> HotelEntity {
     return hotel_entity;
 }
 
+pub fn put_hotel(hotel_entity: HotelEntity) -> () {
+    let updated_hotel = Hotel {
+        id: hotel_entity.id,
+        name: hotel_entity.name,
+        has_washitsu: hotel_entity.has_washitsu,
+        description: hotel_entity.description,
+        url: hotel_entity.url,
+    };
+    let connection = &mut establish_connection();
+    let _ = diesel::update(hotel::dsl::hotel.find(updated_hotel.id))
+        .set((
+            hotel::dsl::name.eq(updated_hotel.name),
+            hotel::dsl::has_washitsu.eq(updated_hotel.has_washitsu),
+            hotel::dsl::description.eq(updated_hotel.description),
+            hotel::dsl::url.eq(updated_hotel.url),
+        ))
+        .execute(connection)
+        .expect("DB error");
+}
+
 pub fn put_hotel_description(id: u32, description: &str) -> () {
     let connection = &mut establish_connection();
     let _ = diesel::update(hotel::dsl::hotel.find(id))
