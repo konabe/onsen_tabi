@@ -28,6 +28,7 @@ fn main() {
                 get_hotels,
                 get_hotel,
                 post_hotel,
+                put_hotel,
                 put_hotel_description,
                 get_onsens,
                 get_onsen,
