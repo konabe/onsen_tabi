@@ -26,6 +26,33 @@ pub fn get_onsen(onsen_id: u32) -> Result<Json<OnsenResponse>, Status> {
     }
 }
 
+#[put("/onsen/<onsen_id>", format = "json", data = "<onsen_req>")]
+pub fn put_onsen(
+    onsen_id: u32,
+    onsen_req: Json<OnsenRequest>,
+    user: ValidatedUser,
+) -> Result<(), Status> {
+    if user.role != "admin" {
+        return Err(Status::Forbidden);
+    }
+    let onsen_entity = OnsenEntity::new(
+        onsen_id,
+        &onsen_req.name,
+        &onsen_req.spring_quality,
+        onsen_req.liquid.as_deref(),
+        onsen_req.osmotic_pressure.as_deref(),
+        &onsen_req.form,
+        &onsen_req.url,
+        &onsen_req.description,
+    );
+    if let Some(onsen_entity) = onsen_entity {
+        let _ = onsen_repository::put_onsen(onsen_entity);
+    } else {
+        return Err(Status::BadRequest);
+    }
+    Ok(())
+}
+
 #[put("/onsen/<onsen_id>/description", format = "json", data = "<req>")]
 pub fn put_onsen_description(
     onsen_id: u32,

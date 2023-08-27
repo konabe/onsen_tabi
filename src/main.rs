@@ -32,6 +32,7 @@ fn main() {
                 get_onsens,
                 get_onsen,
                 post_onsen,
+                put_onsen,
                 put_onsen_description,
                 get_areas,
                 get_area,
