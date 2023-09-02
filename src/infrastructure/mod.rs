@@ -1,3 +1,2 @@
-pub mod auth;
-pub mod mysql;
+mod mysql;
 pub mod repository;

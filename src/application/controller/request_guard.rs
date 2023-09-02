@@ -1,4 +1,4 @@
-use crate::infrastructure::auth::jwt::decode_jwt;
+use crate::application::auth::jwt::decode_jwt;
 use crate::infrastructure::repository::user_repository;
 use chrono::{TimeZone, Utc};
 use rocket::http::Status;
