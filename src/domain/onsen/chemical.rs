@@ -1,5 +1,6 @@
 use Chemical::*;
 
+#[allow(dead_code)]
 #[derive(PartialEq, Clone)]
 pub enum Chemical {
     NaIon,
