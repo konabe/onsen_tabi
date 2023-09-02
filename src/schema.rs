@@ -39,6 +39,7 @@ diesel::table! {
         osmotic_pressure -> Nullable<Varchar>,
         #[max_length = 255]
         category -> Varchar,
+        day_use -> Nullable<Bool>,
         #[max_length = 255]
         url -> Varchar,
         description -> Text,

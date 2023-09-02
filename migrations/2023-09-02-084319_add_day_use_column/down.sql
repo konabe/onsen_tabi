@@ -1,0 +1,1 @@
+ALTER TABLE onsen DROP COLUMN day_use;
