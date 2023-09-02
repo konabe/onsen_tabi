@@ -1,4 +1,4 @@
-use crate::domain::onsen::onsen_entity::OnsenEntity;
+use crate::domain::{area_entity::AreaEntity, onsen::onsen_entity::OnsenEntity};
 use diesel::{Associations, Identifiable, Insertable, Queryable, Selectable};
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Debug)]
@@ -44,14 +44,29 @@ impl From<Onsen> for OnsenEntity {
     }
 }
 
-#[derive(Queryable, Selectable, Identifiable, Insertable, Debug)]
+#[derive(Queryable, Selectable, Identifiable, Insertable, Debug, Clone)]
 #[diesel(table_name=crate::schema::area)]
 pub struct Area {
     pub id: u32,
     pub name: String,
     pub prefecture: String,
+    pub national_resort: bool,
+    pub village: Option<String>,
     pub url: String,
     pub description: String,
+}
+
+impl From<Area> for AreaEntity {
+    fn from(value: Area) -> Self {
+        AreaEntity::new(
+            value.id,
+            &value.name,
+            &value.prefecture,
+            &value.url,
+            &value.description,
+        )
+        .expect("Saved data violates AreaEntity")
+    }
 }
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Debug, Clone)]
