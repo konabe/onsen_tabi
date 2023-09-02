@@ -3,6 +3,8 @@ pub struct AreaEntity {
     pub id: u32,
     pub name: String,
     pub prefecture: String,
+    pub national_resort: bool,
+    pub village: Option<String>,
     pub url: String,
     pub description: String,
 }
@@ -12,6 +14,8 @@ impl AreaEntity {
         id: u32,
         name: &str,
         prefecture: &str,
+        national_resort: bool,
+        village: Option<&str>,
         url: &str,
         description: &str,
     ) -> Option<Self> {
@@ -25,6 +29,8 @@ impl AreaEntity {
             id,
             name: name.to_string(),
             prefecture: prefecture.to_string(),
+            national_resort,
+            village: village.map(|v| v.to_string()),
             url: url.to_string(),
             description: description.to_string(),
         })
@@ -33,7 +39,15 @@ impl AreaEntity {
 
 #[test]
 fn new_test() {
-    let area = AreaEntity::new(1, "四万", "群馬県", "https://nakanojo-kanko.jp/shima/", "");
+    let area = AreaEntity::new(
+        1,
+        "四万",
+        "群馬県",
+        true,
+        None,
+        "https://nakanojo-kanko.jp/shima/",
+        "",
+    );
     let inside: AreaEntity = area.expect("");
     assert!(inside.name == "四万");
 }
@@ -41,13 +55,29 @@ fn new_test() {
 #[test]
 #[should_panic]
 fn new_test_none_name() {
-    let area = AreaEntity::new(1, "", "群馬県", "https://nakanojo-kanko.jp/shima/", "");
+    let area = AreaEntity::new(
+        1,
+        "",
+        "群馬県",
+        false,
+        None,
+        "https://nakanojo-kanko.jp/shima/",
+        "",
+    );
     area.unwrap();
 }
 
 #[test]
 #[should_panic]
 fn new_test_none_prefecture() {
-    let area = AreaEntity::new(1, "四万", "", "https://nakanojo-kanko.jp/shima/", "");
+    let area = AreaEntity::new(
+        1,
+        "四万",
+        "",
+        false,
+        None,
+        "https://nakanojo-kanko.jp/shima/",
+        "",
+    );
     area.unwrap();
 }

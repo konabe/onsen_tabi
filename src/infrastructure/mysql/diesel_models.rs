@@ -62,10 +62,26 @@ impl From<Area> for AreaEntity {
             value.id,
             &value.name,
             &value.prefecture,
+            value.national_resort,
+            value.village.as_deref(),
             &value.url,
             &value.description,
         )
         .expect("Saved data violates AreaEntity")
+    }
+}
+
+impl From<AreaEntity> for Area {
+    fn from(value: AreaEntity) -> Self {
+        Self {
+            id: value.id,
+            name: value.name,
+            prefecture: value.prefecture,
+            national_resort: value.national_resort,
+            village: value.village,
+            url: value.url,
+            description: value.description,
+        }
     }
 }
 

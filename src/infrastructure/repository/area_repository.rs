@@ -28,10 +28,36 @@ pub fn get_area(id: u32) -> Option<AreaEntity> {
     Some(AreaEntity::from(area.clone()))
 }
 
+pub fn put_area(area_entity: AreaEntity) -> () {
+    let updated_area = Area::from(area_entity);
+    let connection = &mut establish_connection();
+    let _ = diesel::update(area::table.find(updated_area.id))
+        .set((
+            area::dsl::name.eq(updated_area.name),
+            area::dsl::prefecture.eq(updated_area.prefecture),
+            area::dsl::national_resort.eq(updated_area.national_resort),
+            area::dsl::village.eq(updated_area.village),
+            area::dsl::url.eq(updated_area.url),
+            area::dsl::description.eq(updated_area.description),
+        ))
+        .execute(connection)
+        .expect("DB error");
+}
+
 pub fn put_area_description(id: u32, description: &str) -> () {
     let connection = &mut establish_connection();
     let _ = diesel::update(area::dsl::area.find(id))
         .set(area::dsl::description.eq(description))
         .execute(connection)
         .expect("DB error");
+}
+
+pub fn post_area(area_entity: AreaEntity) -> AreaEntity {
+    let new_area = Area::from(area_entity);
+    let connection = &mut establish_connection();
+    diesel::insert_into(area::table)
+        .values(&new_area)
+        .execute(connection)
+        .expect("DB error");
+    AreaEntity::from(new_area)
 }
