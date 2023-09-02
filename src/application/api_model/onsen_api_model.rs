@@ -1,4 +1,4 @@
-use crate::domain::onsen_entity::OnsenEntity;
+use crate::domain::onsen::onsen_entity::OnsenEntity;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]

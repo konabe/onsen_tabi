@@ -1,5 +1,5 @@
 use crate::{
-    domain::{hotel_entity::HotelEntity, onsen_entity::OnsenEntity},
+    domain::{hotel_entity::HotelEntity, onsen::onsen_entity::OnsenEntity},
     infrastructure::mysql::{
         diesel_connection::establish_connection,
         diesel_models::{Hotel, Onsen},
