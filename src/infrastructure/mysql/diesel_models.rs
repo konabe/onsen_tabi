@@ -1,7 +1,9 @@
-use crate::domain::{area_entity::AreaEntity, onsen::onsen_entity::OnsenEntity};
+use crate::domain::{
+    area_entity::AreaEntity, hotel_entity::HotelEntity, onsen::onsen_entity::OnsenEntity,
+};
 use diesel::{Associations, Identifiable, Insertable, Queryable, Selectable};
 
-#[derive(Queryable, Selectable, Identifiable, Insertable, Debug)]
+#[derive(Queryable, Selectable, Identifiable, Insertable, Debug, Clone)]
 #[diesel(table_name=crate::schema::hotel)]
 pub struct Hotel {
     pub id: u32,
@@ -9,6 +11,32 @@ pub struct Hotel {
     pub has_washitsu: bool,
     pub url: String,
     pub description: String,
+}
+
+impl From<Hotel> for HotelEntity {
+    fn from(value: Hotel) -> Self {
+        HotelEntity::new(
+            value.id,
+            &value.name,
+            value.has_washitsu,
+            value.url.as_str(),
+            value.description.as_str(),
+            &vec![],
+        )
+        .expect("Saved data violates HotelEntity")
+    }
+}
+
+impl From<HotelEntity> for Hotel {
+    fn from(value: HotelEntity) -> Self {
+        Self {
+            id: value.id,
+            name: value.name,
+            has_washitsu: value.has_washitsu,
+            description: value.description,
+            url: value.url,
+        }
+    }
 }
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Associations, Debug, Clone)]
@@ -41,6 +69,23 @@ impl From<Onsen> for OnsenEntity {
             &value.description,
         )
         .expect("Saved data violates OnsenEntity")
+    }
+}
+
+impl From<OnsenEntity> for Onsen {
+    fn from(value: OnsenEntity) -> Self {
+        Self {
+            id: value.id,
+            name: value.name,
+            spring_quality: value.spring_quality,
+            liquid: value.liquid.map(|v| v.to_string()),
+            osmotic_pressure: value.osmotic_pressure.map(|v| v.to_string()),
+            category: value.form.to_string(),
+            day_use: value.is_day_use,
+            url: value.url,
+            description: value.description,
+            hotel_id: None,
+        }
     }
 }
 

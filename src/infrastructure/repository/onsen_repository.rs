@@ -33,18 +33,7 @@ pub fn get_onsen(id: u32) -> Option<OnsenEntity> {
 }
 
 pub fn put_onsen(onsen_entity: OnsenEntity) -> () {
-    let updated_onsen = Onsen {
-        id: onsen_entity.id,
-        name: onsen_entity.name,
-        spring_quality: onsen_entity.spring_quality,
-        liquid: onsen_entity.liquid.map(|v| v.to_string()),
-        osmotic_pressure: onsen_entity.osmotic_pressure.map(|v| v.to_string()),
-        category: onsen_entity.form.to_string(),
-        day_use: onsen_entity.is_day_use,
-        url: onsen_entity.url,
-        description: onsen_entity.description,
-        hotel_id: None,
-    };
+    let updated_onsen = Onsen::from(onsen_entity);
     let connection = &mut establish_connection();
     let _ = diesel::update(onsen::table.find(updated_onsen.id))
         .set((
@@ -71,18 +60,7 @@ pub fn put_onsen_description(id: u32, description: &str) -> () {
 }
 
 pub fn post_onsen(onsen_entity: OnsenEntity) -> OnsenEntity {
-    let new_onsen = Onsen {
-        id: 0,
-        name: onsen_entity.name,
-        spring_quality: onsen_entity.spring_quality,
-        liquid: onsen_entity.liquid.map(|v| v.to_string()),
-        osmotic_pressure: onsen_entity.osmotic_pressure.map(|v| v.to_string()),
-        category: onsen_entity.form.to_string(),
-        day_use: onsen_entity.is_day_use,
-        url: onsen_entity.url,
-        description: onsen_entity.description,
-        hotel_id: None,
-    };
+    let new_onsen = Onsen::from(onsen_entity);
     let connection = &mut establish_connection();
     diesel::insert_into(onsen::table)
         .values(&new_onsen)
