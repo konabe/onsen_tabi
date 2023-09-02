@@ -42,6 +42,7 @@ pub fn put_onsen(
         onsen_req.liquid.as_deref(),
         onsen_req.osmotic_pressure.as_deref(),
         &onsen_req.form,
+        onsen_req.is_day_use,
         &onsen_req.url,
         &onsen_req.description,
     );
@@ -81,6 +82,7 @@ pub fn post_onsen(
         onsen_req.liquid.as_deref(),
         onsen_req.osmotic_pressure.as_deref(),
         &onsen_req.form,
+        onsen_req.is_day_use,
         &onsen_req.url,
         &onsen_req.description,
     );

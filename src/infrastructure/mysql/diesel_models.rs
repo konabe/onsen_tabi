@@ -21,6 +21,7 @@ pub struct Onsen {
     pub liquid: Option<String>,
     pub osmotic_pressure: Option<String>,
     pub category: String,
+    pub day_use: Option<bool>,
     pub url: String,
     pub description: String,
     pub hotel_id: Option<u32>,
@@ -35,6 +36,7 @@ impl From<Onsen> for OnsenEntity {
             value.liquid.as_deref(),
             value.osmotic_pressure.as_deref(),
             &value.category,
+            value.day_use,
             &value.url,
             &value.description,
         )
