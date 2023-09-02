@@ -11,6 +11,19 @@ pub struct HotelRequest {
     pub description: String,
 }
 
+impl HotelRequest {
+    pub fn create_entity(&self, id: u32) -> Option<HotelEntity> {
+        HotelEntity::new(
+            id,
+            self.name.as_str(),
+            self.has_washitsu,
+            self.url.as_str(),
+            self.description.as_str(),
+            &vec![],
+        )
+    }
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct HotelDescriptionRequest {

@@ -12,6 +12,20 @@ pub struct AreaRequest {
     pub description: String,
 }
 
+impl AreaRequest {
+    pub fn create_entity(&self, id: u32) -> Option<AreaEntity> {
+        AreaEntity::new(
+            id,
+            self.name.as_str(),
+            self.prefecture.as_str(),
+            self.national_resort,
+            self.village.as_deref(),
+            self.url.as_str(),
+            self.description.as_str(),
+        )
+    }
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AreaDescriptionRequest {

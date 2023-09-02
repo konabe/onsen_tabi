@@ -1,6 +1,5 @@
 use super::request_guard::ValidatedUser;
 use crate::application::api_model::onsen_api_model::*;
-use crate::domain::onsen::onsen_entity::OnsenEntity;
 use crate::infrastructure::repository::onsen_repository;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
@@ -35,17 +34,7 @@ pub fn put_onsen(
     if user.role != "admin" {
         return Err(Status::Forbidden);
     }
-    let onsen_entity = OnsenEntity::new(
-        onsen_id,
-        &onsen_req.name,
-        &onsen_req.spring_quality,
-        onsen_req.liquid.as_deref(),
-        onsen_req.osmotic_pressure.as_deref(),
-        &onsen_req.form,
-        onsen_req.is_day_use,
-        &onsen_req.url,
-        &onsen_req.description,
-    );
+    let onsen_entity = onsen_req.create_entity(onsen_id);
     if let Some(onsen_entity) = onsen_entity {
         let _ = onsen_repository::put_onsen(onsen_entity);
     } else {
@@ -75,17 +64,7 @@ pub fn post_onsen(
     if user.role != "admin" {
         return Err(Status::Forbidden);
     }
-    let onsen_entity = OnsenEntity::new(
-        0,
-        &onsen_req.name,
-        &onsen_req.spring_quality,
-        onsen_req.liquid.as_deref(),
-        onsen_req.osmotic_pressure.as_deref(),
-        &onsen_req.form,
-        onsen_req.is_day_use,
-        &onsen_req.url,
-        &onsen_req.description,
-    );
+    let onsen_entity = onsen_req.create_entity(0);
     if let Some(onsen_entity) = onsen_entity {
         let created_hotel = onsen_repository::post_onsen(onsen_entity);
         return Ok(Json(OnsenResponse::from(created_hotel.clone())));
