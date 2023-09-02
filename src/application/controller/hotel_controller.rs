@@ -1,6 +1,5 @@
 use super::request_guard::ValidatedUser;
 use crate::application::api_model::hotel_api_model::*;
-use crate::domain::hotel_entity::HotelEntity;
 use crate::infrastructure::repository::hotel_repository;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
@@ -34,14 +33,7 @@ pub fn put_hotel(
     if user.role != "admin" {
         return Err(Status::Forbidden);
     }
-    let hotel_entity = HotelEntity::new(
-        hotel_id,
-        &hotel_req.name,
-        hotel_req.has_washitsu,
-        &hotel_req.url,
-        &hotel_req.description,
-        &vec![],
-    );
+    let hotel_entity = hotel_req.create_entity(hotel_id);
     if let Some(hotel_entity) = hotel_entity {
         hotel_repository::put_hotel(hotel_entity);
     } else {
@@ -71,14 +63,7 @@ pub fn post_hotel(
     if user.role != "admin" {
         return Err(Status::Forbidden);
     }
-    let hotel_entity = HotelEntity::new(
-        0,
-        &hotel_req.name,
-        hotel_req.has_washitsu,
-        &hotel_req.url,
-        &hotel_req.description,
-        &vec![],
-    );
+    let hotel_entity = hotel_req.create_entity(0);
     if let Some(hotel_entity) = hotel_entity {
         let created_hotel = hotel_repository::post_hotel(hotel_entity);
         return Ok(Json(HotelResponse::from(created_hotel.clone())));

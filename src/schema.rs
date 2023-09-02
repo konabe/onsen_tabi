@@ -7,6 +7,9 @@ diesel::table! {
         name -> Varchar,
         #[max_length = 255]
         prefecture -> Varchar,
+        national_resort -> Bool,
+        #[max_length = 255]
+        village -> Nullable<Varchar>,
         #[max_length = 255]
         url -> Varchar,
         description -> Text,

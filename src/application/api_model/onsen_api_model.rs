@@ -14,6 +14,22 @@ pub struct OnsenRequest {
     pub description: String,
 }
 
+impl OnsenRequest {
+    pub fn create_entity(&self, id: u32) -> Option<OnsenEntity> {
+        OnsenEntity::new(
+            id,
+            self.name.as_str(),
+            self.spring_quality.as_str(),
+            self.liquid.as_deref(),
+            self.osmotic_pressure.as_deref(),
+            self.form.as_str(),
+            self.is_day_use,
+            self.url.as_str(),
+            self.description.as_str(),
+        )
+    }
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OnsenDescriptionRequest {

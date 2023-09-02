@@ -37,6 +37,8 @@ fn main() {
                 put_onsen_description,
                 get_areas,
                 get_area,
+                post_area,
+                put_area,
                 put_area_description,
                 post_signup,
                 post_signin,
