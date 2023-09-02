@@ -1,6 +1,6 @@
 use super::request_guard::ValidatedUser;
 use crate::application::api_model::onsen_api_model::*;
-use crate::domain::onsen_entity::OnsenEntity;
+use crate::domain::onsen::onsen_entity::OnsenEntity;
 use crate::infrastructure::repository::onsen_repository;
 use rocket::http::Status;
 use rocket_contrib::json::Json;

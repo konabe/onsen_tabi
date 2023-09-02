@@ -1,5 +1,5 @@
 use super::super::mysql::{diesel_connection::establish_connection, diesel_models::Onsen};
-use crate::{domain::onsen_entity::OnsenEntity, schema::onsen};
+use crate::{domain::onsen::onsen_entity::OnsenEntity, schema::onsen};
 use diesel::*;
 
 pub fn get_onsens(area_id: Option<u32>, hotel_id: Option<u32>) -> Vec<OnsenEntity> {
