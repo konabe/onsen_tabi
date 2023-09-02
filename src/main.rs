@@ -42,6 +42,10 @@ fn main() {
                 post_signin,
             ],
         )
-        .attach(CorsOptions::default().to_cors().expect("error"))
+        .attach(
+            CorsOptions::default()
+                .to_cors()
+                .expect("Cors options error"),
+        )
         .launch();
 }
