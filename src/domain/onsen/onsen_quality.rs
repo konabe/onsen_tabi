@@ -53,9 +53,7 @@ impl OnsenQuality {
         let empty = "".to_string();
         match &self.liquid {
             Some(liquid) => match liquid {
-                Acidic => empty,
-                MildlyAcidic => empty,
-                Neutral => empty,
+                Acidic | MildlyAcidic | Neutral => empty,
                 MildlyAlkaline => "弱アルカリ性".to_string(),
                 Alkaline => "アルカリ性".to_string(),
             },
