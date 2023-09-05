@@ -21,30 +21,21 @@ impl Chemical {
     // 陽イオン
     pub fn is_cation(&self) -> bool {
         match self {
-            NaIon => true,
-            CaIon => true,
-            MgIon => true,
+            NaIon | CaIon | MgIon => true,
             _ => false,
         }
     }
 
     pub fn is_anion(&self) -> bool {
         match self {
-            ClIon => true,
-            HCO3Ion => true,
-            SO4Ion => true,
+            ClIon | HCO3Ion | SO4Ion => true,
             _ => false,
         }
     }
 
     pub fn is_inclusion(&self) -> bool {
         match self {
-            CO2 => true,
-            FeIon(_) => true,
-            HIon => true,
-            IIon => true,
-            S => true,
-            Rn => true,
+            CO2 | FeIon(_) | HIon | IIon | S | Rn => true,
             _ => false,
         }
     }
