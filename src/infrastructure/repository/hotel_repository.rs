@@ -2,7 +2,7 @@ use crate::{
     domain::{hotel_entity::HotelEntity, onsen::onsen_entity::OnsenEntity},
     infrastructure::mysql::{
         diesel_connection::establish_connection,
-        diesel_models::{Hotel, Onsen},
+        diesel_model::{diesel_hotel::Hotel, diesel_onsen::Onsen},
     },
     schema::{
         hotel::{self},

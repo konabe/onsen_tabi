@@ -1,2 +1,2 @@
 pub mod diesel_connection;
-pub mod diesel_models;
+pub mod diesel_model;

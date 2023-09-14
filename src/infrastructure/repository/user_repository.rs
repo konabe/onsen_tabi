@@ -1,5 +1,5 @@
-use super::super::mysql::{diesel_connection::establish_connection, diesel_models::User};
-use crate::schema::user;
+use super::super::mysql::diesel_connection::establish_connection;
+use crate::{infrastructure::mysql::diesel_model::diesel_user::User, schema::user};
 use diesel::*;
 
 pub fn exists_user(email: &str) -> bool {
