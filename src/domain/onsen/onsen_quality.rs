@@ -3,12 +3,13 @@ use super::onsen_entity::SpringLiquid;
 use super::onsen_entity::SpringLiquid::*;
 use std::{fmt, vec};
 
-struct OnsenQuality {
+#[derive(Clone)]
+pub struct OnsenQuality {
     is_simple: bool,
     liquid: Option<SpringLiquid>,
-    cations: Vec<Chemical>,
-    anions: Vec<Chemical>,
-    inclusions: Vec<Chemical>,
+    pub cations: Vec<Chemical>,
+    pub anions: Vec<Chemical>,
+    pub inclusions: Vec<Chemical>,
 }
 
 // https://www.env.go.jp/nature/onsen/pdf/2-5_p_16.pdf

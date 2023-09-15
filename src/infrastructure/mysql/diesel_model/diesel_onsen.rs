@@ -1,5 +1,5 @@
-use super::diesel_hotel::Hotel;
-use crate::domain::onsen::onsen_entity::OnsenEntity;
+use super::{diesel_chemical::DieselChemical, diesel_hotel::Hotel};
+use crate::domain::onsen::{onsen_entity::OnsenEntity, onsen_quality::OnsenQuality};
 use diesel::{Associations, Identifiable, Insertable, Queryable, Selectable};
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Associations, Debug, Clone)]
@@ -18,18 +18,20 @@ pub struct Onsen {
     pub hotel_id: Option<u32>,
 }
 
-impl From<Onsen> for OnsenEntity {
-    fn from(value: Onsen) -> Self {
+impl OnsenEntity {
+    pub fn create(onsen: Onsen, diesel_chemical: Option<DieselChemical>) -> Self {
+        let onsen_quality = diesel_chemical.map(|v| OnsenQuality::from(v));
         OnsenEntity::new(
-            value.id,
-            &value.name,
-            &value.spring_quality,
-            value.liquid.as_deref(),
-            value.osmotic_pressure.as_deref(),
-            &value.category,
-            value.day_use,
-            &value.url,
-            &value.description,
+            onsen.id,
+            &onsen.name,
+            &onsen.spring_quality,
+            onsen_quality,
+            onsen.liquid.as_deref(),
+            onsen.osmotic_pressure.as_deref(),
+            &onsen.category,
+            onsen.day_use,
+            &onsen.url,
+            &onsen.description,
         )
         .expect("Saved data violates OnsenEntity")
     }

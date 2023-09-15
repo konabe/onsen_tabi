@@ -1,6 +1,8 @@
 use std::str::FromStr;
 use strum_macros::{Display, EnumString};
 
+use super::onsen_quality::OnsenQuality;
+
 /// 液性
 #[derive(Display, Debug, PartialEq, EnumString, Clone)]
 pub enum SpringLiquid {
@@ -44,6 +46,7 @@ pub struct OnsenEntity {
     pub name: String,
     // TODO: 温泉法の定義に基づいてここをドメインモデル化できる
     pub spring_quality: String,
+    pub quality: Option<OnsenQuality>,
     pub liquid: Option<SpringLiquid>,
     pub osmotic_pressure: Option<SpringOsmoticPressure>,
     pub form: SpringForm,
@@ -58,6 +61,7 @@ impl OnsenEntity {
         id: u32,
         name: &str,
         spring_quality: &str,
+        quality: Option<OnsenQuality>,
         liquid: Option<&str>,
         osmotic_pressure: Option<&str>,
         form: &str,
@@ -76,6 +80,7 @@ impl OnsenEntity {
             id,
             name: name.to_string(),
             spring_quality: spring_quality.to_string(),
+            quality,
             liquid,
             osmotic_pressure,
             form,
@@ -92,6 +97,7 @@ fn new_test() {
         1,
         "元禄の湯",
         "ナトリウム・カルシウム 塩化物硫酸塩温泉",
+        None,
         Some("neutral"),
         Some("hypotonic"),
         "uchiyu",
@@ -110,6 +116,7 @@ fn new_test_none() {
         1,
         "",
         "ナトリウム・カルシウム 塩化物硫酸塩温泉",
+        None,
         Some("neutral"),
         Some("hypotonic"),
         "uchiyu",

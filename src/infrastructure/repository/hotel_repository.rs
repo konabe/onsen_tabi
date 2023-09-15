@@ -40,7 +40,7 @@ pub fn get_hotel_with_onsen(id: u32) -> Option<HotelEntity> {
     let mut onsen_entities: Vec<OnsenEntity> = vec![];
     for onsen in related_onsens {
         if let Some(onsen) = onsen {
-            onsen_entities.push(OnsenEntity::from(onsen.clone()));
+            onsen_entities.push(OnsenEntity::create(onsen.clone(), None));
         }
     }
     Some(HotelEntity::from(hotel.clone()))
