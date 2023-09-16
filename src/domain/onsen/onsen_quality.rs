@@ -61,6 +61,14 @@ impl OnsenQuality {
             None => "".to_string(),
         }
     }
+
+    pub fn to_string_vec(&self) -> Vec<String> {
+        let cations_string_vec: Vec<String> = self.cations.iter().map(|v| v.to_string()).collect();
+        let anions_string_vec: Vec<String> = self.anions.iter().map(|v| v.to_string()).collect();
+        let inclusions_string_vec: Vec<String> =
+            self.inclusions.iter().map(|v| v.to_string()).collect();
+        return [cations_string_vec, anions_string_vec, inclusions_string_vec].concat();
+    }
 }
 
 impl fmt::Display for OnsenQuality {
