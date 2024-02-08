@@ -22,6 +22,7 @@ impl AreaRequest {
             self.village.as_deref(),
             self.url.as_str(),
             self.description.as_str(),
+            vec![],
         )
     }
 }
