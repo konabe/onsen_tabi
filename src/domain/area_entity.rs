@@ -1,3 +1,5 @@
+use crate::domain::onsen::onsen_entity::OnsenEntity;
+
 #[derive(Clone)]
 pub struct AreaEntity {
     pub id: u32,
@@ -7,6 +9,7 @@ pub struct AreaEntity {
     pub village: Option<String>,
     pub url: String,
     pub description: String,
+    pub onsens: Vec<OnsenEntity>,
 }
 
 impl AreaEntity {
@@ -18,6 +21,7 @@ impl AreaEntity {
         village: Option<&str>,
         url: &str,
         description: &str,
+        onsens: Vec<OnsenEntity>,
     ) -> Option<Self> {
         if name.is_empty() {
             return None;
@@ -33,6 +37,7 @@ impl AreaEntity {
             village: village.map(|v| v.to_string()),
             url: url.to_string(),
             description: description.to_string(),
+            onsens,
         })
     }
 }
@@ -47,6 +52,7 @@ fn new_test() {
         None,
         "https://nakanojo-kanko.jp/shima/",
         "",
+        vec![],
     );
     let inside: AreaEntity = area.expect("");
     assert!(inside.name == "四万");
@@ -63,6 +69,7 @@ fn new_test_none_name() {
         None,
         "https://nakanojo-kanko.jp/shima/",
         "",
+        vec![],
     );
     area.unwrap();
 }
@@ -78,6 +85,7 @@ fn new_test_none_prefecture() {
         None,
         "https://nakanojo-kanko.jp/shima/",
         "",
+        vec![],
     );
     area.unwrap();
 }

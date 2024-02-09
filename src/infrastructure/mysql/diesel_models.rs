@@ -111,6 +111,7 @@ impl From<Area> for AreaEntity {
             value.village.as_deref(),
             &value.url,
             &value.description,
+            vec![],
         )
         .expect("Saved data violates AreaEntity")
     }
