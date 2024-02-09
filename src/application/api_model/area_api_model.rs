@@ -43,6 +43,7 @@ pub struct AreaResponse {
     pub village: Option<String>,
     pub url: String,
     pub description: String,
+    pub onsen_ids: Vec<u32>,
 }
 
 impl From<AreaEntity> for AreaResponse {
@@ -55,6 +56,7 @@ impl From<AreaEntity> for AreaResponse {
             village: value.village,
             url: value.url,
             description: value.description,
+            onsen_ids: value.onsens.iter().map(|v| v.id).collect(),
         }
     }
 }

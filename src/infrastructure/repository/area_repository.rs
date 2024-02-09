@@ -1,5 +1,10 @@
-use super::super::mysql::{diesel_connection::establish_connection, diesel_models::Area};
-use crate::{domain::area_entity::AreaEntity, schema::area};
+use crate::infrastructure::mysql::{
+    diesel_connection::establish_connection, diesel_models::Area, diesel_models::Onsen,
+};
+use crate::{
+    domain::area_entity::AreaEntity, domain::onsen::onsen_entity::OnsenEntity, schema::area,
+    schema::onsen,
+};
 use diesel::*;
 
 pub fn get_areas() -> Vec<AreaEntity> {
@@ -12,6 +17,32 @@ pub fn get_areas() -> Vec<AreaEntity> {
         .iter()
         .map(|v: &Area| AreaEntity::from(v.clone()))
         .collect();
+}
+
+pub fn get_areas_with_onsen() -> Vec<AreaEntity> {
+    let connection = &mut establish_connection();
+    let areas_onsens: Vec<(Area, Option<Onsen>)> = area::table
+        .left_join(onsen::table)
+        .select((Area::as_select(), Option::<Onsen>::as_select()))
+        .load(connection)
+        .expect("DB error");
+    let mut area_entities: Vec<AreaEntity> = vec![];
+    for area_onsen in areas_onsens {
+        let (area, onsen) = area_onsen;
+        let got_area = area_entities.iter_mut().find(|v| v.id == area.id);
+        if let Some(area_entity) = got_area {
+            if let Some(onsen) = onsen {
+                area_entity.onsens.push(OnsenEntity::from(onsen));
+            }
+        } else {
+            let mut area_entity = AreaEntity::from(area);
+            if let Some(onsen) = onsen {
+                area_entity.onsens.push(OnsenEntity::from(onsen));
+            }
+            area_entities.push(area_entity);
+        }
+    }
+    area_entities
 }
 
 pub fn get_area(id: u32) -> Option<AreaEntity> {
