@@ -6,7 +6,7 @@ use rocket_contrib::json::Json;
 
 #[get("/area")]
 pub fn get_areas() -> Json<Vec<AreaResponse>> {
-    let areas = area_repository::get_areas();
+    let areas = area_repository::get_areas_with_onsen();
     let response: Vec<AreaResponse> = areas
         .iter()
         .map(|v| AreaResponse::from(v.clone()))
