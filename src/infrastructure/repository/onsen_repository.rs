@@ -32,13 +32,14 @@ pub fn get_onsens(area_id: Option<u32>, hotel_id: Option<u32>) -> Vec<OnsenEntit
 
 pub fn get_onsen(id: u32) -> Option<OnsenEntity> {
     let connection = &mut establish_connection();
-    let results: Vec<Onsen> = onsen::table
-        .select(Onsen::as_select())
+    let results: Vec<(Onsen, Option<DieselChemical>)> = onsen::table
+        .left_join(chemicals::table)
+        .select((Onsen::as_select(), Option::<DieselChemical>::as_select()))
         .filter(onsen::dsl::id.eq(id))
-        .load(connection)
+        .load::<(Onsen, Option<DieselChemical>)>(connection)
         .expect("DB error");
-    let onsen = results.first()?;
-    Some(OnsenEntity::create(onsen.clone(), None))
+    let result = results.first()?;
+    Some(OnsenEntity::create(result.0.clone(), result.1.clone()))
 }
 
 pub fn put_onsen(onsen_entity: OnsenEntity) -> () {
