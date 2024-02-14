@@ -1,5 +1,9 @@
-use super::super::mysql::{diesel_connection::establish_connection, diesel_models::Onsen};
-use crate::{domain::onsen::onsen_entity::OnsenEntity, schema::onsen};
+use super::super::mysql::diesel_connection::establish_connection;
+use crate::{
+    domain::onsen::onsen_entity::OnsenEntity,
+    infrastructure::mysql::diesel_model::{diesel_chemical::DieselChemical, diesel_onsen::Onsen},
+    schema::{chemicals, onsen},
+};
 use diesel::*;
 
 pub fn get_onsens(area_id: Option<u32>, hotel_id: Option<u32>) -> Vec<OnsenEntity> {
@@ -11,25 +15,31 @@ pub fn get_onsens(area_id: Option<u32>, hotel_id: Option<u32>) -> Vec<OnsenEntit
     if let Some(hotel_id) = hotel_id {
         query = query.filter(onsen::dsl::hotel_id.eq(hotel_id));
     }
-    let results: Vec<Onsen> = query
-        .select(Onsen::as_select())
-        .load(connection)
+    let results: Vec<(Onsen, Option<DieselChemical>)> = query
+        .left_join(chemicals::table)
+        .select((Onsen::as_select(), Option::<DieselChemical>::as_select()))
+        .load::<(Onsen, Option<DieselChemical>)>(connection)
         .expect("DB error");
-    return results
+    let onsen_entities = results
         .iter()
-        .map(|v: &Onsen| OnsenEntity::from(v.clone()))
+        .map(|v: &(Onsen, Option<DieselChemical>)| {
+            let onsen_entity = OnsenEntity::create(v.0.clone(), v.1.clone());
+            return onsen_entity;
+        })
         .collect();
+    onsen_entities
 }
 
 pub fn get_onsen(id: u32) -> Option<OnsenEntity> {
     let connection = &mut establish_connection();
-    let results: Vec<Onsen> = onsen::table
-        .select(Onsen::as_select())
+    let results: Vec<(Onsen, Option<DieselChemical>)> = onsen::table
+        .left_join(chemicals::table)
+        .select((Onsen::as_select(), Option::<DieselChemical>::as_select()))
         .filter(onsen::dsl::id.eq(id))
-        .load(connection)
+        .load::<(Onsen, Option<DieselChemical>)>(connection)
         .expect("DB error");
-    let onsen = results.first()?;
-    Some(OnsenEntity::from(onsen.clone()))
+    let result = results.first()?;
+    Some(OnsenEntity::create(result.0.clone(), result.1.clone()))
 }
 
 pub fn put_onsen(onsen_entity: OnsenEntity) -> () {
@@ -66,5 +76,5 @@ pub fn post_onsen(onsen_entity: OnsenEntity) -> OnsenEntity {
         .values(&new_onsen)
         .execute(connection)
         .expect("DB error");
-    OnsenEntity::from(new_onsen)
+    OnsenEntity::create(new_onsen, None)
 }

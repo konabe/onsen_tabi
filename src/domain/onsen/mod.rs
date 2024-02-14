@@ -1,4 +1,4 @@
 pub mod onsen_entity;
 
-mod chemical;
-mod onsen_quality;
+pub mod chemical;
+pub mod onsen_quality;

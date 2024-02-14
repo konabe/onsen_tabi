@@ -1,5 +1,6 @@
 use crate::infrastructure::mysql::{
-    diesel_connection::establish_connection, diesel_models::Area, diesel_models::Onsen,
+    diesel_connection::establish_connection, diesel_model::diesel_area::Area,
+    diesel_model::diesel_onsen::Onsen,
 };
 use crate::{
     domain::area_entity::AreaEntity, domain::onsen::onsen_entity::OnsenEntity, schema::area,
@@ -32,12 +33,12 @@ pub fn get_areas_with_onsen() -> Vec<AreaEntity> {
         let got_area = area_entities.iter_mut().find(|v| v.id == area.id);
         if let Some(area_entity) = got_area {
             if let Some(onsen) = onsen {
-                area_entity.onsens.push(OnsenEntity::from(onsen));
+                area_entity.onsens.push(OnsenEntity::create(onsen, None));
             }
         } else {
             let mut area_entity = AreaEntity::from(area);
             if let Some(onsen) = onsen {
-                area_entity.onsens.push(OnsenEntity::from(onsen));
+                area_entity.onsens.push(OnsenEntity::create(onsen, None));
             }
             area_entities.push(area_entity);
         }

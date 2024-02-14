@@ -45,6 +45,7 @@ fn new_test() {
             1,
             "テスト温泉",
             "単純温泉",
+            None,
             Some("neutral"),
             Some("isotonic"),
             "sotoyu",

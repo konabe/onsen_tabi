@@ -3,12 +3,13 @@ use super::onsen_entity::SpringLiquid;
 use super::onsen_entity::SpringLiquid::*;
 use std::{fmt, vec};
 
-struct OnsenQuality {
+#[derive(Clone)]
+pub struct OnsenQuality {
     is_simple: bool,
     liquid: Option<SpringLiquid>,
-    cations: Vec<Chemical>,
-    anions: Vec<Chemical>,
-    inclusions: Vec<Chemical>,
+    pub cations: Vec<Chemical>,
+    pub anions: Vec<Chemical>,
+    pub inclusions: Vec<Chemical>,
 }
 
 // https://www.env.go.jp/nature/onsen/pdf/2-5_p_16.pdf
@@ -59,6 +60,14 @@ impl OnsenQuality {
             },
             None => "".to_string(),
         }
+    }
+
+    pub fn to_string_vec(&self) -> Vec<String> {
+        let cations_string_vec: Vec<String> = self.cations.iter().map(|v| v.to_string()).collect();
+        let anions_string_vec: Vec<String> = self.anions.iter().map(|v| v.to_string()).collect();
+        let inclusions_string_vec: Vec<String> =
+            self.inclusions.iter().map(|v| v.to_string()).collect();
+        return [cations_string_vec, anions_string_vec, inclusions_string_vec].concat();
     }
 }
 
