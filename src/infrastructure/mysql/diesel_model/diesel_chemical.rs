@@ -67,12 +67,12 @@ impl From<OnsenQuality> for DieselChemical {
     fn from(value: OnsenQuality) -> Self {
         Self {
             id: 0,
-            na_ion: value.anions.contains(&Chemical::NaIon),
-            ca_ion: value.anions.contains(&Chemical::CaIon),
-            mg_ion: value.anions.contains(&Chemical::MgIon),
-            cl_ion: value.cations.contains(&Chemical::ClIon),
-            hco3_ion: value.cations.contains(&Chemical::HCO3Ion),
-            so4_ion: value.cations.contains(&Chemical::SO4Ion),
+            na_ion: value.cations.contains(&Chemical::NaIon),
+            ca_ion: value.cations.contains(&Chemical::CaIon),
+            mg_ion: value.cations.contains(&Chemical::MgIon),
+            cl_ion: value.anions.contains(&Chemical::ClIon),
+            hco3_ion: value.anions.contains(&Chemical::HCO3Ion),
+            so4_ion: value.anions.contains(&Chemical::SO4Ion),
             co2_ion: value.inclusions.contains(&Chemical::CO2),
             fe_ion: value.inclusions.contains(&Chemical::FeIon(2)),
             h_ion: value.inclusions.contains(&Chemical::HIon),
