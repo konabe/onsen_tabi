@@ -52,30 +52,59 @@ pub fn put_onsen(onsen_entity: OnsenEntity) -> () {
         .map(|v| DieselChemical::from(v));
     let connection = &mut establish_connection();
     let _ = connection.transaction(|connection| {
-        let onsen_records: Vec<Onsen> = onsen::table
+        let target_onsen_record: Vec<Onsen> = onsen::table
             .select(Onsen::as_select())
             .filter(onsen::dsl::id.eq(onsen_entity.id))
             .load::<Onsen>(connection)
             .expect("DB error");
-        let chemical_id = onsen_records.first().and_then(|v| v.chemical_id);
-        if let Some(chemical_id) = chemical_id {
-            let _ = diesel::update(chemicals::table.find(chemical_id))
-                .set((
-                    chemicals::dsl::na_ion.eq(updated_chemicals.as_ref().unwrap().na_ion),
-                    chemicals::dsl::ca_ion.eq(updated_chemicals.as_ref().unwrap().ca_ion),
-                    chemicals::dsl::mg_ion.eq(updated_chemicals.as_ref().unwrap().mg_ion),
-                    chemicals::dsl::cl_ion.eq(updated_chemicals.as_ref().unwrap().cl_ion),
-                    chemicals::dsl::hco3_ion.eq(updated_chemicals.as_ref().unwrap().hco3_ion),
-                    chemicals::dsl::so4_ion.eq(updated_chemicals.as_ref().unwrap().so4_ion),
-                    chemicals::dsl::co2_ion.eq(updated_chemicals.as_ref().unwrap().co2_ion),
-                    chemicals::dsl::fe_ion.eq(updated_chemicals.as_ref().unwrap().fe_ion),
-                    chemicals::dsl::h_ion.eq(updated_chemicals.as_ref().unwrap().h_ion),
-                    chemicals::dsl::i_ion.eq(updated_chemicals.as_ref().unwrap().i_ion),
-                    chemicals::dsl::s.eq(updated_chemicals.as_ref().unwrap().s),
-                    chemicals::dsl::rn.eq(updated_chemicals.as_ref().unwrap().rn),
-                ))
-                .execute(connection)
-                .expect("DB error");
+        let chemical_id = target_onsen_record.first().and_then(|v| v.chemical_id);
+        if let Some(current_chemical_id) = chemical_id {
+            if let Some(updated_chemicals) = updated_chemicals.clone() {
+                let _ = diesel::update(chemicals::table.find(current_chemical_id))
+                    .set((
+                        chemicals::dsl::na_ion.eq(updated_chemicals.na_ion),
+                        chemicals::dsl::ca_ion.eq(updated_chemicals.ca_ion),
+                        chemicals::dsl::mg_ion.eq(updated_chemicals.mg_ion),
+                        chemicals::dsl::cl_ion.eq(updated_chemicals.cl_ion),
+                        chemicals::dsl::hco3_ion.eq(updated_chemicals.hco3_ion),
+                        chemicals::dsl::so4_ion.eq(updated_chemicals.so4_ion),
+                        chemicals::dsl::co2_ion.eq(updated_chemicals.co2_ion),
+                        chemicals::dsl::fe_ion.eq(updated_chemicals.fe_ion),
+                        chemicals::dsl::h_ion.eq(updated_chemicals.h_ion),
+                        chemicals::dsl::i_ion.eq(updated_chemicals.i_ion),
+                        chemicals::dsl::s.eq(updated_chemicals.s),
+                        chemicals::dsl::rn.eq(updated_chemicals.rn),
+                    ))
+                    .execute(connection)
+                    .expect("DB error");
+            } else {
+                let _ = diesel::update(onsen::table.find(updated_onsen.id))
+                    .set(onsen::dsl::chemical_id.eq(None::<u32>))
+                    .execute(connection)
+                    .expect("DB error");
+                diesel::delete(chemicals::table.find(current_chemical_id))
+                    .execute(connection)
+                    .expect("DB error");
+            }
+        } else {
+            if let Some(updated_chemicals) = updated_chemicals.clone() {
+                diesel::insert_into(chemicals::table)
+                    .values(updated_chemicals)
+                    .execute(connection)
+                    .expect("DB error");
+                let new_chemical_id = Some(
+                    diesel::sql_query("select LAST_INSERT_ID() as id")
+                        .load::<Sequence>(connection)
+                        .expect("get_id_error")
+                        .first()
+                        .unwrap()
+                        .id as u32,
+                );
+                let _ = diesel::update(onsen::table.find(updated_onsen.id))
+                    .set(onsen::dsl::chemical_id.eq(new_chemical_id))
+                    .execute(connection)
+                    .expect("DB error");
+            }
         }
         let _ = diesel::update(onsen::table.find(updated_onsen.id))
             .set((
@@ -88,7 +117,6 @@ pub fn put_onsen(onsen_entity: OnsenEntity) -> () {
                 onsen::dsl::url.eq(updated_onsen.url),
                 onsen::dsl::description.eq(updated_onsen.description),
                 onsen::dsl::hotel_id.eq(updated_onsen.hotel_id),
-                onsen::dsl::chemical_id.eq(chemical_id),
             ))
             .execute(connection)
             .expect("DB error");
