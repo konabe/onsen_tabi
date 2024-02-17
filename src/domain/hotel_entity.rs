@@ -44,8 +44,8 @@ fn new_test() {
         &vec![OnsenEntity::new(
             1,
             "テスト温泉",
-            "単純温泉",
             None,
+            "単純温泉",
             Some("neutral"),
             Some("isotonic"),
             "sotoyu",

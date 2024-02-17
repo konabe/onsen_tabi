@@ -69,11 +69,3 @@ pub fn put_hotel(hotel_entity: HotelEntity) -> () {
         .execute(connection)
         .expect("DB error");
 }
-
-pub fn put_hotel_description(id: u32, description: &str) -> () {
-    let connection = &mut establish_connection();
-    let _ = diesel::update(hotel::dsl::hotel.find(id))
-        .set(hotel::dsl::description.eq(description))
-        .execute(connection)
-        .expect("DB error");
-}

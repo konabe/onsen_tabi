@@ -44,9 +44,9 @@ pub enum SpringForm {
 pub struct OnsenEntity {
     pub id: u32,
     pub name: String,
-    // TODO: 温泉法の定義に基づいてここをドメインモデル化できる
-    pub spring_quality: String,
+    // TODO: "その他の泉質"を格納する場所を作る
     pub quality: Option<OnsenQuality>,
+    pub spring_quality: String,
     pub liquid: Option<SpringLiquid>,
     pub osmotic_pressure: Option<SpringOsmoticPressure>,
     pub form: SpringForm,
@@ -60,8 +60,8 @@ impl OnsenEntity {
     pub fn new(
         id: u32,
         name: &str,
-        spring_quality: &str,
         quality: Option<OnsenQuality>,
+        spring_quality: &str,
         liquid: Option<&str>,
         osmotic_pressure: Option<&str>,
         form: &str,
@@ -79,8 +79,8 @@ impl OnsenEntity {
         Some(Self {
             id,
             name: name.to_string(),
-            spring_quality: spring_quality.to_string(),
             quality,
+            spring_quality: spring_quality.to_string(),
             liquid,
             osmotic_pressure,
             form,
@@ -96,8 +96,8 @@ fn new_test() {
     let onsen = OnsenEntity::new(
         1,
         "元禄の湯",
-        "ナトリウム・カルシウム 塩化物硫酸塩温泉",
         None,
+        "ナトリウム・カルシウム 塩化物硫酸塩温泉",
         Some("neutral"),
         Some("hypotonic"),
         "uchiyu",
@@ -115,8 +115,8 @@ fn new_test_none() {
     let onsen = OnsenEntity::new(
         1,
         "",
-        "ナトリウム・カルシウム 塩化物硫酸塩温泉",
         None,
+        "ナトリウム・カルシウム 塩化物硫酸塩温泉",
         Some("neutral"),
         Some("hypotonic"),
         "uchiyu",

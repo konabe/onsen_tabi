@@ -27,12 +27,6 @@ impl AreaRequest {
     }
 }
 
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct AreaDescriptionRequest {
-    pub description: String,
-}
-
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AreaResponse {

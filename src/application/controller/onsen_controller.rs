@@ -43,19 +43,6 @@ pub fn put_onsen(
     Ok(())
 }
 
-#[put("/onsen/<onsen_id>/description", format = "json", data = "<req>")]
-pub fn put_onsen_description(
-    onsen_id: u32,
-    req: Json<OnsenDescriptionRequest>,
-    user: ValidatedUser,
-) -> Result<(), Status> {
-    if user.role != "admin" {
-        return Err(Status::Forbidden);
-    }
-    onsen_repository::put_onsen_description(onsen_id, &req.description);
-    Ok(())
-}
-
 #[post("/onsen", format = "json", data = "<onsen_req>")]
 pub fn post_onsen(
     onsen_req: Json<OnsenRequest>,

@@ -76,14 +76,6 @@ pub fn put_area(area_entity: AreaEntity) -> () {
         .expect("DB error");
 }
 
-pub fn put_area_description(id: u32, description: &str) -> () {
-    let connection = &mut establish_connection();
-    let _ = diesel::update(area::dsl::area.find(id))
-        .set(area::dsl::description.eq(description))
-        .execute(connection)
-        .expect("DB error");
-}
-
 pub fn post_area(area_entity: AreaEntity) -> AreaEntity {
     let new_area = Area::from(area_entity);
     let connection = &mut establish_connection();
