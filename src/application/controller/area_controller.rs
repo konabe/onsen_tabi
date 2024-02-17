@@ -41,19 +41,6 @@ pub fn put_area(
     Ok(())
 }
 
-#[put("/area/<area_id>/description", format = "json", data = "<req>")]
-pub fn put_area_description(
-    area_id: u32,
-    req: Json<AreaDescriptionRequest>,
-    user: ValidatedUser,
-) -> Result<(), Status> {
-    if user.role != "admin" {
-        return Err(Status::Forbidden);
-    }
-    area_repository::put_area_description(area_id, &req.description);
-    Ok(())
-}
-
 #[post("/area", format = "json", data = "<area_req>")]
 pub fn post_area(
     area_req: Json<AreaRequest>,
