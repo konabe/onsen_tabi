@@ -16,6 +16,7 @@ pub struct Onsen {
     pub url: String,
     pub description: String,
     pub hotel_id: Option<u32>,
+    pub chemical_id: Option<u32>,
 }
 
 impl OnsenEntity {
@@ -50,6 +51,7 @@ impl From<OnsenEntity> for Onsen {
             url: value.url,
             description: value.description,
             hotel_id: None,
+            chemical_id: None,
         }
     }
 }
