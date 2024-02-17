@@ -20,8 +20,8 @@ impl OnsenRequest {
         OnsenEntity::new(
             id,
             self.name.as_str(),
-            self.spring_quality.as_str(),
             None,
+            self.spring_quality.as_str(),
             self.liquid.as_deref(),
             self.osmotic_pressure.as_deref(),
             self.form.as_str(),

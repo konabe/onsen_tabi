@@ -24,8 +24,8 @@ impl OnsenEntity {
         OnsenEntity::new(
             onsen.id,
             &onsen.name,
-            &onsen.spring_quality,
             onsen_quality,
+            &onsen.spring_quality,
             onsen.liquid.as_deref(),
             onsen.osmotic_pressure.as_deref(),
             &onsen.category,
