@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 pub struct OnsenRequest {
     pub name: String,
     pub spring_quality: String,
+    pub chemicals: Option<Vec<String>>,
     pub liquid: Option<String>,
     pub osmotic_pressure: Option<String>,
     pub form: String,
