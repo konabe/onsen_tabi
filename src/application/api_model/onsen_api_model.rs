@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 pub struct OnsenRequest {
     pub name: String,
     pub spring_quality: String,
-    pub chemicals: Option<Vec<String>>,
+    pub chemicals: Option<OnsenChemicalsRequestModel>,
     pub liquid: Option<String>,
     pub osmotic_pressure: Option<String>,
     pub form: String,
@@ -15,11 +15,29 @@ pub struct OnsenRequest {
     pub description: String,
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OnsenChemicalsRequestModel {
+    pub na_ion: bool,
+    pub ca_ion: bool,
+    pub mg_ion: bool,
+    pub cl_ion: bool,
+    pub hco3_ion: bool,
+    pub so4_ion: bool,
+    pub co2_ion: bool,
+    pub fe_ion: bool,
+    pub h_ion: bool,
+    pub i_ion: bool,
+    pub s: bool,
+    pub rn: bool,
+}
+
 impl OnsenRequest {
     pub fn create_entity(&self, id: u32) -> Option<OnsenEntity> {
         OnsenEntity::new(
             id,
             self.name.as_str(),
+            // TODO: ここにいれる
             None,
             self.spring_quality.as_str(),
             self.liquid.as_deref(),
