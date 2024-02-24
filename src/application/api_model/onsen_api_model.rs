@@ -12,7 +12,7 @@ pub struct OnsenRequest {
     pub liquid: Option<String>,
     pub osmotic_pressure: Option<String>,
     pub form: String,
-    pub is_day_use: Option<bool>,
+    pub is_day_use: bool,
     pub url: String,
     pub description: String,
 }
@@ -105,7 +105,7 @@ pub struct OnsenResponse {
     pub liquid: Option<String>,
     pub osmotic_pressure: Option<String>,
     pub form: String,
-    pub is_day_use: Option<bool>,
+    pub is_day_use: bool,
     pub url: String,
     pub description: String,
 }

@@ -11,3 +11,10 @@ vercel <-> render.com WEB SERVICE <-> MySQL [AWS]
 // TODO: AWSに移行
 
 - [frontend source](https://github.com/konabe/onsen-tabi-web)
+
+## マイグレーション
+
+```
+diesel migration generate {name}
+diesel migration run
+```

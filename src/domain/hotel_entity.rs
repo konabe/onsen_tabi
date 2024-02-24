@@ -49,7 +49,7 @@ fn new_test() {
             Some("neutral"),
             Some("isotonic"),
             "sotoyu",
-            Some(true),
+            true,
             "https://www.sekizenkan.co.jp/spa/#ank-spa1",
             "",
         )
