@@ -50,8 +50,7 @@ pub struct OnsenEntity {
     pub liquid: Option<SpringLiquid>,
     pub osmotic_pressure: Option<SpringOsmoticPressure>,
     pub form: SpringForm,
-    // TODO: データが移行完了したらOptionを外す。
-    pub is_day_use: Option<bool>,
+    pub is_day_use: bool,
     pub url: String,
     pub description: String,
 }
@@ -65,7 +64,7 @@ impl OnsenEntity {
         liquid: Option<&str>,
         osmotic_pressure: Option<&str>,
         form: &str,
-        is_day_use: Option<bool>,
+        is_day_use: bool,
         url: &str,
         description: &str,
     ) -> Option<Self> {
@@ -101,7 +100,7 @@ fn new_test() {
         Some("neutral"),
         Some("hypotonic"),
         "uchiyu",
-        Some(true),
+        true,
         "https://www.sekizenkan.co.jp/spa/#ank-spa1",
         "",
     );
@@ -120,7 +119,7 @@ fn new_test_none() {
         Some("neutral"),
         Some("hypotonic"),
         "uchiyu",
-        Some(true),
+        true,
         "https://www.sekizenkan.co.jp/spa/#ank-spa1",
         "",
     );

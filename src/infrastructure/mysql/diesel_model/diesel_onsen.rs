@@ -12,7 +12,7 @@ pub struct Onsen {
     pub liquid: Option<String>,
     pub osmotic_pressure: Option<String>,
     pub category: String,
-    pub day_use: Option<bool>,
+    pub day_use: bool,
     pub url: String,
     pub description: String,
     pub hotel_id: Option<u32>,
