@@ -100,7 +100,13 @@ impl fmt::Display for OnsenQuality {
         let inclusion_enumerated_text = self
             .inclusions
             .iter()
-            .map(|v| format!("含{}", v.jp()))
+            .map(|v| {
+                if v == &HIon {
+                    // 「含」がない
+                    return v.jp();
+                }
+                format!("含{}", v.jp())
+            })
             .collect::<Vec<String>>()
             .join("・");
         let mut text: String = format!("{}泉", anion_enumrated_text);
@@ -214,6 +220,12 @@ fn test_fe_so4_onsen() {
 fn test_h_onsen() {
     let quality = OnsenQuality::new(&vec![HIon], None);
     assert_eq!(quality.to_string(), "単純酸性泉");
+}
+
+#[test]
+fn test_h_na_cl_onsen() {
+    let quality = OnsenQuality::new(&vec![NaIon, ClIon, HIon], None);
+    assert_eq!(quality.to_string(), "酸性－ナトリウム－塩化物泉");
 }
 
 #[test]
