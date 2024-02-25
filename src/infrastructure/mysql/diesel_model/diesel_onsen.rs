@@ -1,5 +1,10 @@
+use std::str::FromStr;
+
 use super::{diesel_chemical::DieselChemical, diesel_hotel::Hotel};
-use crate::domain::onsen::{onsen_entity::OnsenEntity, onsen_quality::OnsenQuality};
+use crate::domain::onsen::{
+    onsen_entity::{OnsenEntity, SpringLiquid},
+    onsen_quality::OnsenQuality,
+};
 use diesel::{Associations, Identifiable, Insertable, Queryable, Selectable};
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Associations, Debug, Clone)]
@@ -21,7 +26,11 @@ pub struct Onsen {
 
 impl OnsenEntity {
     pub fn create(onsen: Onsen, diesel_chemical: Option<DieselChemical>) -> Self {
-        let onsen_quality = diesel_chemical.map(|v| OnsenQuality::from(v));
+        let liquid = onsen
+            .liquid
+            .clone()
+            .and_then(|v| SpringLiquid::from_str(&v).ok());
+        let onsen_quality = diesel_chemical.map(|v| v.create(liquid));
         OnsenEntity::new(
             onsen.id,
             &onsen.name,

@@ -1,5 +1,5 @@
-use crate::domain::onsen::chemical::Chemical;
 use crate::domain::onsen::onsen_quality::OnsenQuality;
+use crate::domain::onsen::{chemical::Chemical, onsen_entity::SpringLiquid};
 use diesel::{Identifiable, Insertable, Queryable, Selectable};
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Debug, Clone)]
@@ -20,46 +20,46 @@ pub struct DieselChemical {
     pub rn: bool,
 }
 
-impl From<DieselChemical> for OnsenQuality {
-    fn from(value: DieselChemical) -> Self {
+impl DieselChemical {
+    pub fn create(&self, liquid: Option<SpringLiquid>) -> OnsenQuality {
         let mut chemicals: Vec<Chemical> = vec![];
-        if value.na_ion {
+        if self.na_ion {
             chemicals.push(Chemical::NaIon);
         }
-        if value.ca_ion {
+        if self.ca_ion {
             chemicals.push(Chemical::CaIon)
         }
-        if value.mg_ion {
+        if self.mg_ion {
             chemicals.push(Chemical::MgIon)
         }
-        if value.cl_ion {
+        if self.cl_ion {
             chemicals.push(Chemical::ClIon)
         }
-        if value.hco3_ion {
+        if self.hco3_ion {
             chemicals.push(Chemical::HCO3Ion)
         }
-        if value.so4_ion {
+        if self.so4_ion {
             chemicals.push(Chemical::SO4Ion)
         }
-        if value.co2_ion {
+        if self.co2_ion {
             chemicals.push(Chemical::CO2)
         }
-        if value.fe_ion {
+        if self.fe_ion {
             chemicals.push(Chemical::FeIon(2))
         }
-        if value.h_ion {
+        if self.h_ion {
             chemicals.push(Chemical::HIon)
         }
-        if value.i_ion {
+        if self.i_ion {
             chemicals.push(Chemical::IIon)
         }
-        if value.s {
+        if self.s {
             chemicals.push(Chemical::S)
         }
-        if value.rn {
+        if self.rn {
             chemicals.push(Chemical::Rn)
         }
-        Self::new(&chemicals, None)
+        OnsenQuality::new(&chemicals, liquid)
     }
 }
 
