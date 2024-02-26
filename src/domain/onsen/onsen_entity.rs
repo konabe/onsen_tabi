@@ -29,6 +29,19 @@ pub enum SpringOsmoticPressure {
     Hypertonic, // 高張性
 }
 
+/// 温度
+#[derive(Display, Debug, PartialEq, EnumString, Clone)]
+pub enum SpringTemperature {
+    #[strum(serialize = "hot")]
+    Hot, // 高温泉
+    #[strum(serialize = "normal")]
+    Warm, // 温泉
+    #[strum(serialize = "cool")]
+    Cool, // 低温泉
+    #[strum(serialize = "cold")]
+    Cold, // 冷鉱泉
+}
+
 /// 営業形態
 #[derive(Display, Debug, PartialEq, EnumString, Clone)]
 pub enum SpringForm {
@@ -49,6 +62,7 @@ pub struct OnsenEntity {
     pub spring_quality: String,
     pub liquid: Option<SpringLiquid>,
     pub osmotic_pressure: Option<SpringOsmoticPressure>,
+    pub temperature: Option<SpringTemperature>,
     pub form: SpringForm,
     pub is_day_use: bool,
     pub url: String,
@@ -63,6 +77,7 @@ impl OnsenEntity {
         spring_quality: &str,
         liquid: Option<&str>,
         osmotic_pressure: Option<&str>,
+        temperature: Option<&str>,
         form: &str,
         is_day_use: bool,
         url: &str,
@@ -74,6 +89,7 @@ impl OnsenEntity {
         let liquid = liquid.and_then(|v| SpringLiquid::from_str(v).ok());
         let osmotic_pressure =
             osmotic_pressure.and_then(|v| SpringOsmoticPressure::from_str(v).ok());
+        let temperature = temperature.and_then(|v| SpringTemperature::from_str(v).ok());
         let form = SpringForm::from_str(form).ok()?;
         Some(Self {
             id,
@@ -82,6 +98,7 @@ impl OnsenEntity {
             spring_quality: spring_quality.to_string(),
             liquid,
             osmotic_pressure,
+            temperature,
             form,
             is_day_use,
             url: url.to_string(),
@@ -99,6 +116,7 @@ fn new_test() {
         "ナトリウム・カルシウム 塩化物硫酸塩温泉",
         Some("neutral"),
         Some("hypotonic"),
+        Some("hot"),
         "uchiyu",
         true,
         "https://www.sekizenkan.co.jp/spa/#ank-spa1",
@@ -118,6 +136,7 @@ fn new_test_none() {
         "ナトリウム・カルシウム 塩化物硫酸塩温泉",
         Some("neutral"),
         Some("hypotonic"),
+        Some("hot"),
         "uchiyu",
         true,
         "https://www.sekizenkan.co.jp/spa/#ank-spa1",

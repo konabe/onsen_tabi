@@ -48,6 +48,7 @@ fn new_test() {
             "単純温泉",
             Some("neutral"),
             Some("isotonic"),
+            Some("hot"),
             "sotoyu",
             true,
             "https://www.sekizenkan.co.jp/spa/#ank-spa1",
