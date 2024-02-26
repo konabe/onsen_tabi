@@ -112,6 +112,7 @@ pub fn put_onsen(onsen_entity: OnsenEntity) -> () {
                 onsen::dsl::spring_quality.eq(updated_onsen.spring_quality),
                 onsen::dsl::liquid.eq(updated_onsen.liquid),
                 onsen::dsl::osmotic_pressure.eq(updated_onsen.osmotic_pressure),
+                onsen::dsl::temperature.eq(updated_onsen.temperature),
                 onsen::dsl::category.eq(updated_onsen.category),
                 onsen::dsl::day_use.eq(updated_onsen.day_use),
                 onsen::dsl::url.eq(updated_onsen.url),
