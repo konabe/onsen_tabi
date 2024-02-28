@@ -52,6 +52,7 @@ fn new_test() {
             "sotoyu",
             true,
             "https://www.sekizenkan.co.jp/spa/#ank-spa1",
+            Some("https://placehold.jp/150x150.png"),
             "",
         )
         .expect("")],

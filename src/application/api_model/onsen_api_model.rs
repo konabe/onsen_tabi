@@ -15,6 +15,7 @@ pub struct OnsenRequest {
     pub form: String,
     pub is_day_use: bool,
     pub url: String,
+    pub img_url: Option<String>,
     pub description: String,
 }
 
@@ -92,6 +93,7 @@ impl OnsenRequest {
             self.form.as_str(),
             self.is_day_use,
             self.url.as_str(),
+            self.img_url.as_deref(),
             self.description.as_str(),
         )
     }
@@ -110,6 +112,7 @@ pub struct OnsenResponse {
     pub form: String,
     pub is_day_use: bool,
     pub url: String,
+    pub img_url: Option<String>,
     pub description: String,
 }
 
@@ -136,6 +139,7 @@ impl From<OnsenEntity> for OnsenResponse {
             form: value.form.to_string(),
             is_day_use: value.is_day_use,
             url: value.url.to_string(),
+            img_url: value.img_url.as_ref().map(|v| v.to_string()),
             description: value.description.to_string(),
         }
     }
