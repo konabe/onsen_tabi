@@ -116,6 +116,7 @@ pub fn put_onsen(onsen_entity: OnsenEntity) -> () {
                 onsen::dsl::category.eq(updated_onsen.category),
                 onsen::dsl::day_use.eq(updated_onsen.day_use),
                 onsen::dsl::url.eq(updated_onsen.url),
+                onsen::dsl::img_url.eq(updated_onsen.img_url),
                 onsen::dsl::description.eq(updated_onsen.description),
                 onsen::dsl::hotel_id.eq(updated_onsen.hotel_id),
             ))
