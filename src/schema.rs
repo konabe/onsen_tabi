@@ -65,6 +65,8 @@ diesel::table! {
         day_use -> Bool,
         #[max_length = 255]
         url -> Varchar,
+        #[max_length = 255]
+        img_url -> Nullable<Varchar>,
         description -> Text,
         chemical_id -> Nullable<Unsigned<Integer>>,
         hotel_id -> Nullable<Unsigned<Integer>>,

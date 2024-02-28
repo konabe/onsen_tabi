@@ -17,6 +17,7 @@ pub struct Onsen {
     pub category: String,
     pub day_use: bool,
     pub url: String,
+    pub img_url: Option<String>,
     pub description: String,
     pub hotel_id: Option<u32>,
     pub chemical_id: Option<u32>,
@@ -40,6 +41,7 @@ impl OnsenEntity {
             &onsen.category,
             onsen.day_use,
             &onsen.url,
+            onsen.img_url.as_deref(),
             &onsen.description,
         )
         .expect("Saved data violates OnsenEntity")
@@ -58,6 +60,7 @@ impl From<OnsenEntity> for Onsen {
             category: value.form.to_string(),
             day_use: value.is_day_use,
             url: value.url,
+            img_url: value.img_url.map(|v| v.to_string()),
             description: value.description,
             hotel_id: None,
             chemical_id: None,

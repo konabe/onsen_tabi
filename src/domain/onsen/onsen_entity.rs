@@ -66,6 +66,7 @@ pub struct OnsenEntity {
     pub form: SpringForm,
     pub is_day_use: bool,
     pub url: String,
+    pub img_url: Option<String>,
     pub description: String,
 }
 
@@ -81,6 +82,7 @@ impl OnsenEntity {
         form: &str,
         is_day_use: bool,
         url: &str,
+        img_url: Option<&str>,
         description: &str,
     ) -> Option<Self> {
         if name.is_empty() {
@@ -102,6 +104,7 @@ impl OnsenEntity {
             form,
             is_day_use,
             url: url.to_string(),
+            img_url: img_url.map(|v| v.to_string()),
             description: description.to_string(),
         })
     }
@@ -120,6 +123,7 @@ fn new_test() {
         "uchiyu",
         true,
         "https://www.sekizenkan.co.jp/spa/#ank-spa1",
+        Some("https://placehold.jp/150x150.png"),
         "",
     );
     let inside: OnsenEntity = onsen.expect("");
@@ -140,6 +144,7 @@ fn new_test_none() {
         "uchiyu",
         true,
         "https://www.sekizenkan.co.jp/spa/#ank-spa1",
+        Some("https://placehold.jp/150x150.png"),
         "",
     );
     onsen.expect("");
