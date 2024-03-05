@@ -10,6 +10,8 @@ use application::controller::area_controller::*;
 use application::controller::hotel_controller::*;
 use application::controller::onsen_controller::*;
 use application::controller::user_controller::*;
+use rocket::http::Method;
+use rocket_cors::AllowedOrigins;
 use rocket_cors::CorsOptions;
 
 #[get("/")]
@@ -42,6 +44,14 @@ fn rocket() -> _ {
         )
         .attach(
             CorsOptions::default()
+                .allowed_origins(AllowedOrigins::all())
+                .allowed_methods(
+                    vec![Method::Get, Method::Post, Method::Put, Method::Delete]
+                        .into_iter()
+                        .map(From::from)
+                        .collect(),
+                )
+                .allow_credentials(true)
                 .to_cors()
                 .expect("Cors options error"),
         )
