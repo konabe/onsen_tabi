@@ -8,18 +8,6 @@ use crate::{
 };
 use diesel::*;
 
-pub fn get_areas() -> Vec<AreaEntity> {
-    let connection = &mut establish_connection();
-    let results = area::table
-        .select(Area::as_select())
-        .load(connection)
-        .expect("error");
-    return results
-        .iter()
-        .map(|v: &Area| AreaEntity::from(v.clone()))
-        .collect();
-}
-
 pub fn get_areas_with_onsen() -> Vec<AreaEntity> {
     let connection = &mut establish_connection();
     let areas_onsens: Vec<(Area, Option<Onsen>)> = area::table

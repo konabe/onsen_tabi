@@ -2,7 +2,7 @@ use super::request_guard::ValidatedUser;
 use crate::application::api_model::hotel_api_model::*;
 use crate::infrastructure::repository::hotel_repository;
 use rocket::http::Status;
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 
 #[get("/hotel?<area_id>")]
 pub fn get_hotels(area_id: Option<String>) -> Json<Vec<HotelResponse>> {
