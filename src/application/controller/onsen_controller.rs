@@ -2,7 +2,7 @@ use super::request_guard::ValidatedUser;
 use crate::application::api_model::onsen_api_model::*;
 use crate::infrastructure::repository::onsen_repository;
 use rocket::http::Status;
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 
 #[get("/onsen?<area_id>&<hotel_id>")]
 pub fn get_onsens(area_id: Option<String>, hotel_id: Option<String>) -> Json<Vec<OnsenResponse>> {

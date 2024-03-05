@@ -2,7 +2,7 @@ use crate::application::auth::crypto;
 use crate::infrastructure::repository::user_repository;
 use crate::{application::api_model::user_api_model::*, application::auth::jwt::encode_jwt};
 use rocket::http::Status;
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 
 #[post("/signup", format = "json", data = "<auth_req>")]
 pub fn post_signup(auth_req: Json<AuthRequest>) -> Result<Json<AuthResponse>, Status> {

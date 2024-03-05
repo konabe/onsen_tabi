@@ -2,7 +2,7 @@ use crate::application::api_model::area_api_model::*;
 use crate::application::controller::request_guard::ValidatedUser;
 use crate::infrastructure::repository::area_repository;
 use rocket::http::Status;
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 
 #[get("/area")]
 pub fn get_areas() -> Json<Vec<AreaResponse>> {
