@@ -4,20 +4,16 @@ version = "0.0.0"
 edition = "2021"
 
 [dependencies]
-diesel = { version = "2.1.0", features = ["mysql"] }
+diesel = { version = "2.1", features = ["mysql"] }
 dotenvy = "0.15"
-rocket = "0.4.11"
-rocket_contrib = { version = "0.4.11", features = ["json"] }
-rocket_cors = "0.5.2"
-serde = { version = "1.0.178", features = ["derive"] }
-serde_json = "1.0.104"
-strum = { version = "0.25.0", features = ["derive"] }
-strum_macros = "0.25"
-jsonwebtoken = "8"
-rust-argon2 = "2.0"
-rand = "0.8.5"
-chrono = "0.4.26"
-
-[dependencies.rocket_dyn_templates]
-version = "0.1.0-rc.3"
-features = ["handlebars", "tera"]
+rocket = { version = "0.5.0", features = ["json"] }
+rocket_cors = "0.6"
+rocket_dyn_templates = { version = "0.1.0", features = ["handlebars", "tera"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+strum = { version = "0.26", features = ["derive"] }
+strum_macros = "0.26"
+jsonwebtoken = "9"
+rust-argon2 = "2.1"
+rand = "0.8"
+chrono = "0.4"
