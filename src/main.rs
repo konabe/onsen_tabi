@@ -33,9 +33,9 @@ impl<'r> response::Responder<'r, 'static> for PfResponse {
             .header(Header::new("Access-Control-Allow-Origin", "*"))
             .header(Header::new(
                 "Access-Control-Allow-Methods",
-                "POST,GET,PATCH,OPTIONS,TRACE",
+                "POST, PATCH, GET, DELETE",
             ))
-            .header(Header::new("Access-Control-Allow-Headers", "x-api-key"))
+            .header(Header::new("Access-Control-Allow-Headers", "*"))
             .header(Header::new("Access-Control-Allow-Credentials", "true"))
             .ok()
     }
