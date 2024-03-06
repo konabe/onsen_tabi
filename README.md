@@ -7,7 +7,7 @@
 
 ## システム構成
 
-vercel <-> EC2 <-> RDS for MySQL
+vercel <-> Route53 <-> ALB <-> EC2 <-> RDS for MySQL
 
 - [frontend source](https://github.com/konabe/onsen-tabi-web)
 
