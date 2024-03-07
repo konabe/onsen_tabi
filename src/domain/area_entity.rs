@@ -42,50 +42,57 @@ impl AreaEntity {
     }
 }
 
-#[test]
-fn new_test() {
-    let area = AreaEntity::new(
-        1,
-        "四万",
-        "群馬県",
-        true,
-        None,
-        "https://nakanojo-kanko.jp/shima/",
-        "",
-        vec![],
-    );
-    let inside: AreaEntity = area.expect("");
-    assert!(inside.name == "四万");
-}
+#[cfg(test)]
+mod tests {
+    use crate::domain::area_entity::AreaEntity;
 
-#[test]
-#[should_panic]
-fn new_test_none_name() {
-    let area = AreaEntity::new(
-        1,
-        "",
-        "群馬県",
-        false,
-        None,
-        "https://nakanojo-kanko.jp/shima/",
-        "",
-        vec![],
-    );
-    area.unwrap();
-}
+    #[test]
+    fn new_and_clone_test() {
+        let area = AreaEntity::new(
+            1,
+            "四万",
+            "群馬県",
+            true,
+            None,
+            "https://nakanojo-kanko.jp/shima/",
+            "",
+            vec![],
+        );
+        let area: AreaEntity = area.expect("");
+        assert!(area.name == "四万");
+        let cloned_area = area.clone();
+        assert!(cloned_area.name == "四万");
+    }
 
-#[test]
-#[should_panic]
-fn new_test_none_prefecture() {
-    let area = AreaEntity::new(
-        1,
-        "四万",
-        "",
-        false,
-        None,
-        "https://nakanojo-kanko.jp/shima/",
-        "",
-        vec![],
-    );
-    area.unwrap();
+    #[test]
+    #[should_panic]
+    fn new_test_return_none_if_name_is_empty() {
+        let area = AreaEntity::new(
+            1,
+            "",
+            "群馬県",
+            false,
+            None,
+            "https://nakanojo-kanko.jp/shima/",
+            "",
+            vec![],
+        );
+        area.unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn new_test_return_none_if_prefecture_is_empty() {
+        let area = AreaEntity::new(
+            1,
+            "四万",
+            "",
+            false,
+            None,
+            "https://nakanojo-kanko.jp/shima/",
+            "",
+            vec![],
+        );
+        area.unwrap();
+    }
 }

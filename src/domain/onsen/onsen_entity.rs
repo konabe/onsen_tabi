@@ -110,42 +110,54 @@ impl OnsenEntity {
     }
 }
 
-#[test]
-fn new_test() {
-    let onsen = OnsenEntity::new(
-        1,
-        "元禄の湯",
-        None,
-        "ナトリウム・カルシウム 塩化物硫酸塩温泉",
-        Some("neutral"),
-        Some("hypotonic"),
-        Some("hot"),
-        "uchiyu",
-        true,
-        "https://www.sekizenkan.co.jp/spa/#ank-spa1",
-        Some("https://placehold.jp/150x150.png"),
-        "",
-    );
-    let inside: OnsenEntity = onsen.expect("");
-    assert!(inside.name == "元禄の湯");
-}
+#[cfg(test)]
+mod tests {
+    use once_cell::sync::Lazy;
 
-#[test]
-#[should_panic]
-fn new_test_none() {
-    let onsen = OnsenEntity::new(
-        1,
-        "",
-        None,
-        "ナトリウム・カルシウム 塩化物硫酸塩温泉",
-        Some("neutral"),
-        Some("hypotonic"),
-        Some("hot"),
-        "uchiyu",
-        true,
-        "https://www.sekizenkan.co.jp/spa/#ank-spa1",
-        Some("https://placehold.jp/150x150.png"),
-        "",
-    );
-    onsen.expect("");
+    use crate::domain::onsen::chemical::Chemical::*;
+    use crate::domain::onsen::onsen_entity::OnsenEntity;
+    use crate::domain::onsen::onsen_quality::OnsenQuality;
+
+    const COMMON_ONSEN_QUALITY: Lazy<OnsenQuality> =
+        Lazy::new(|| OnsenQuality::new(&vec![NaIon, CaIon, SO4Ion], None));
+
+    #[test]
+    fn new_test() {
+        let onsen = OnsenEntity::new(
+            1,
+            "元禄の湯",
+            Some(COMMON_ONSEN_QUALITY.clone()),
+            "ナトリウム・カルシウム 塩化物硫酸塩温泉",
+            Some("neutral"),
+            Some("hypotonic"),
+            Some("hot"),
+            "uchiyu",
+            true,
+            "https://www.sekizenkan.co.jp/spa/#ank-spa1",
+            Some("https://placehold.jp/150x150.png"),
+            "",
+        );
+        let inside: OnsenEntity = onsen.expect("");
+        assert!(inside.name == "元禄の湯");
+    }
+
+    #[test]
+    #[should_panic]
+    fn new_test_return_none_when_name_is_empty() {
+        let onsen = OnsenEntity::new(
+            1,
+            "",
+            Some(COMMON_ONSEN_QUALITY.clone()),
+            "ナトリウム・カルシウム 塩化物硫酸塩温泉",
+            Some("neutral"),
+            Some("hypotonic"),
+            Some("hot"),
+            "uchiyu",
+            true,
+            "https://www.sekizenkan.co.jp/spa/#ank-spa1",
+            Some("https://placehold.jp/150x150.png"),
+            "",
+        );
+        onsen.expect("");
+    }
 }

@@ -1145,6 +1145,7 @@ dependencies = [
  "diesel",
  "dotenvy",
  "jsonwebtoken",
+ "once_cell",
  "rand",
  "rocket",
  "rocket_cors",
