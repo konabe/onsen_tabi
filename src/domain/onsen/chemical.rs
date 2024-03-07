@@ -52,7 +52,7 @@ impl Chemical {
             CO2 => "二酸化炭素",
             FeIon(valence) => match valence {
                 2 => "鉄（Ⅱ）",
-                3 => "鉄（Ⅱ）",
+                3 => "鉄（Ⅲ）",
                 _ => "鉄",
             },
             HIon => "酸性",
@@ -64,18 +64,23 @@ impl Chemical {
     }
 }
 
-#[test]
-fn test_is_cation() {
-    assert!(NaIon.is_cation());
-    assert!(CaIon.is_cation());
-    assert!(MgIon.is_cation());
-    assert!(!ClIon.is_cation());
-}
+#[cfg(test)]
+mod tests {
+    use crate::domain::onsen::chemical::Chemical::*;
 
-#[test]
-fn test_is_anion() {
-    assert!(ClIon.is_anion());
-    assert!(HCO3Ion.is_anion());
-    assert!(SO4Ion.is_anion());
-    assert!(!NaIon.is_anion());
+    #[test]
+    fn test_is_cation() {
+        assert!(NaIon.is_cation());
+        assert!(CaIon.is_cation());
+        assert!(MgIon.is_cation());
+        assert!(!ClIon.is_cation());
+    }
+
+    #[test]
+    fn test_is_anion() {
+        assert!(ClIon.is_anion());
+        assert!(HCO3Ion.is_anion());
+        assert!(SO4Ion.is_anion());
+        assert!(!NaIon.is_anion());
+    }
 }

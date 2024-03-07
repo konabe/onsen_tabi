@@ -33,17 +33,15 @@ impl HotelEntity {
     }
 }
 
-#[test]
-fn new_test() {
-    let hotel = HotelEntity::new(
-        1,
-        "積善館",
-        true,
-        "https://www.sekizenkan.co.jp/",
-        "",
-        &vec![OnsenEntity::new(
+#[cfg(test)]
+mod tests {
+    use crate::domain::{hotel_entity::HotelEntity, onsen::onsen_entity::OnsenEntity};
+    use once_cell::sync::Lazy;
+
+    const COMMON_ONSEN: Lazy<OnsenEntity> = Lazy::new(|| {
+        OnsenEntity::new(
             1,
-            "テスト温泉",
+            "積善館 元禄の湯",
             None,
             "単純温泉",
             Some("neutral"),
@@ -55,16 +53,31 @@ fn new_test() {
             Some("https://placehold.jp/150x150.png"),
             "",
         )
-        .expect("")],
-    );
-    let inside: HotelEntity = hotel.expect("");
-    assert!(inside.name == "積善館");
-    assert!(inside.has_washitsu == true);
-}
+        .expect("")
+    });
 
-#[test]
-#[should_panic]
-fn new_test_none() {
-    let hotel = HotelEntity::new(1, "", true, "https://www.sekizenkan.co.jp/", "", &vec![]);
-    hotel.unwrap();
+    #[test]
+    fn new_and_clone_test() {
+        let hotel = HotelEntity::new(
+            1,
+            "積善館",
+            true,
+            "https://www.sekizenkan.co.jp/",
+            "",
+            &vec![COMMON_ONSEN.clone()],
+        );
+        let hotel: HotelEntity = hotel.expect("");
+        assert!(hotel.name == "積善館");
+        assert!(hotel.has_washitsu == true);
+        let cloned_hotel = hotel.clone();
+        assert!(cloned_hotel.name == "積善館");
+        assert!(cloned_hotel.has_washitsu == true);
+    }
+
+    #[test]
+    #[should_panic]
+    fn new_test_return_none_when_name_is_empty() {
+        let hotel = HotelEntity::new(1, "", true, "https://www.sekizenkan.co.jp/", "", &vec![]);
+        hotel.unwrap();
+    }
 }
