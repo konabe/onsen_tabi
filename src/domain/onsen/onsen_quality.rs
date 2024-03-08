@@ -22,10 +22,8 @@ impl OnsenQuality {
         is_strong_na_cl: bool,
         is_weak_rn: bool,
     ) -> Self {
-        if liquid == Some(Acidic) && !chemicals.contains(&HIon)
-            || chemicals.contains(&HIon) && liquid != Some(Acidic)
-        {
-            panic!("酸性の温泉には必ず水素イオンを多く含む");
+        if chemicals.contains(&HIon) && liquid != Some(Acidic) {
+            panic!("酸性泉は必ず液性は酸性である");
         }
         if is_strong_na_cl && (!chemicals.contains(&NaIon) || !chemicals.contains(&ClIon)) {
             panic!("塩化物強塩泉には必ずナトリウムイオンと塩化物イオンを含む");
@@ -339,12 +337,6 @@ mod tests {
     #[should_panic]
     fn test_h_onsen_without_acidic_liquid() {
         OnsenQuality::new(&vec![HIon], Some(Neutral), false, false);
-    }
-
-    #[test]
-    #[should_panic]
-    fn test_acidic_liquid_onsen_without_h_ion() {
-        OnsenQuality::new(&vec![], Some(Acidic), false, false);
     }
 
     #[test]
