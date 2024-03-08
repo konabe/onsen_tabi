@@ -2,7 +2,7 @@ use strum_macros::{Display, EnumString};
 use Chemical::*;
 
 #[allow(dead_code)]
-#[derive(Display, PartialEq, Clone, EnumString)]
+#[derive(Display, PartialEq, Clone, EnumString, Debug)]
 pub enum Chemical {
     NaIon,
     CaIon,

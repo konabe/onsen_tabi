@@ -22,60 +22,45 @@ pub struct OnsenRequest {
 #[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct OnsenChemicalsRequestModel {
-    pub na_ion: bool,
-    pub ca_ion: bool,
-    pub mg_ion: bool,
-    pub cl_ion: bool,
-    pub hco3_ion: bool,
-    pub so4_ion: bool,
-    pub co2_ion: bool,
-    pub fe_ion: bool,
-    pub h_ion: bool,
-    pub i_ion: bool,
-    pub s: bool,
-    pub rn: bool,
+    pub na_ion: u32,
+    pub ca_ion: u32,
+    pub mg_ion: u32,
+    pub cl_ion: u32,
+    pub hco3_ion: u32,
+    pub so4_ion: u32,
+    pub co2_ion: u32,
+    pub fe_ion: u32,
+    pub h_ion: u32,
+    pub i_ion: u32,
+    pub s: u32,
+    pub rn: u32,
 }
 
 impl From<OnsenChemicalsRequestModel> for OnsenQuality {
     fn from(value: OnsenChemicalsRequestModel) -> Self {
-        let mut chemicals: Vec<Chemical> = vec![];
-        if value.na_ion {
-            chemicals.push(Chemical::NaIon);
-        }
-        if value.ca_ion {
-            chemicals.push(Chemical::CaIon)
-        }
-        if value.mg_ion {
-            chemicals.push(Chemical::MgIon)
-        }
-        if value.cl_ion {
-            chemicals.push(Chemical::ClIon)
-        }
-        if value.hco3_ion {
-            chemicals.push(Chemical::HCO3Ion)
-        }
-        if value.so4_ion {
-            chemicals.push(Chemical::SO4Ion)
-        }
-        if value.co2_ion {
-            chemicals.push(Chemical::CO2)
-        }
-        if value.fe_ion {
-            chemicals.push(Chemical::FeIon(2))
-        }
-        if value.h_ion {
-            chemicals.push(Chemical::HIon)
-        }
-        if value.i_ion {
-            chemicals.push(Chemical::IIon)
-        }
-        if value.s {
-            chemicals.push(Chemical::S)
-        }
-        if value.rn {
-            chemicals.push(Chemical::Rn)
-        }
-        Self::new(&chemicals, None)
+        let mut chemicals: Vec<(Chemical, u32)> = vec![
+            (Chemical::NaIon, value.na_ion),
+            (Chemical::CaIon, value.ca_ion),
+            (Chemical::MgIon, value.mg_ion),
+            (Chemical::ClIon, value.cl_ion),
+            (Chemical::HCO3Ion, value.hco3_ion),
+            (Chemical::SO4Ion, value.so4_ion),
+            (Chemical::CO2, value.co2_ion),
+            (Chemical::FeIon(2), value.fe_ion),
+            (Chemical::HIon, value.h_ion),
+            (Chemical::IIon, value.i_ion),
+            (Chemical::S, value.s),
+            (Chemical::Rn, value.rn),
+        ]
+        .into_iter()
+        .filter(|(_, value)| *value > 0)
+        .collect();
+        chemicals.sort_by(|(_, a), (_, b)| a.cmp(b));
+        let chemicals_values: Vec<Chemical> = chemicals
+            .into_iter()
+            .map(|(chemical, _)| chemical)
+            .collect();
+        Self::new(&chemicals_values, None)
     }
 }
 
@@ -142,5 +127,106 @@ impl From<OnsenEntity> for OnsenResponse {
             img_url: value.img_url.as_ref().map(|v| v.to_string()),
             description: value.description.to_string(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        application::api_model::onsen_api_model::{OnsenChemicalsRequestModel, OnsenRequest},
+        domain::onsen::chemical::Chemical,
+    };
+
+    #[test]
+    fn test_onsen_request_create_entity() {
+        let request = OnsenRequest {
+            name: "元禄の湯".to_string(),
+            spring_quality: "温泉法の温泉".to_string(),
+            chemicals: Some(OnsenChemicalsRequestModel {
+                na_ion: 2,
+                ca_ion: 1,
+                mg_ion: 0,
+                cl_ion: 5,
+                hco3_ion: 4,
+                so4_ion: 0,
+                co2_ion: 0,
+                fe_ion: 7,
+                h_ion: 0,
+                i_ion: 0,
+                s: 0,
+                rn: 0,
+            }),
+            liquid: Some("neutral".to_string()),
+            osmotic_pressure: Some("hypotonic".to_string()),
+            temperature: Some("hot".to_string()),
+            form: "uchiyu".to_string(),
+            is_day_use: true,
+            url: "https://www.sekizenkan.co.jp/spa/#ank-spa1".to_string(),
+            img_url: Some("https://placehold.jp/150x150.png".to_string()),
+            description: "description".to_string(),
+        };
+        let entity = request.create_entity(1).unwrap();
+        assert_eq!(entity.id, 1);
+        assert_eq!(entity.name, "元禄の湯");
+        let quality = entity.quality.clone().unwrap();
+        assert_eq!(quality.cations, vec![Chemical::CaIon, Chemical::NaIon]);
+        assert_eq!(quality.anions, vec![Chemical::HCO3Ion, Chemical::ClIon]);
+        assert_eq!(quality.inclusions, vec![Chemical::FeIon(2)]);
+        assert_eq!(entity.spring_quality, "温泉法の温泉");
+        assert_eq!(
+            entity.quality.unwrap().to_string(),
+            "含鉄（Ⅱ）－カルシウム・ナトリウム－炭酸水素塩・塩化物泉"
+        );
+        assert_eq!(entity.is_day_use, true);
+        assert_eq!(entity.url, "https://www.sekizenkan.co.jp/spa/#ank-spa1");
+        assert_eq!(entity.img_url.unwrap(), "https://placehold.jp/150x150.png");
+        assert_eq!(entity.description, "description");
+    }
+
+    #[test]
+    fn test_onsen_request_create_entity_if_data_is_not_migrated() {
+        let request = OnsenRequest {
+            name: "元禄の湯".to_string(),
+            spring_quality: "温泉法の温泉".to_string(),
+            chemicals: Some(OnsenChemicalsRequestModel {
+                // 元々は含まれていれば1, そうでなければ0というデータが入っていた
+                na_ion: 1,
+                ca_ion: 1,
+                mg_ion: 0,
+                cl_ion: 1,
+                hco3_ion: 1,
+                so4_ion: 0,
+                co2_ion: 0,
+                fe_ion: 1,
+                h_ion: 0,
+                i_ion: 0,
+                s: 0,
+                rn: 0,
+            }),
+            liquid: Some("neutral".to_string()),
+            osmotic_pressure: Some("hypotonic".to_string()),
+            temperature: Some("hot".to_string()),
+            form: "uchiyu".to_string(),
+            is_day_use: true,
+            url: "https://www.sekizenkan.co.jp/spa/#ank-spa1".to_string(),
+            img_url: Some("https://placehold.jp/150x150.png".to_string()),
+            description: "description".to_string(),
+        };
+        let entity = request.create_entity(1).unwrap();
+        assert_eq!(entity.id, 1);
+        assert_eq!(entity.name, "元禄の湯");
+        let quality = entity.quality.clone().unwrap();
+        assert_eq!(quality.cations, vec![Chemical::NaIon, Chemical::CaIon]);
+        assert_eq!(quality.anions, vec![Chemical::ClIon, Chemical::HCO3Ion]);
+        assert_eq!(quality.inclusions, vec![Chemical::FeIon(2)]);
+        assert_eq!(entity.spring_quality, "温泉法の温泉");
+        assert_eq!(
+            entity.quality.unwrap().to_string(),
+            "含鉄（Ⅱ）－ナトリウム・カルシウム－塩化物・炭酸水素塩泉"
+        );
+        assert_eq!(entity.is_day_use, true);
+        assert_eq!(entity.url, "https://www.sekizenkan.co.jp/spa/#ank-spa1");
+        assert_eq!(entity.img_url.unwrap(), "https://placehold.jp/150x150.png");
+        assert_eq!(entity.description, "description");
     }
 }
