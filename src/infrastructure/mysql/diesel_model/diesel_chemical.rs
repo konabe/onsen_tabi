@@ -6,79 +6,95 @@ use diesel::{Identifiable, Insertable, Queryable, Selectable};
 #[diesel(table_name=crate::schema::chemicals)]
 pub struct DieselChemical {
     pub id: u32,
-    pub na_ion: bool,
-    pub ca_ion: bool,
-    pub mg_ion: bool,
-    pub cl_ion: bool,
-    pub hco3_ion: bool,
-    pub so4_ion: bool,
-    pub co2_ion: bool,
-    pub fe_ion: bool,
-    pub h_ion: bool,
-    pub i_ion: bool,
-    pub s: bool,
-    pub rn: bool,
+    pub na_ion: u32,
+    pub ca_ion: u32,
+    pub mg_ion: u32,
+    pub cl_ion: u32,
+    pub hco3_ion: u32,
+    pub so4_ion: u32,
+    pub co2_ion: u32,
+    pub fe_ion: u32,
+    pub h_ion: u32,
+    pub i_ion: u32,
+    pub s: u32,
+    pub rn: u32,
 }
 
 impl DieselChemical {
     pub fn create(&self, liquid: Option<SpringLiquid>) -> OnsenQuality {
-        let mut chemicals: Vec<Chemical> = vec![];
-        if self.na_ion {
-            chemicals.push(Chemical::NaIon);
-        }
-        if self.ca_ion {
-            chemicals.push(Chemical::CaIon)
-        }
-        if self.mg_ion {
-            chemicals.push(Chemical::MgIon)
-        }
-        if self.cl_ion {
-            chemicals.push(Chemical::ClIon)
-        }
-        if self.hco3_ion {
-            chemicals.push(Chemical::HCO3Ion)
-        }
-        if self.so4_ion {
-            chemicals.push(Chemical::SO4Ion)
-        }
-        if self.co2_ion {
-            chemicals.push(Chemical::CO2)
-        }
-        if self.fe_ion {
-            chemicals.push(Chemical::FeIon(2))
-        }
-        if self.h_ion {
-            chemicals.push(Chemical::HIon)
-        }
-        if self.i_ion {
-            chemicals.push(Chemical::IIon)
-        }
-        if self.s {
-            chemicals.push(Chemical::S)
-        }
-        if self.rn {
-            chemicals.push(Chemical::Rn)
-        }
-        OnsenQuality::new(&chemicals, liquid)
+        let mut chemicals: Vec<(Chemical, u32)> = vec![
+            (Chemical::NaIon, self.na_ion),
+            (Chemical::CaIon, self.ca_ion),
+            (Chemical::MgIon, self.mg_ion),
+            (Chemical::ClIon, self.cl_ion),
+            (Chemical::HCO3Ion, self.hco3_ion),
+            (Chemical::SO4Ion, self.so4_ion),
+            (Chemical::CO2, self.co2_ion),
+            (Chemical::FeIon(2), self.fe_ion),
+            (Chemical::HIon, self.h_ion),
+            (Chemical::IIon, self.i_ion),
+            (Chemical::S, self.s),
+            (Chemical::Rn, self.rn),
+        ]
+        .into_iter()
+        .filter(|(_, value)| *value > 0)
+        .collect();
+        chemicals.sort_by(|(_, a), (_, b)| a.cmp(b));
+        let chemicals_values: Vec<Chemical> = chemicals
+            .into_iter()
+            .map(|(chemical, _)| chemical)
+            .collect();
+        OnsenQuality::new(&chemicals_values, liquid)
     }
 }
 
 impl From<OnsenQuality> for DieselChemical {
     fn from(value: OnsenQuality) -> Self {
-        Self {
+        let mut self_ = Self {
             id: 0,
-            na_ion: value.cations.contains(&Chemical::NaIon),
-            ca_ion: value.cations.contains(&Chemical::CaIon),
-            mg_ion: value.cations.contains(&Chemical::MgIon),
-            cl_ion: value.anions.contains(&Chemical::ClIon),
-            hco3_ion: value.anions.contains(&Chemical::HCO3Ion),
-            so4_ion: value.anions.contains(&Chemical::SO4Ion),
-            co2_ion: value.inclusions.contains(&Chemical::CO2),
-            fe_ion: value.inclusions.contains(&Chemical::FeIon(2)),
-            h_ion: value.inclusions.contains(&Chemical::HIon),
-            i_ion: value.inclusions.contains(&Chemical::IIon),
-            s: value.inclusions.contains(&Chemical::S),
-            rn: value.inclusions.contains(&Chemical::Rn),
+            na_ion: 0,
+            ca_ion: 0,
+            mg_ion: 0,
+            cl_ion: 0,
+            hco3_ion: 0,
+            so4_ion: 0,
+            co2_ion: 0,
+            fe_ion: 0,
+            h_ion: 0,
+            i_ion: 0,
+            s: 0,
+            rn: 0,
+        };
+        for (i, v) in value.cations.iter().enumerate() {
+            let index = i as u32;
+            match v {
+                Chemical::NaIon => self_.na_ion = index + 1,
+                Chemical::CaIon => self_.ca_ion = index + 1,
+                Chemical::MgIon => self_.mg_ion = index + 1,
+                _ => (),
+            }
         }
+        for (i, v) in value.anions.iter().enumerate() {
+            let index = i as u32;
+            match v {
+                Chemical::ClIon => self_.cl_ion = index + 4,
+                Chemical::HCO3Ion => self_.hco3_ion = index + 4,
+                Chemical::SO4Ion => self_.so4_ion = index + 4,
+                _ => (),
+            }
+        }
+        for (i, v) in value.inclusions.iter().enumerate() {
+            let index = i as u32;
+            match v {
+                Chemical::CO2 => self_.co2_ion = index + 7,
+                Chemical::FeIon(_) => self_.fe_ion = index + 7,
+                Chemical::HIon => self_.h_ion = index + 7,
+                Chemical::IIon => self_.i_ion = index + 7,
+                Chemical::S => self_.s = index + 7,
+                Chemical::Rn => self_.rn = index + 7,
+                _ => (),
+            }
+        }
+        self_
     }
 }

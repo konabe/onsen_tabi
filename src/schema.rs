@@ -19,18 +19,18 @@ diesel::table! {
 diesel::table! {
     chemicals (id) {
         id -> Unsigned<Integer>,
-        na_ion -> Bool,
-        ca_ion -> Bool,
-        mg_ion -> Bool,
-        cl_ion -> Bool,
-        hco3_ion -> Bool,
-        so4_ion -> Bool,
-        co2_ion -> Bool,
-        fe_ion -> Bool,
-        h_ion -> Bool,
-        i_ion -> Bool,
-        s -> Bool,
-        rn -> Bool,
+        na_ion -> Unsigned<Integer>,
+        ca_ion -> Unsigned<Integer>,
+        mg_ion -> Unsigned<Integer>,
+        cl_ion -> Unsigned<Integer>,
+        hco3_ion -> Unsigned<Integer>,
+        so4_ion -> Unsigned<Integer>,
+        co2_ion -> Unsigned<Integer>,
+        fe_ion -> Unsigned<Integer>,
+        h_ion -> Unsigned<Integer>,
+        i_ion -> Unsigned<Integer>,
+        s -> Unsigned<Integer>,
+        rn -> Unsigned<Integer>,
     }
 }
 
