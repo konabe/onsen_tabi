@@ -27,10 +27,14 @@ diesel::table! {
         so4_ion -> Unsigned<Integer>,
         co2_ion -> Unsigned<Integer>,
         fe_ion -> Unsigned<Integer>,
+        al_ion -> Unsigned<Integer>,
+        cu_ion -> Unsigned<Integer>,
         h_ion -> Unsigned<Integer>,
         i_ion -> Unsigned<Integer>,
         s -> Unsigned<Integer>,
         rn -> Unsigned<Integer>,
+        strong_na_cl -> Bool,
+        weak_rn -> Bool,
     }
 }
 

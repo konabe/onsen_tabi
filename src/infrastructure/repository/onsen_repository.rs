@@ -70,10 +70,14 @@ pub fn put_onsen(onsen_entity: OnsenEntity) -> () {
                         chemicals::dsl::so4_ion.eq(updated_chemicals.so4_ion),
                         chemicals::dsl::co2_ion.eq(updated_chemicals.co2_ion),
                         chemicals::dsl::fe_ion.eq(updated_chemicals.fe_ion),
+                        chemicals::dsl::al_ion.eq(updated_chemicals.al_ion),
+                        chemicals::dsl::cu_ion.eq(updated_chemicals.cu_ion),
                         chemicals::dsl::h_ion.eq(updated_chemicals.h_ion),
                         chemicals::dsl::i_ion.eq(updated_chemicals.i_ion),
                         chemicals::dsl::s.eq(updated_chemicals.s),
                         chemicals::dsl::rn.eq(updated_chemicals.rn),
+                        chemicals::dsl::strong_na_cl.eq(updated_chemicals.strong_na_cl),
+                        chemicals::dsl::weak_rn.eq(updated_chemicals.weak_rn),
                     ))
                     .execute(connection)
                     .expect("DB error");

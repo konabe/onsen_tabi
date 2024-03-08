@@ -30,10 +30,14 @@ pub struct OnsenChemicalsRequestModel {
     pub so4_ion: u32,
     pub co2_ion: u32,
     pub fe_ion: u32,
+    pub al_ion: u32,
+    pub cu_ion: u32,
     pub h_ion: u32,
     pub i_ion: u32,
     pub s: u32,
     pub rn: u32,
+    pub is_strong_na_cl: bool,
+    pub is_weak_rn: bool,
 }
 
 impl From<OnsenChemicalsRequestModel> for OnsenQuality {
@@ -47,6 +51,8 @@ impl From<OnsenChemicalsRequestModel> for OnsenQuality {
             (Chemical::SO4Ion, value.so4_ion),
             (Chemical::CO2, value.co2_ion),
             (Chemical::FeIon(2), value.fe_ion),
+            (Chemical::AlIon, value.al_ion),
+            (Chemical::CuIon, value.cu_ion),
             (Chemical::HIon, value.h_ion),
             (Chemical::IIon, value.i_ion),
             (Chemical::S, value.s),
@@ -60,7 +66,12 @@ impl From<OnsenChemicalsRequestModel> for OnsenQuality {
             .into_iter()
             .map(|(chemical, _)| chemical)
             .collect();
-        Self::new(&chemicals_values, None)
+        Self::new(
+            &chemicals_values,
+            None,
+            value.is_strong_na_cl,
+            value.is_weak_rn,
+        )
     }
 }
 
@@ -106,6 +117,8 @@ pub struct OnsenResponse {
 pub struct OnsenQualityResponseModel {
     pub name: String,
     pub chemicals: Vec<String>,
+    pub is_strong_na_cl: bool,
+    pub is_weak_rn: bool,
 }
 
 impl From<OnsenEntity> for OnsenResponse {
@@ -117,6 +130,8 @@ impl From<OnsenEntity> for OnsenResponse {
             quality: value.quality.map(|v| OnsenQualityResponseModel {
                 name: v.to_string(),
                 chemicals: v.to_string_vec(),
+                is_strong_na_cl: v.is_strong_na_cl,
+                is_weak_rn: v.is_weak_rn,
             }),
             liquid: value.liquid.as_ref().map(|v| v.to_string()),
             osmotic_pressure: value.osmotic_pressure.as_ref().map(|v| v.to_string()),
@@ -151,10 +166,14 @@ mod tests {
                 so4_ion: 0,
                 co2_ion: 0,
                 fe_ion: 7,
+                al_ion: 0,
+                cu_ion: 0,
                 h_ion: 0,
                 i_ion: 0,
                 s: 0,
                 rn: 0,
+                is_strong_na_cl: false,
+                is_weak_rn: false,
             }),
             liquid: Some("neutral".to_string()),
             osmotic_pressure: Some("hypotonic".to_string()),
@@ -198,10 +217,14 @@ mod tests {
                 so4_ion: 0,
                 co2_ion: 0,
                 fe_ion: 1,
+                al_ion: 0,
+                cu_ion: 0,
                 h_ion: 0,
                 i_ion: 0,
                 s: 0,
                 rn: 0,
+                is_strong_na_cl: false,
+                is_weak_rn: false,
             }),
             liquid: Some("neutral".to_string()),
             osmotic_pressure: Some("hypotonic".to_string()),
