@@ -15,6 +15,11 @@ pub struct OnsenQuality {
 // https://www.env.go.jp/nature/onsen/pdf/2-5_p_16.pdf
 impl OnsenQuality {
     pub fn new(chemicals: &[Chemical], liquid: Option<SpringLiquid>) -> Self {
+        if liquid == Some(Acidic) && !chemicals.contains(&HIon)
+            || chemicals.contains(&HIon) && liquid != Some(Acidic)
+        {
+            panic!("酸性の温泉には必ず水素イオンを多く含む");
+        }
         if chemicals.is_empty() {
             return Self {
                 is_simple: true,
@@ -97,24 +102,25 @@ impl fmt::Display for OnsenQuality {
             .map(|v| v.jp())
             .collect::<Vec<String>>()
             .join("・");
-        let inclusion_enumerated_text = self
+        let inclusion_h_ion_excluded = self
             .inclusions
             .iter()
-            .map(|v| {
-                if v == &HIon {
-                    // 「含」がない
-                    return v.jp();
-                }
-                format!("含{}", v.jp())
-            })
+            .filter(|&v| v.clone() != HIon)
+            .collect::<Vec<&Chemical>>();
+        let inclusion_enumerated_text = inclusion_h_ion_excluded
+            .iter()
+            .map(|v| v.jp())
             .collect::<Vec<String>>()
             .join("・");
         let mut text: String = format!("{}泉", anion_enumrated_text);
         if !self.cations.is_empty() {
             text = cation_enumrated_text + "－" + &text;
         }
-        if !self.inclusions.is_empty() {
-            text = inclusion_enumerated_text + "－" + &text;
+        if !inclusion_h_ion_excluded.is_empty() {
+            text = "含".to_owned() + &inclusion_enumerated_text + "－" + &text;
+        }
+        if self.inclusions.contains(&HIon) {
+            text = "酸性－".to_owned() + &text;
         }
         write!(f, "{}", text)
     }
@@ -244,14 +250,21 @@ mod tests {
 
     #[test]
     fn test_h_onsen() {
-        let quality = OnsenQuality::new(&vec![HIon], None);
+        let quality = OnsenQuality::new(&vec![HIon], Some(Acidic));
         assert_eq!(quality.to_string(), "単純酸性泉");
     }
 
     #[test]
     fn test_h_na_cl_onsen() {
-        let quality = OnsenQuality::new(&vec![NaIon, ClIon, HIon], None);
+        let quality = OnsenQuality::new(&vec![NaIon, ClIon, HIon], Some(Acidic));
         assert_eq!(quality.to_string(), "酸性－ナトリウム－塩化物泉");
+    }
+
+    #[test]
+    fn test_h_s_na_cl_onsen() {
+        let quality = OnsenQuality::new(&vec![NaIon, ClIon, HIon, S], Some(Acidic));
+        // "酸性"はさらに仕切られる
+        assert_eq!(quality.to_string(), "酸性－含硫黄－ナトリウム－塩化物泉");
     }
 
     #[test]
@@ -270,6 +283,16 @@ mod tests {
     fn test_rn_onsen() {
         let quality = OnsenQuality::new(&vec![Rn], None);
         assert_eq!(quality.to_string(), "単純放射能泉");
+    }
+
+    #[test]
+    fn test_multi_inclusion_onsen() {
+        let quality = OnsenQuality::new(&vec![S, FeIon(2), NaIon, CaIon, SO4Ion], None);
+        assert_eq!(
+            quality.to_string(),
+            // "含"は先頭にのみつける
+            "含硫黄・鉄（Ⅱ）－ナトリウム・カルシウム－硫酸塩泉"
+        );
     }
 
     #[test]
