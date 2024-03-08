@@ -16,8 +16,12 @@ pub struct DieselChemical {
     pub fe_ion: u32,
     pub h_ion: u32,
     pub i_ion: u32,
+    pub al_ion: u32,
+    pub cu_ion: u32,
     pub s: u32,
     pub rn: u32,
+    pub strong_na_cl: bool,
+    pub weak_rn: bool,
 }
 
 impl DieselChemical {
@@ -31,6 +35,8 @@ impl DieselChemical {
             (Chemical::SO4Ion, self.so4_ion),
             (Chemical::CO2, self.co2_ion),
             (Chemical::FeIon(2), self.fe_ion),
+            (Chemical::AlIon, self.al_ion),
+            (Chemical::CuIon, self.cu_ion),
             (Chemical::HIon, self.h_ion),
             (Chemical::IIon, self.i_ion),
             (Chemical::S, self.s),
@@ -44,7 +50,7 @@ impl DieselChemical {
             .into_iter()
             .map(|(chemical, _)| chemical)
             .collect();
-        OnsenQuality::new(&chemicals_values, liquid)
+        OnsenQuality::new(&chemicals_values, liquid, self.strong_na_cl, self.weak_rn)
     }
 }
 
@@ -60,10 +66,14 @@ impl From<OnsenQuality> for DieselChemical {
             so4_ion: 0,
             co2_ion: 0,
             fe_ion: 0,
+            al_ion: 0,
+            cu_ion: 0,
             h_ion: 0,
             i_ion: 0,
             s: 0,
             rn: 0,
+            strong_na_cl: value.is_strong_na_cl,
+            weak_rn: value.is_weak_rn,
         };
         for (i, v) in value.cations.iter().enumerate() {
             let index = i as u32;
@@ -88,6 +98,8 @@ impl From<OnsenQuality> for DieselChemical {
             match v {
                 Chemical::CO2 => self_.co2_ion = index + 7,
                 Chemical::FeIon(_) => self_.fe_ion = index + 7,
+                Chemical::AlIon => self_.al_ion = index + 7,
+                Chemical::CuIon => self_.cu_ion = index + 7,
                 Chemical::HIon => self_.h_ion = index + 7,
                 Chemical::IIon => self_.i_ion = index + 7,
                 Chemical::S => self_.s = index + 7,

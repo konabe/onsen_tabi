@@ -12,6 +12,8 @@ pub enum Chemical {
     SO4Ion,
     CO2,
     FeIon(u8), // 価数
+    AlIon,
+    CuIon,
     HIon,
     IIon,
     S,
@@ -36,7 +38,7 @@ impl Chemical {
 
     pub fn is_inclusion(&self) -> bool {
         match self {
-            CO2 | FeIon(_) | HIon | IIon | S | Rn => true,
+            CO2 | FeIon(_) | AlIon | CuIon | HIon | IIon | S | Rn => true,
             _ => false,
         }
     }
@@ -55,6 +57,8 @@ impl Chemical {
                 3 => "鉄（Ⅲ）",
                 _ => "鉄",
             },
+            AlIon => "アルミニウム",
+            CuIon => "銅",
             HIon => "酸性",
             IIon => "よう素",
             S => "硫黄",
