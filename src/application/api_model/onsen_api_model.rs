@@ -1,5 +1,9 @@
+use std::str::FromStr;
+
 use crate::domain::onsen::{
-    chemical::Chemical, onsen_entity::OnsenEntity, onsen_quality::OnsenQuality,
+    chemical::Chemical,
+    onsen_entity::{OnsenEntity, SpringLiquid},
+    onsen_quality::OnsenQuality,
 };
 use serde::{Deserialize, Serialize};
 
@@ -40,23 +44,23 @@ pub struct OnsenChemicalsRequestModel {
     pub is_weak_rn: bool,
 }
 
-impl From<OnsenChemicalsRequestModel> for OnsenQuality {
-    fn from(value: OnsenChemicalsRequestModel) -> Self {
+impl OnsenChemicalsRequestModel {
+    fn create(&self, liquid: Option<String>) -> OnsenQuality {
         let mut chemicals: Vec<(Chemical, u32)> = vec![
-            (Chemical::NaIon, value.na_ion),
-            (Chemical::CaIon, value.ca_ion),
-            (Chemical::MgIon, value.mg_ion),
-            (Chemical::ClIon, value.cl_ion),
-            (Chemical::HCO3Ion, value.hco3_ion),
-            (Chemical::SO4Ion, value.so4_ion),
-            (Chemical::CO2, value.co2_ion),
-            (Chemical::FeIon(2), value.fe_ion),
-            (Chemical::AlIon, value.al_ion),
-            (Chemical::CuIon, value.cu_ion),
-            (Chemical::HIon, value.h_ion),
-            (Chemical::IIon, value.i_ion),
-            (Chemical::S, value.s),
-            (Chemical::Rn, value.rn),
+            (Chemical::NaIon, self.na_ion),
+            (Chemical::CaIon, self.ca_ion),
+            (Chemical::MgIon, self.mg_ion),
+            (Chemical::ClIon, self.cl_ion),
+            (Chemical::HCO3Ion, self.hco3_ion),
+            (Chemical::SO4Ion, self.so4_ion),
+            (Chemical::CO2, self.co2_ion),
+            (Chemical::FeIon(2), self.fe_ion),
+            (Chemical::AlIon, self.al_ion),
+            (Chemical::CuIon, self.cu_ion),
+            (Chemical::HIon, self.h_ion),
+            (Chemical::IIon, self.i_ion),
+            (Chemical::S, self.s),
+            (Chemical::Rn, self.rn),
         ]
         .into_iter()
         .filter(|(_, value)| *value > 0)
@@ -66,18 +70,22 @@ impl From<OnsenChemicalsRequestModel> for OnsenQuality {
             .into_iter()
             .map(|(chemical, _)| chemical)
             .collect();
-        Self::new(
+        let liquid = liquid.and_then(|v| SpringLiquid::from_str(v.as_str()).ok());
+        OnsenQuality::new(
             &chemicals_values,
-            None,
-            value.is_strong_na_cl,
-            value.is_weak_rn,
+            liquid,
+            self.is_strong_na_cl,
+            self.is_weak_rn,
         )
     }
 }
 
 impl OnsenRequest {
     pub fn create_entity(&self, id: u32) -> Option<OnsenEntity> {
-        let quality = self.chemicals.clone().map(|v| OnsenQuality::from(v));
+        let quality = self
+            .chemicals
+            .clone()
+            .map(|v| v.create(self.liquid.clone()));
         OnsenEntity::new(
             id,
             self.name.as_str(),
