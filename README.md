@@ -18,6 +18,14 @@ diesel migration generate {name}
 diesel migration run
 ```
 
+## Docker
+
+```
+docker build --no-cache --tag app-hello-rocket:latest .
+docker run --rm --env DATABASE_URL="" --env JWT_SECRET_KEY="" --publish 8000:8000 --name app-local app-hello-rocket:latest
+
+```
+
 ## テストカバレッジ
 
 ![sunburst](https://codecov.io/gh/konabe/onsen_tabi/graphs/sunburst.svg?token=WRRRJTB2BE)
