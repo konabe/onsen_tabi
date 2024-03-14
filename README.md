@@ -18,6 +18,14 @@ diesel migration generate {name}
 diesel migration run
 ```
 
+## Docker
+
+```
+docker build --no-cache --tag konabe/onsen_tabi:latest .
+docker run --rm --env DATABASE_URL="" --env JWT_SECRET_KEY="" --publish 8000:8000 --name web_server konabe/onsen_tabi:latest
+
+```
+
 ## テストカバレッジ
 
 ![sunburst](https://codecov.io/gh/konabe/onsen_tabi/graphs/sunburst.svg?token=WRRRJTB2BE)
