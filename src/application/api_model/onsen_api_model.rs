@@ -11,8 +11,8 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "camelCase")]
 pub struct OnsenRequest {
     pub name: String,
-    pub spring_quality: String,
     pub chemicals: Option<OnsenChemicalsRequestModel>,
+    pub other_spring_quality: String,
     pub liquid: Option<String>,
     pub osmotic_pressure: Option<String>,
     pub temperature: Option<String>,
@@ -90,7 +90,7 @@ impl OnsenRequest {
             id,
             self.name.as_str(),
             quality,
-            self.spring_quality.as_str(),
+            self.other_spring_quality.as_str(),
             self.liquid.as_deref(),
             self.osmotic_pressure.as_deref(),
             self.temperature.as_deref(),
@@ -108,8 +108,8 @@ impl OnsenRequest {
 pub struct OnsenResponse {
     pub id: u32,
     pub name: String,
-    pub spring_quality: String,
     pub quality: Option<OnsenQualityResponseModel>,
+    pub other_spring_quality: String,
     pub liquid: Option<String>,
     pub osmotic_pressure: Option<String>,
     pub temperature: Option<String>,
@@ -134,13 +134,13 @@ impl From<OnsenEntity> for OnsenResponse {
         Self {
             id: value.id,
             name: value.name.clone(),
-            spring_quality: value.spring_quality.clone(),
             quality: value.quality.map(|v| OnsenQualityResponseModel {
                 name: v.to_string(),
                 chemicals: v.to_string_vec(),
                 is_strong_na_cl: v.is_strong_na_cl,
                 is_weak_rn: v.is_weak_rn,
             }),
+            other_spring_quality: value.spring_quality.clone(),
             liquid: value.liquid.as_ref().map(|v| v.to_string()),
             osmotic_pressure: value.osmotic_pressure.as_ref().map(|v| v.to_string()),
             temperature: value.temperature.as_ref().map(|v| v.to_string()),
@@ -164,7 +164,6 @@ mod tests {
     fn test_onsen_request_create_entity() {
         let request = OnsenRequest {
             name: "元禄の湯".to_string(),
-            spring_quality: "温泉法の温泉".to_string(),
             chemicals: Some(OnsenChemicalsRequestModel {
                 na_ion: 2,
                 ca_ion: 1,
@@ -183,6 +182,7 @@ mod tests {
                 is_strong_na_cl: false,
                 is_weak_rn: false,
             }),
+            other_spring_quality: "温泉法の温泉".to_string(),
             liquid: Some("neutral".to_string()),
             osmotic_pressure: Some("hypotonic".to_string()),
             temperature: Some("hot".to_string()),
@@ -214,7 +214,6 @@ mod tests {
     fn test_onsen_request_create_entity_if_data_is_not_migrated() {
         let request = OnsenRequest {
             name: "元禄の湯".to_string(),
-            spring_quality: "温泉法の温泉".to_string(),
             chemicals: Some(OnsenChemicalsRequestModel {
                 // 元々は含まれていれば1, そうでなければ0というデータが入っていた
                 na_ion: 1,
@@ -234,6 +233,7 @@ mod tests {
                 is_strong_na_cl: false,
                 is_weak_rn: false,
             }),
+            other_spring_quality: "温泉法の温泉".to_string(),
             liquid: Some("neutral".to_string()),
             osmotic_pressure: Some("hypotonic".to_string()),
             temperature: Some("hot".to_string()),
