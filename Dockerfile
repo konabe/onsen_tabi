@@ -18,7 +18,7 @@ RUN yum install -y git gcc
 RUN yum install -y --enablerepo=mysql80-community mysql-community-client mysql-community-devel
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN $HOME/.cargo/bin/rustup show
-RUN cargo install diesel_cli --no-default-features --features "mysql"
+RUN $HOME/.cargo/bin/cargo install diesel_cli --no-default-features --features "mysql"
 COPY --from=build-env /app/target/release/onsen_tabi ./onsen_tabi
 COPY startup.sh /startup.sh
 ENV ROCKET_ADDRESS=0.0.0.0
