@@ -1,6 +1,13 @@
 use strum_macros::{Display, EnumString};
 use Chemical::*;
 
+#[derive(Display, PartialEq, Clone, Debug, Default)]
+pub enum RnType {
+    Weak,
+    #[default]
+    Normal,
+}
+
 #[allow(dead_code)]
 #[derive(Display, PartialEq, Clone, EnumString, Debug)]
 pub enum Chemical {
@@ -17,7 +24,7 @@ pub enum Chemical {
     HIon,
     IIon,
     S,
-    Rn,
+    Rn(RnType),
 }
 
 impl Chemical {
@@ -38,7 +45,7 @@ impl Chemical {
 
     pub fn is_inclusion(&self) -> bool {
         match self {
-            CO2 | FeIon(_) | AlIon | CuIon | HIon | IIon | S | Rn => true,
+            CO2 | FeIon(_) | AlIon | CuIon | HIon | IIon | S | Rn(_) => true,
             _ => false,
         }
     }
@@ -62,7 +69,10 @@ impl Chemical {
             HIon => "酸性",
             IIon => "よう素",
             S => "硫黄",
-            Rn => "放射能",
+            Rn(rn_type) => match rn_type {
+                RnType::Weak => "弱放射能",
+                RnType::Normal => "放射能",
+            },
         };
         str.to_string()
     }

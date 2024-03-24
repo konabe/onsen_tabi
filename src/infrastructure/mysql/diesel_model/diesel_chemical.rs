@@ -1,5 +1,5 @@
 use crate::domain::onsen::onsen_quality::OnsenQuality;
-use crate::domain::onsen::{chemical::Chemical, onsen_entity::SpringLiquid};
+use crate::domain::onsen::{chemical::Chemical, chemical::RnType, onsen_entity::SpringLiquid};
 use diesel::{Identifiable, Insertable, Queryable, Selectable};
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Debug, Clone)]
@@ -26,6 +26,11 @@ pub struct DieselChemical {
 
 impl DieselChemical {
     pub fn create(&self, liquid: Option<SpringLiquid>) -> OnsenQuality {
+        let rn_type: RnType = if self.weak_rn {
+            RnType::Weak
+        } else {
+            RnType::Normal
+        };
         let mut chemicals: Vec<(Chemical, u32)> = vec![
             (Chemical::NaIon, self.na_ion),
             (Chemical::CaIon, self.ca_ion),
@@ -40,7 +45,7 @@ impl DieselChemical {
             (Chemical::HIon, self.h_ion),
             (Chemical::IIon, self.i_ion),
             (Chemical::S, self.s),
-            (Chemical::Rn, self.rn),
+            (Chemical::Rn(rn_type), self.rn),
         ]
         .into_iter()
         .filter(|(_, value)| *value > 0)
@@ -50,7 +55,7 @@ impl DieselChemical {
             .into_iter()
             .map(|(chemical, _)| chemical)
             .collect();
-        OnsenQuality::new(&chemicals_values, liquid, self.strong_na_cl, self.weak_rn)
+        OnsenQuality::new(&chemicals_values, liquid, self.strong_na_cl)
     }
 }
 
@@ -73,7 +78,7 @@ impl From<OnsenQuality> for DieselChemical {
             s: 0,
             rn: 0,
             strong_na_cl: value.is_strong_na_cl,
-            weak_rn: value.is_weak_rn,
+            weak_rn: value.is_weak_rn(),
         };
         for (i, v) in value.cations.iter().enumerate() {
             let index = i as u32;
@@ -103,7 +108,7 @@ impl From<OnsenQuality> for DieselChemical {
                 Chemical::HIon => self_.h_ion = index + 7,
                 Chemical::IIon => self_.i_ion = index + 7,
                 Chemical::S => self_.s = index + 7,
-                Chemical::Rn => self_.rn = index + 7,
+                Chemical::Rn(_) => self_.rn = index + 7,
                 _ => (),
             }
         }
