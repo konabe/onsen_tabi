@@ -1,4 +1,4 @@
-use crate::application::api_model::onsen_api_model::OnsenResponse;
+use crate::application::api_model::onsen_response::OnsenResponse;
 use crate::domain::hotel_entity::HotelEntity;
 use serde::{Deserialize, Serialize};
 
