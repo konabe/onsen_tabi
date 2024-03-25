@@ -10,13 +10,16 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  AWS_REGION: ap-northeast-1
+  AWS_ROLE_ARN: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/onsen-tabi-github-actions-runner
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
       - name: Build
         run: cargo build --verbose
       - name: Run tests
@@ -37,10 +40,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: test
+    permissions:
+      id-token: write
+      contents: read
     if: github.ref == 'refs/heads/main'
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to Docker Hub
@@ -53,3 +59,10 @@ jobs:
         with:
           push: true
           tags: konabe/onsen_tabi:latest
+      - name: Configure AWS credentials from IAM Role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Start
+        run: aws autoscaling start-instance-refresh --auto-scaling-group-name onsen-tabi-web-auto-scaling
