@@ -35,7 +35,7 @@ impl From<OnsenEntity> for OnsenResponse {
             quality: value.quality.map(|v| OnsenQualityResponseModel {
                 name: v.to_string(),
                 chemicals: v.to_string_vec(),
-                is_strong_na_cl: v.is_strong_na_cl,
+                is_strong_na_cl: v.is_strong_na_cl(),
                 is_weak_rn: v.is_weak_rn(),
             }),
             other_spring_quality: value.spring_quality.clone(),

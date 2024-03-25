@@ -1,3 +1,4 @@
+use crate::domain::onsen::chemical::ClType;
 use crate::domain::onsen::onsen_quality::OnsenQuality;
 use crate::domain::onsen::{chemical::Chemical, chemical::RnType, onsen_entity::SpringLiquid};
 use diesel::{Identifiable, Insertable, Queryable, Selectable};
@@ -26,6 +27,11 @@ pub struct DieselChemical {
 
 impl DieselChemical {
     pub fn create(&self, liquid: Option<SpringLiquid>) -> OnsenQuality {
+        let cl_type: ClType = if self.strong_na_cl {
+            ClType::Strong
+        } else {
+            ClType::Normal
+        };
         let rn_type: RnType = if self.weak_rn {
             RnType::Weak
         } else {
@@ -35,7 +41,7 @@ impl DieselChemical {
             (Chemical::NaIon, self.na_ion),
             (Chemical::CaIon, self.ca_ion),
             (Chemical::MgIon, self.mg_ion),
-            (Chemical::ClIon, self.cl_ion),
+            (Chemical::ClIon(cl_type), self.cl_ion),
             (Chemical::HCO3Ion, self.hco3_ion),
             (Chemical::SO4Ion, self.so4_ion),
             (Chemical::CO2, self.co2_ion),
@@ -55,7 +61,7 @@ impl DieselChemical {
             .into_iter()
             .map(|(chemical, _)| chemical)
             .collect();
-        OnsenQuality::new(&chemicals_values, liquid, self.strong_na_cl)
+        OnsenQuality::new(&chemicals_values, liquid)
     }
 }
 
@@ -77,7 +83,7 @@ impl From<OnsenQuality> for DieselChemical {
             i_ion: 0,
             s: 0,
             rn: 0,
-            strong_na_cl: value.is_strong_na_cl,
+            strong_na_cl: value.is_strong_na_cl(),
             weak_rn: value.is_weak_rn(),
         };
         for (i, v) in value.cations.iter().enumerate() {
@@ -92,7 +98,7 @@ impl From<OnsenQuality> for DieselChemical {
         for (i, v) in value.anions.iter().enumerate() {
             let index = i as u32;
             match v {
-                Chemical::ClIon => self_.cl_ion = index + 4,
+                Chemical::ClIon(_) => self_.cl_ion = index + 4,
                 Chemical::HCO3Ion => self_.hco3_ion = index + 4,
                 Chemical::SO4Ion => self_.so4_ion = index + 4,
                 _ => (),

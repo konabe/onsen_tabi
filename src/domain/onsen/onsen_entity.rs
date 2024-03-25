@@ -119,7 +119,7 @@ mod tests {
     use crate::domain::onsen::onsen_quality::OnsenQuality;
 
     const COMMON_ONSEN_QUALITY: Lazy<OnsenQuality> =
-        Lazy::new(|| OnsenQuality::new(&vec![NaIon, CaIon, SO4Ion], None, false));
+        Lazy::new(|| OnsenQuality::new(&vec![NaIon, CaIon, SO4Ion], None));
 
     #[test]
     fn new_test() {
