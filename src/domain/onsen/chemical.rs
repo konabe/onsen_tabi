@@ -2,10 +2,17 @@ use strum_macros::{Display, EnumString};
 use Chemical::*;
 
 #[derive(Display, PartialEq, Clone, Debug, Default)]
-pub enum RnType {
-    Weak,
+pub enum ClType {
     #[default]
     Normal,
+    Strong,
+}
+
+#[derive(Display, PartialEq, Clone, Debug, Default)]
+pub enum RnType {
+    #[default]
+    Normal,
+    Weak,
 }
 
 #[allow(dead_code)]
@@ -14,7 +21,7 @@ pub enum Chemical {
     NaIon,
     CaIon,
     MgIon,
-    ClIon,
+    ClIon(ClType),
     HCO3Ion,
     SO4Ion,
     CO2,
@@ -38,7 +45,7 @@ impl Chemical {
 
     pub fn is_anion(&self) -> bool {
         match self {
-            ClIon | HCO3Ion | SO4Ion => true,
+            ClIon(_) | HCO3Ion | SO4Ion => true,
             _ => false,
         }
     }
@@ -55,7 +62,10 @@ impl Chemical {
             NaIon => "ナトリウム",
             CaIon => "カルシウム",
             MgIon => "マグネシウム",
-            ClIon => "塩化物",
+            ClIon(cl_type) => match cl_type {
+                ClType::Normal => "塩化物",
+                ClType::Strong => "塩化物強塩",
+            },
             HCO3Ion => "炭酸水素塩",
             SO4Ion => "硫酸塩",
             CO2 => "二酸化炭素",
@@ -70,8 +80,8 @@ impl Chemical {
             IIon => "よう素",
             S => "硫黄",
             Rn(rn_type) => match rn_type {
-                RnType::Weak => "弱放射能",
                 RnType::Normal => "放射能",
+                RnType::Weak => "弱放射能",
             },
         };
         str.to_string()
@@ -80,19 +90,19 @@ impl Chemical {
 
 #[cfg(test)]
 mod tests {
-    use crate::domain::onsen::chemical::Chemical::*;
+    use crate::domain::onsen::chemical::{Chemical::*, ClType};
 
     #[test]
     fn test_is_cation() {
         assert!(NaIon.is_cation());
         assert!(CaIon.is_cation());
         assert!(MgIon.is_cation());
-        assert!(!ClIon.is_cation());
+        assert!(!ClIon(ClType::Normal).is_cation());
     }
 
     #[test]
     fn test_is_anion() {
-        assert!(ClIon.is_anion());
+        assert!(ClIon(ClType::Normal).is_anion());
         assert!(HCO3Ion.is_anion());
         assert!(SO4Ion.is_anion());
         assert!(!NaIon.is_anion());

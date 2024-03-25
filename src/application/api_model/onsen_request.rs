@@ -2,7 +2,7 @@ use serde::Deserialize;
 use std::str::FromStr;
 
 use crate::domain::onsen::{
-    chemical::{Chemical, RnType},
+    chemical::{Chemical, ClType, RnType},
     onsen_entity::{OnsenEntity, SpringLiquid},
     onsen_quality::OnsenQuality,
 };
@@ -46,6 +46,11 @@ pub struct OnsenChemicalsRequestModel {
 
 impl OnsenChemicalsRequestModel {
     fn create(&self, liquid: Option<String>) -> OnsenQuality {
+        let cl_type: ClType = if self.is_strong_na_cl {
+            ClType::Strong
+        } else {
+            ClType::Normal
+        };
         let rn_type: RnType = if self.is_weak_rn {
             RnType::Weak
         } else {
@@ -55,7 +60,7 @@ impl OnsenChemicalsRequestModel {
             (Chemical::NaIon, self.na_ion),
             (Chemical::CaIon, self.ca_ion),
             (Chemical::MgIon, self.mg_ion),
-            (Chemical::ClIon, self.cl_ion),
+            (Chemical::ClIon(cl_type), self.cl_ion),
             (Chemical::HCO3Ion, self.hco3_ion),
             (Chemical::SO4Ion, self.so4_ion),
             (Chemical::CO2, self.co2_ion),
@@ -76,7 +81,7 @@ impl OnsenChemicalsRequestModel {
             .map(|(chemical, _)| chemical)
             .collect();
         let liquid = liquid.and_then(|v| SpringLiquid::from_str(v.as_str()).ok());
-        OnsenQuality::new(&chemicals_values, liquid, self.is_strong_na_cl)
+        OnsenQuality::new(&chemicals_values, liquid)
     }
 }
 
@@ -107,7 +112,7 @@ impl OnsenRequest {
 mod tests {
     use crate::{
         application::api_model::onsen_request::{OnsenChemicalsRequestModel, OnsenRequest},
-        domain::onsen::chemical::{Chemical, RnType},
+        domain::onsen::chemical::{Chemical, ClType, RnType},
     };
 
     #[test]
@@ -147,7 +152,10 @@ mod tests {
         assert_eq!(entity.name, "元禄の湯");
         let quality = entity.quality.clone().unwrap();
         assert_eq!(quality.cations, vec![Chemical::CaIon, Chemical::NaIon]);
-        assert_eq!(quality.anions, vec![Chemical::HCO3Ion, Chemical::ClIon]);
+        assert_eq!(
+            quality.anions,
+            vec![Chemical::HCO3Ion, Chemical::ClIon(ClType::Normal)]
+        );
         assert_eq!(quality.inclusions, vec![Chemical::FeIon(2)]);
         assert_eq!(entity.spring_quality, "温泉法の温泉");
         assert_eq!(
@@ -195,7 +203,10 @@ mod tests {
         let entity = request.create_entity(1).unwrap();
         let quality = entity.quality.clone().unwrap();
         assert_eq!(quality.cations, vec![Chemical::CaIon, Chemical::NaIon]);
-        assert_eq!(quality.anions, vec![Chemical::HCO3Ion, Chemical::ClIon]);
+        assert_eq!(
+            quality.anions,
+            vec![Chemical::HCO3Ion, Chemical::ClIon(ClType::Normal)]
+        );
         assert_eq!(
             quality.inclusions,
             vec![Chemical::FeIon(2), Chemical::Rn(RnType::Weak)]
@@ -242,7 +253,10 @@ mod tests {
         let entity = request.create_entity(1).unwrap();
         let quality = entity.quality.clone().unwrap();
         assert_eq!(quality.cations, vec![Chemical::CaIon, Chemical::NaIon]);
-        assert_eq!(quality.anions, vec![Chemical::HCO3Ion, Chemical::ClIon]);
+        assert_eq!(
+            quality.anions,
+            vec![Chemical::HCO3Ion, Chemical::ClIon(ClType::Normal)]
+        );
         assert_eq!(
             quality.inclusions,
             vec![Chemical::FeIon(2), Chemical::Rn(RnType::Normal)]
@@ -292,7 +306,10 @@ mod tests {
         assert_eq!(entity.name, "元禄の湯");
         let quality = entity.quality.clone().unwrap();
         assert_eq!(quality.cations, vec![Chemical::NaIon, Chemical::CaIon]);
-        assert_eq!(quality.anions, vec![Chemical::ClIon, Chemical::HCO3Ion]);
+        assert_eq!(
+            quality.anions,
+            vec![Chemical::ClIon(ClType::Normal), Chemical::HCO3Ion]
+        );
         assert_eq!(quality.inclusions, vec![Chemical::FeIon(2)]);
         assert_eq!(entity.spring_quality, "温泉法の温泉");
         assert_eq!(
