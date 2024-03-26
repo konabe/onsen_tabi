@@ -377,6 +377,30 @@ mod tests {
     }
 
     #[test]
+    fn test_is_fe_type_normal() {
+        let quality = OnsenQuality::new(&vec![FeIon(FeType::Normal)], None);
+        assert_eq!(quality.fe_type(), "Normal".to_string());
+    }
+
+    #[test]
+    fn test_is_fe_type_two() {
+        let quality = OnsenQuality::new(&vec![FeIon(FeType::Two)], None);
+        assert_eq!(quality.fe_type(), "Two".to_string());
+    }
+
+    #[test]
+    fn test_is_fe_type_three() {
+        let quality = OnsenQuality::new(&vec![FeIon(FeType::Three)], None);
+        assert_eq!(quality.fe_type(), "Three".to_string());
+    }
+
+    #[test]
+    fn test_is_fe_type_nothing() {
+        let quality = OnsenQuality::new(&vec![], None);
+        assert_eq!(quality.fe_type(), "".to_string());
+    }
+
+    #[test]
     fn test_is_weak_rn() {
         let quality = OnsenQuality::new(&vec![Rn(RnType::Weak)], None);
         assert_eq!(quality.is_weak_rn(), true);
