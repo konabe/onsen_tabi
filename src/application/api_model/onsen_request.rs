@@ -2,7 +2,7 @@ use serde::Deserialize;
 use std::str::FromStr;
 
 use crate::domain::onsen::{
-    chemical::{Chemical, ClType, RnType},
+    chemical::{Chemical, ClType, FeType, RnType},
     onsen_entity::{OnsenEntity, SpringLiquid},
     onsen_quality::OnsenQuality,
 };
@@ -41,6 +41,7 @@ pub struct OnsenChemicalsRequestModel {
     pub s: u32,
     pub rn: u32,
     pub is_strong_na_cl: bool,
+    pub fe_type: String,
     pub is_weak_rn: bool,
 }
 
@@ -50,6 +51,13 @@ impl OnsenChemicalsRequestModel {
             ClType::Strong
         } else {
             ClType::Normal
+        };
+        let fe_type: FeType = if self.fe_type == "Two" {
+            FeType::Two
+        } else if self.fe_type == "Three" {
+            FeType::Three
+        } else {
+            FeType::Normal
         };
         let rn_type: RnType = if self.is_weak_rn {
             RnType::Weak
@@ -64,7 +72,7 @@ impl OnsenChemicalsRequestModel {
             (Chemical::HCO3Ion, self.hco3_ion),
             (Chemical::SO4Ion, self.so4_ion),
             (Chemical::CO2, self.co2_ion),
-            (Chemical::FeIon(2), self.fe_ion),
+            (Chemical::FeIon(fe_type), self.fe_ion),
             (Chemical::AlIon, self.al_ion),
             (Chemical::CuIon, self.cu_ion),
             (Chemical::HIon, self.h_ion),
@@ -112,7 +120,7 @@ impl OnsenRequest {
 mod tests {
     use crate::{
         application::api_model::onsen_request::{OnsenChemicalsRequestModel, OnsenRequest},
-        domain::onsen::chemical::{Chemical, ClType, RnType},
+        domain::onsen::chemical::{Chemical, ClType, FeType, RnType},
     };
 
     #[test]
@@ -135,6 +143,7 @@ mod tests {
                 s: 0,
                 rn: 0,
                 is_strong_na_cl: false,
+                fe_type: "Two".to_string(),
                 is_weak_rn: false,
             }),
             other_spring_quality: "温泉法の温泉".to_string(),
@@ -156,7 +165,7 @@ mod tests {
             quality.anions,
             vec![Chemical::HCO3Ion, Chemical::ClIon(ClType::Normal)]
         );
-        assert_eq!(quality.inclusions, vec![Chemical::FeIon(2)]);
+        assert_eq!(quality.inclusions, vec![Chemical::FeIon(FeType::Two)]);
         assert_eq!(entity.spring_quality, "温泉法の温泉");
         assert_eq!(
             entity.quality.unwrap().to_string(),
@@ -188,6 +197,7 @@ mod tests {
                 s: 0,
                 rn: 8,
                 is_strong_na_cl: false,
+                fe_type: "Two".to_string(),
                 is_weak_rn: true,
             }),
             other_spring_quality: "温泉法の温泉".to_string(),
@@ -209,7 +219,7 @@ mod tests {
         );
         assert_eq!(
             quality.inclusions,
-            vec![Chemical::FeIon(2), Chemical::Rn(RnType::Weak)]
+            vec![Chemical::FeIon(FeType::Two), Chemical::Rn(RnType::Weak)]
         );
         assert_eq!(entity.spring_quality, "温泉法の温泉");
         assert_eq!(
@@ -238,6 +248,7 @@ mod tests {
                 s: 0,
                 rn: 8,
                 is_strong_na_cl: false,
+                fe_type: "Two".to_string(),
                 is_weak_rn: false,
             }),
             other_spring_quality: "温泉法の温泉".to_string(),
@@ -259,7 +270,7 @@ mod tests {
         );
         assert_eq!(
             quality.inclusions,
-            vec![Chemical::FeIon(2), Chemical::Rn(RnType::Normal)]
+            vec![Chemical::FeIon(FeType::Two), Chemical::Rn(RnType::Normal)]
         );
         assert_eq!(entity.spring_quality, "温泉法の温泉");
         assert_eq!(
@@ -289,6 +300,7 @@ mod tests {
                 s: 0,
                 rn: 0,
                 is_strong_na_cl: false,
+                fe_type: "Two".to_string(),
                 is_weak_rn: false,
             }),
             other_spring_quality: "温泉法の温泉".to_string(),
@@ -310,7 +322,7 @@ mod tests {
             quality.anions,
             vec![Chemical::ClIon(ClType::Normal), Chemical::HCO3Ion]
         );
-        assert_eq!(quality.inclusions, vec![Chemical::FeIon(2)]);
+        assert_eq!(quality.inclusions, vec![Chemical::FeIon(FeType::Two)]);
         assert_eq!(entity.spring_quality, "温泉法の温泉");
         assert_eq!(
             entity.quality.unwrap().to_string(),

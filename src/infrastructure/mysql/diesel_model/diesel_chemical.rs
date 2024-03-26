@@ -1,4 +1,4 @@
-use crate::domain::onsen::chemical::ClType;
+use crate::domain::onsen::chemical::{ClType, FeType};
 use crate::domain::onsen::onsen_quality::OnsenQuality;
 use crate::domain::onsen::{chemical::Chemical, chemical::RnType, onsen_entity::SpringLiquid};
 use diesel::{Identifiable, Insertable, Queryable, Selectable};
@@ -22,6 +22,7 @@ pub struct DieselChemical {
     pub s: u32,
     pub rn: u32,
     pub strong_na_cl: bool,
+    pub fe_type: String,
     pub weak_rn: bool,
 }
 
@@ -31,6 +32,13 @@ impl DieselChemical {
             ClType::Strong
         } else {
             ClType::Normal
+        };
+        let fe_type: FeType = if self.fe_type == "Two".to_string() {
+            FeType::Two
+        } else if self.fe_type == "Three".to_string() {
+            FeType::Three
+        } else {
+            FeType::Normal
         };
         let rn_type: RnType = if self.weak_rn {
             RnType::Weak
@@ -45,7 +53,7 @@ impl DieselChemical {
             (Chemical::HCO3Ion, self.hco3_ion),
             (Chemical::SO4Ion, self.so4_ion),
             (Chemical::CO2, self.co2_ion),
-            (Chemical::FeIon(2), self.fe_ion),
+            (Chemical::FeIon(fe_type), self.fe_ion),
             (Chemical::AlIon, self.al_ion),
             (Chemical::CuIon, self.cu_ion),
             (Chemical::HIon, self.h_ion),
@@ -84,6 +92,7 @@ impl From<OnsenQuality> for DieselChemical {
             s: 0,
             rn: 0,
             strong_na_cl: value.is_strong_na_cl(),
+            fe_type: value.fe_type(),
             weak_rn: value.is_weak_rn(),
         };
         for (i, v) in value.cations.iter().enumerate() {

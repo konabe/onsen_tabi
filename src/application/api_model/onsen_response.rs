@@ -24,6 +24,7 @@ pub struct OnsenQualityResponseModel {
     pub name: String,
     pub chemicals: Vec<String>,
     pub is_strong_na_cl: bool,
+    pub fe_type: String,
     pub is_weak_rn: bool,
 }
 
@@ -36,6 +37,7 @@ impl From<OnsenEntity> for OnsenResponse {
                 name: v.to_string(),
                 chemicals: v.to_string_vec(),
                 is_strong_na_cl: v.is_strong_na_cl(),
+                fe_type: v.fe_type(),
                 is_weak_rn: v.is_weak_rn(),
             }),
             other_spring_quality: value.spring_quality.clone(),
