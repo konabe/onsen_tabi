@@ -34,6 +34,8 @@ diesel::table! {
         s -> Unsigned<Integer>,
         rn -> Unsigned<Integer>,
         strong_na_cl -> Bool,
+        #[max_length = 255]
+        fe_type -> Varchar,
         weak_rn -> Bool,
     }
 }

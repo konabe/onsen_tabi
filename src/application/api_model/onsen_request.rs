@@ -2,7 +2,7 @@ use serde::Deserialize;
 use std::str::FromStr;
 
 use crate::domain::onsen::{
-    chemical::{Chemical, ClType, RnType},
+    chemical::{Chemical, ClType, FeType, RnType},
     onsen_entity::{OnsenEntity, SpringLiquid},
     onsen_quality::OnsenQuality,
 };
@@ -41,6 +41,7 @@ pub struct OnsenChemicalsRequestModel {
     pub s: u32,
     pub rn: u32,
     pub is_strong_na_cl: bool,
+    pub fe_type: String,
     pub is_weak_rn: bool,
 }
 
@@ -50,6 +51,13 @@ impl OnsenChemicalsRequestModel {
             ClType::Strong
         } else {
             ClType::Normal
+        };
+        let fe_type: FeType = if self.fe_type == "Two" {
+            FeType::Two
+        } else if self.fe_type == "Three" {
+            FeType::Three
+        } else {
+            FeType::Normal
         };
         let rn_type: RnType = if self.is_weak_rn {
             RnType::Weak
@@ -64,7 +72,7 @@ impl OnsenChemicalsRequestModel {
             (Chemical::HCO3Ion, self.hco3_ion),
             (Chemical::SO4Ion, self.so4_ion),
             (Chemical::CO2, self.co2_ion),
-            (Chemical::FeIon(2), self.fe_ion),
+            (Chemical::FeIon(fe_type), self.fe_ion),
             (Chemical::AlIon, self.al_ion),
             (Chemical::CuIon, self.cu_ion),
             (Chemical::HIon, self.h_ion),
@@ -112,7 +120,7 @@ impl OnsenRequest {
 mod tests {
     use crate::{
         application::api_model::onsen_request::{OnsenChemicalsRequestModel, OnsenRequest},
-        domain::onsen::chemical::{Chemical, ClType, RnType},
+        domain::onsen::chemical::{Chemical, ClType, FeType, RnType},
     };
 
     #[test]
@@ -135,6 +143,7 @@ mod tests {
                 s: 0,
                 rn: 0,
                 is_strong_na_cl: false,
+                fe_type: "Two".to_string(),
                 is_weak_rn: false,
             }),
             other_spring_quality: "温泉法の温泉".to_string(),
@@ -156,7 +165,7 @@ mod tests {
             quality.anions,
             vec![Chemical::HCO3Ion, Chemical::ClIon(ClType::Normal)]
         );
-        assert_eq!(quality.inclusions, vec![Chemical::FeIon(2)]);
+        assert_eq!(quality.inclusions, vec![Chemical::FeIon(FeType::Two)]);
         assert_eq!(entity.spring_quality, "温泉法の温泉");
         assert_eq!(
             entity.quality.unwrap().to_string(),
@@ -166,6 +175,198 @@ mod tests {
         assert_eq!(entity.url, "https://www.sekizenkan.co.jp/spa/#ank-spa1");
         assert_eq!(entity.img_url.unwrap(), "https://placehold.jp/150x150.png");
         assert_eq!(entity.description, "description");
+    }
+
+    #[test]
+    fn test_onsen_request_create_entity_na_cl_strong() {
+        let request = OnsenRequest {
+            name: "元禄の湯".to_string(),
+            chemicals: Some(OnsenChemicalsRequestModel {
+                na_ion: 2,
+                ca_ion: 1,
+                mg_ion: 0,
+                cl_ion: 5,
+                hco3_ion: 4,
+                so4_ion: 0,
+                co2_ion: 0,
+                fe_ion: 7,
+                al_ion: 0,
+                cu_ion: 0,
+                h_ion: 0,
+                i_ion: 0,
+                s: 0,
+                rn: 0,
+                is_strong_na_cl: true,
+                fe_type: "Two".to_string(),
+                is_weak_rn: false,
+            }),
+            other_spring_quality: "温泉法の温泉".to_string(),
+            liquid: Some("neutral".to_string()),
+            osmotic_pressure: Some("hypotonic".to_string()),
+            temperature: Some("hot".to_string()),
+            form: "uchiyu".to_string(),
+            is_day_use: true,
+            url: "https://www.sekizenkan.co.jp/spa/#ank-spa1".to_string(),
+            img_url: Some("https://placehold.jp/150x150.png".to_string()),
+            description: "description".to_string(),
+        };
+        let entity = request.create_entity(1).unwrap();
+        assert_eq!(entity.id, 1);
+        let quality = entity.quality.clone().unwrap();
+        assert_eq!(quality.cations, vec![Chemical::CaIon, Chemical::NaIon]);
+        assert_eq!(
+            quality.anions,
+            vec![Chemical::HCO3Ion, Chemical::ClIon(ClType::Strong)]
+        );
+        assert_eq!(quality.inclusions, vec![Chemical::FeIon(FeType::Two)]);
+        assert_eq!(
+            entity.quality.unwrap().to_string(),
+            "含鉄（Ⅱ）－カルシウム・ナトリウム－炭酸水素塩・塩化物強塩泉"
+        );
+    }
+
+    #[test]
+    fn test_onsen_request_create_entity_fe_type_normal() {
+        let request = OnsenRequest {
+            name: "元禄の湯".to_string(),
+            chemicals: Some(OnsenChemicalsRequestModel {
+                na_ion: 2,
+                ca_ion: 1,
+                mg_ion: 0,
+                cl_ion: 5,
+                hco3_ion: 4,
+                so4_ion: 0,
+                co2_ion: 0,
+                fe_ion: 7,
+                al_ion: 0,
+                cu_ion: 0,
+                h_ion: 0,
+                i_ion: 0,
+                s: 0,
+                rn: 0,
+                is_strong_na_cl: false,
+                fe_type: "Normal".to_string(),
+                is_weak_rn: false,
+            }),
+            other_spring_quality: "温泉法の温泉".to_string(),
+            liquid: Some("neutral".to_string()),
+            osmotic_pressure: Some("hypotonic".to_string()),
+            temperature: Some("hot".to_string()),
+            form: "uchiyu".to_string(),
+            is_day_use: true,
+            url: "https://www.sekizenkan.co.jp/spa/#ank-spa1".to_string(),
+            img_url: Some("https://placehold.jp/150x150.png".to_string()),
+            description: "description".to_string(),
+        };
+        let entity = request.create_entity(1).unwrap();
+        assert_eq!(entity.id, 1);
+        let quality = entity.quality.clone().unwrap();
+        assert_eq!(quality.cations, vec![Chemical::CaIon, Chemical::NaIon]);
+        assert_eq!(
+            quality.anions,
+            vec![Chemical::HCO3Ion, Chemical::ClIon(ClType::Normal)]
+        );
+        assert_eq!(quality.inclusions, vec![Chemical::FeIon(FeType::Normal)]);
+        assert_eq!(
+            entity.quality.unwrap().to_string(),
+            "含鉄－カルシウム・ナトリウム－炭酸水素塩・塩化物泉"
+        );
+    }
+
+    #[test]
+    fn test_onsen_request_create_entity_fe_type_two() {
+        let request = OnsenRequest {
+            name: "元禄の湯".to_string(),
+            chemicals: Some(OnsenChemicalsRequestModel {
+                na_ion: 2,
+                ca_ion: 1,
+                mg_ion: 0,
+                cl_ion: 5,
+                hco3_ion: 4,
+                so4_ion: 0,
+                co2_ion: 0,
+                fe_ion: 7,
+                al_ion: 0,
+                cu_ion: 0,
+                h_ion: 0,
+                i_ion: 0,
+                s: 0,
+                rn: 0,
+                is_strong_na_cl: false,
+                fe_type: "Two".to_string(),
+                is_weak_rn: false,
+            }),
+            other_spring_quality: "温泉法の温泉".to_string(),
+            liquid: Some("neutral".to_string()),
+            osmotic_pressure: Some("hypotonic".to_string()),
+            temperature: Some("hot".to_string()),
+            form: "uchiyu".to_string(),
+            is_day_use: true,
+            url: "https://www.sekizenkan.co.jp/spa/#ank-spa1".to_string(),
+            img_url: Some("https://placehold.jp/150x150.png".to_string()),
+            description: "description".to_string(),
+        };
+        let entity = request.create_entity(1).unwrap();
+        assert_eq!(entity.id, 1);
+        let quality = entity.quality.clone().unwrap();
+        assert_eq!(quality.cations, vec![Chemical::CaIon, Chemical::NaIon]);
+        assert_eq!(
+            quality.anions,
+            vec![Chemical::HCO3Ion, Chemical::ClIon(ClType::Normal)]
+        );
+        assert_eq!(quality.inclusions, vec![Chemical::FeIon(FeType::Two)]);
+        assert_eq!(
+            entity.quality.unwrap().to_string(),
+            "含鉄（Ⅱ）－カルシウム・ナトリウム－炭酸水素塩・塩化物泉"
+        );
+    }
+
+    #[test]
+    fn test_onsen_request_create_entity_fe_type_three() {
+        let request = OnsenRequest {
+            name: "元禄の湯".to_string(),
+            chemicals: Some(OnsenChemicalsRequestModel {
+                na_ion: 2,
+                ca_ion: 1,
+                mg_ion: 0,
+                cl_ion: 5,
+                hco3_ion: 4,
+                so4_ion: 0,
+                co2_ion: 0,
+                fe_ion: 7,
+                al_ion: 0,
+                cu_ion: 0,
+                h_ion: 0,
+                i_ion: 0,
+                s: 0,
+                rn: 0,
+                is_strong_na_cl: false,
+                fe_type: "Three".to_string(),
+                is_weak_rn: false,
+            }),
+            other_spring_quality: "温泉法の温泉".to_string(),
+            liquid: Some("neutral".to_string()),
+            osmotic_pressure: Some("hypotonic".to_string()),
+            temperature: Some("hot".to_string()),
+            form: "uchiyu".to_string(),
+            is_day_use: true,
+            url: "https://www.sekizenkan.co.jp/spa/#ank-spa1".to_string(),
+            img_url: Some("https://placehold.jp/150x150.png".to_string()),
+            description: "description".to_string(),
+        };
+        let entity = request.create_entity(1).unwrap();
+        assert_eq!(entity.id, 1);
+        let quality = entity.quality.clone().unwrap();
+        assert_eq!(quality.cations, vec![Chemical::CaIon, Chemical::NaIon]);
+        assert_eq!(
+            quality.anions,
+            vec![Chemical::HCO3Ion, Chemical::ClIon(ClType::Normal)]
+        );
+        assert_eq!(quality.inclusions, vec![Chemical::FeIon(FeType::Three)]);
+        assert_eq!(
+            entity.quality.unwrap().to_string(),
+            "含鉄（Ⅲ）－カルシウム・ナトリウム－炭酸水素塩・塩化物泉"
+        );
     }
 
     #[test]
@@ -188,6 +389,7 @@ mod tests {
                 s: 0,
                 rn: 8,
                 is_strong_na_cl: false,
+                fe_type: "Two".to_string(),
                 is_weak_rn: true,
             }),
             other_spring_quality: "温泉法の温泉".to_string(),
@@ -209,7 +411,7 @@ mod tests {
         );
         assert_eq!(
             quality.inclusions,
-            vec![Chemical::FeIon(2), Chemical::Rn(RnType::Weak)]
+            vec![Chemical::FeIon(FeType::Two), Chemical::Rn(RnType::Weak)]
         );
         assert_eq!(entity.spring_quality, "温泉法の温泉");
         assert_eq!(
@@ -238,6 +440,7 @@ mod tests {
                 s: 0,
                 rn: 8,
                 is_strong_na_cl: false,
+                fe_type: "Two".to_string(),
                 is_weak_rn: false,
             }),
             other_spring_quality: "温泉法の温泉".to_string(),
@@ -259,7 +462,7 @@ mod tests {
         );
         assert_eq!(
             quality.inclusions,
-            vec![Chemical::FeIon(2), Chemical::Rn(RnType::Normal)]
+            vec![Chemical::FeIon(FeType::Two), Chemical::Rn(RnType::Normal)]
         );
         assert_eq!(entity.spring_quality, "温泉法の温泉");
         assert_eq!(
@@ -289,6 +492,7 @@ mod tests {
                 s: 0,
                 rn: 0,
                 is_strong_na_cl: false,
+                fe_type: "Two".to_string(),
                 is_weak_rn: false,
             }),
             other_spring_quality: "温泉法の温泉".to_string(),
@@ -310,7 +514,7 @@ mod tests {
             quality.anions,
             vec![Chemical::ClIon(ClType::Normal), Chemical::HCO3Ion]
         );
-        assert_eq!(quality.inclusions, vec![Chemical::FeIon(2)]);
+        assert_eq!(quality.inclusions, vec![Chemical::FeIon(FeType::Two)]);
         assert_eq!(entity.spring_quality, "温泉法の温泉");
         assert_eq!(
             entity.quality.unwrap().to_string(),

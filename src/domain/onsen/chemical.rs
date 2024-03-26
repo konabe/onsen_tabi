@@ -9,6 +9,14 @@ pub enum ClType {
 }
 
 #[derive(Display, PartialEq, Clone, Debug, Default)]
+pub enum FeType {
+    #[default]
+    Normal,
+    Two,
+    Three,
+}
+
+#[derive(Display, PartialEq, Clone, Debug, Default)]
 pub enum RnType {
     #[default]
     Normal,
@@ -25,7 +33,7 @@ pub enum Chemical {
     HCO3Ion,
     SO4Ion,
     CO2,
-    FeIon(u8), // 価数
+    FeIon(FeType), // 価数
     AlIon,
     CuIon,
     HIon,
@@ -70,9 +78,9 @@ impl Chemical {
             SO4Ion => "硫酸塩",
             CO2 => "二酸化炭素",
             FeIon(valence) => match valence {
-                2 => "鉄（Ⅱ）",
-                3 => "鉄（Ⅲ）",
-                _ => "鉄",
+                FeType::Normal => "鉄",
+                FeType::Two => "鉄（Ⅱ）",
+                FeType::Three => "鉄（Ⅲ）",
             },
             AlIon => "アルミニウム",
             CuIon => "銅",

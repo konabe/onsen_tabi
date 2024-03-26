@@ -77,6 +77,7 @@ pub fn put_onsen(onsen_entity: OnsenEntity) -> () {
                         chemicals::dsl::s.eq(updated_chemicals.s),
                         chemicals::dsl::rn.eq(updated_chemicals.rn),
                         chemicals::dsl::strong_na_cl.eq(updated_chemicals.strong_na_cl),
+                        chemicals::dsl::fe_type.eq(updated_chemicals.fe_type),
                         chemicals::dsl::weak_rn.eq(updated_chemicals.weak_rn),
                     ))
                     .execute(connection)
