@@ -63,6 +63,7 @@ pub fn put_hotel(hotel_entity: HotelEntity) -> () {
         .set((
             hotel::dsl::name.eq(updated_hotel.name),
             hotel::dsl::has_washitsu.eq(updated_hotel.has_washitsu),
+            hotel::dsl::solo_available.eq(updated_hotel.solo_available),
             hotel::dsl::description.eq(updated_hotel.description),
             hotel::dsl::url.eq(updated_hotel.url),
         ))

@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 pub struct HotelRequest {
     pub name: String,
     pub has_washitsu: bool,
+    pub solo_available: bool,
     pub url: String,
     pub description: String,
 }
@@ -17,6 +18,7 @@ impl HotelRequest {
             id,
             self.name.as_str(),
             self.has_washitsu,
+            self.solo_available,
             self.url.as_str(),
             self.description.as_str(),
             &vec![],
@@ -30,6 +32,7 @@ pub struct HotelResponse {
     pub id: i32,
     pub name: String,
     pub has_washitsu: bool,
+    pub solo_available: bool,
     pub url: String,
     pub description: String,
     pub onsens: Vec<OnsenResponse>,
@@ -41,6 +44,7 @@ impl From<HotelEntity> for HotelResponse {
             id: value.id as i32,
             name: value.name.to_string(),
             has_washitsu: value.has_washitsu,
+            solo_available: value.solo_available,
             url: value.url,
             description: value.description,
             onsens: value
