@@ -1,7 +1,7 @@
 use super::request_guard::ValidatedUser;
 use crate::application::api_model::onsen_request::OnsenRequest;
 use crate::application::api_model::onsen_response::*;
-use crate::infrastructure::repository::onsen_repository;
+use crate::infrastructure::repository::{area_repository, onsen_repository};
 use rocket::http::Status;
 use rocket::serde::json::Json;
 
@@ -12,7 +12,7 @@ pub fn get_onsens(area_id: Option<String>, hotel_id: Option<String>) -> Json<Vec
     let onsens = onsen_repository::get_onsens(area_id, hotel_id);
     let response = onsens
         .iter()
-        .map(|v| OnsenResponse::from(v.clone()))
+        .map(|v| OnsenResponse::create(v.clone(), None))
         .collect();
     Json(response)
 }
@@ -21,7 +21,13 @@ pub fn get_onsens(area_id: Option<String>, hotel_id: Option<String>) -> Json<Vec
 pub fn get_onsen(onsen_id: u32) -> Result<Json<OnsenResponse>, Status> {
     let onsen = onsen_repository::get_onsen(onsen_id);
     match onsen {
-        Some(onsen) => Ok(Json(OnsenResponse::from(onsen.clone()))),
+        Some(onsen) => match onsen.area_id {
+            Some(area_id) => {
+                let area = area_repository::get_area(area_id);
+                Ok(Json(OnsenResponse::create(onsen, area)))
+            }
+            None => Ok(Json(OnsenResponse::create(onsen, None))),
+        },
         None => Err(Status::NotFound),
     }
 }
@@ -54,8 +60,8 @@ pub fn post_onsen(
     }
     let onsen_entity = onsen_req.create_entity(0);
     if let Some(onsen_entity) = onsen_entity {
-        let created_hotel = onsen_repository::post_onsen(onsen_entity);
-        return Ok(Json(OnsenResponse::from(created_hotel.clone())));
+        let created_onsen = onsen_repository::post_onsen(onsen_entity);
+        return Ok(Json(OnsenResponse::create(created_onsen.clone(), None)));
     } else {
         return Err(Status::BadRequest);
     }

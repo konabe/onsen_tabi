@@ -26,7 +26,7 @@ impl From<HotelEntity> for HotelResponse {
             onsens: value
                 .onsens
                 .iter()
-                .map(|v| OnsenResponse::from(v.clone()))
+                .map(|v| OnsenResponse::create(v.clone(), None))
                 .collect(),
         }
     }

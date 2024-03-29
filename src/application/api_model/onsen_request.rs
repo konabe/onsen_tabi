@@ -112,6 +112,7 @@ impl OnsenRequest {
             self.url.as_str(),
             self.img_url.as_deref(),
             self.description.as_str(),
+            None,
         )
     }
 }
