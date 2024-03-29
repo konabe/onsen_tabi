@@ -1,30 +1,6 @@
 use crate::application::api_model::onsen_response::OnsenResponse;
 use crate::domain::hotel_entity::HotelEntity;
-use serde::{Deserialize, Serialize};
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct HotelRequest {
-    pub name: String,
-    pub has_washitsu: bool,
-    pub solo_available: bool,
-    pub url: String,
-    pub description: String,
-}
-
-impl HotelRequest {
-    pub fn create_entity(&self, id: u32) -> Option<HotelEntity> {
-        HotelEntity::new(
-            id,
-            self.name.as_str(),
-            self.has_washitsu,
-            self.solo_available,
-            self.url.as_str(),
-            self.description.as_str(),
-            &vec![],
-        )
-    }
-}
+use serde::Serialize;
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -53,5 +29,33 @@ impl From<HotelEntity> for HotelResponse {
                 .map(|v| OnsenResponse::from(v.clone()))
                 .collect(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::HotelResponse;
+    use crate::domain::hotel_entity::HotelEntity;
+
+    #[test]
+    fn test_hotel_response_from() {
+        let hotel = HotelEntity::new(
+            1,
+            "ホテル",
+            true,
+            true,
+            "https://example.com/hotel",
+            "いい感じのホテル",
+            &vec![],
+        )
+        .unwrap();
+        let response = HotelResponse::from(hotel);
+        assert_eq!(response.id, 1);
+        assert_eq!(response.name, "ホテル");
+        assert_eq!(response.has_washitsu, true);
+        assert_eq!(response.solo_available, true);
+        assert_eq!(response.url, "https://example.com/hotel");
+        assert_eq!(response.description, "いい感じのホテル");
+        assert_eq!(response.onsens.len(), 0);
     }
 }
