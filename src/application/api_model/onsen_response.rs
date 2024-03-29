@@ -1,4 +1,4 @@
-use crate::domain::onsen::onsen_entity::OnsenEntity;
+use crate::domain::{area_entity::AreaEntity, onsen::onsen_entity::OnsenEntity};
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
@@ -16,6 +16,7 @@ pub struct OnsenResponse {
     pub url: String,
     pub img_url: Option<String>,
     pub description: String,
+    pub area: Option<OnsenAreaResponseModel>,
 }
 
 #[derive(Debug, Serialize)]
@@ -28,27 +29,38 @@ pub struct OnsenQualityResponseModel {
     pub is_weak_rn: bool,
 }
 
-impl From<OnsenEntity> for OnsenResponse {
-    fn from(value: OnsenEntity) -> Self {
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OnsenAreaResponseModel {
+    pub id: u32,
+    pub name: String,
+}
+
+impl OnsenResponse {
+    pub fn create(onsen: OnsenEntity, area: Option<AreaEntity>) -> Self {
         Self {
-            id: value.id,
-            name: value.name.clone(),
-            quality: value.quality.map(|v| OnsenQualityResponseModel {
+            id: onsen.id,
+            name: onsen.name.clone(),
+            quality: onsen.quality.map(|v| OnsenQualityResponseModel {
                 name: v.to_string(),
                 chemicals: v.to_string_vec(),
                 is_strong_na_cl: v.is_strong_na_cl(),
                 fe_type: v.fe_type(),
                 is_weak_rn: v.is_weak_rn(),
             }),
-            other_spring_quality: value.spring_quality.clone(),
-            liquid: value.liquid.as_ref().map(|v| v.to_string()),
-            osmotic_pressure: value.osmotic_pressure.as_ref().map(|v| v.to_string()),
-            temperature: value.temperature.as_ref().map(|v| v.to_string()),
-            form: value.form.to_string(),
-            is_day_use: value.is_day_use,
-            url: value.url.to_string(),
-            img_url: value.img_url.as_ref().map(|v| v.to_string()),
-            description: value.description.to_string(),
+            other_spring_quality: onsen.spring_quality.clone(),
+            liquid: onsen.liquid.as_ref().map(|v| v.to_string()),
+            osmotic_pressure: onsen.osmotic_pressure.as_ref().map(|v| v.to_string()),
+            temperature: onsen.temperature.as_ref().map(|v| v.to_string()),
+            form: onsen.form.to_string(),
+            is_day_use: onsen.is_day_use,
+            url: onsen.url.to_string(),
+            img_url: onsen.img_url.as_ref().map(|v| v.to_string()),
+            description: onsen.description.to_string(),
+            area: area.map(|v| OnsenAreaResponseModel {
+                id: v.id,
+                name: v.name.clone(),
+            }),
         }
     }
 }
@@ -80,9 +92,9 @@ mod tests {
             "https://www.sekizenkan.co.jp/spa/#ank-spa1",
             Some("https://placehold.jp/150x150.png"),
             "",
+            None,
         );
-        let inside: OnsenEntity = onsen.expect("");
-        let response: OnsenResponse = OnsenResponse::from(inside);
+        let response: OnsenResponse = OnsenResponse::create(onsen.unwrap(), None);
         assert_eq!(response.name, "元禄の湯");
         assert_eq!(
             response.quality.unwrap().name,

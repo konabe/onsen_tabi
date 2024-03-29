@@ -68,6 +68,7 @@ pub struct OnsenEntity {
     pub url: String,
     pub img_url: Option<String>,
     pub description: String,
+    pub area_id: Option<u32>,
 }
 
 impl OnsenEntity {
@@ -84,6 +85,7 @@ impl OnsenEntity {
         url: &str,
         img_url: Option<&str>,
         description: &str,
+        area_id: Option<u32>,
     ) -> Option<Self> {
         if name.is_empty() {
             return None;
@@ -106,6 +108,7 @@ impl OnsenEntity {
             url: url.to_string(),
             img_url: img_url.map(|v| v.to_string()),
             description: description.to_string(),
+            area_id,
         })
     }
 }
@@ -136,6 +139,7 @@ mod tests {
             "https://www.sekizenkan.co.jp/spa/#ank-spa1",
             Some("https://placehold.jp/150x150.png"),
             "",
+            None,
         );
         let inside: OnsenEntity = onsen.expect("");
         assert!(inside.name == "元禄の湯");
@@ -157,6 +161,7 @@ mod tests {
             "https://www.sekizenkan.co.jp/spa/#ank-spa1",
             Some("https://placehold.jp/150x150.png"),
             "",
+            None,
         );
         onsen.expect("");
     }
