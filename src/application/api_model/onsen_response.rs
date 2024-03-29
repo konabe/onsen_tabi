@@ -52,3 +52,52 @@ impl From<OnsenEntity> for OnsenResponse {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use once_cell::sync::Lazy;
+
+    use crate::application::api_model::onsen_response::OnsenResponse;
+    use crate::domain::onsen::chemical::Chemical::*;
+    use crate::domain::onsen::onsen_entity::OnsenEntity;
+    use crate::domain::onsen::onsen_quality::OnsenQuality;
+
+    const COMMON_ONSEN_QUALITY: Lazy<OnsenQuality> =
+        Lazy::new(|| OnsenQuality::new(&vec![NaIon, CaIon, SO4Ion], None));
+
+    #[test]
+    fn test_onsen_response_from_onsen_entity() {
+        let onsen = OnsenEntity::new(
+            1,
+            "元禄の湯",
+            Some(COMMON_ONSEN_QUALITY.clone()),
+            "",
+            Some("neutral"),
+            Some("hypotonic"),
+            Some("hot"),
+            "uchiyu",
+            true,
+            "https://www.sekizenkan.co.jp/spa/#ank-spa1",
+            Some("https://placehold.jp/150x150.png"),
+            "",
+        );
+        let inside: OnsenEntity = onsen.expect("");
+        let response: OnsenResponse = OnsenResponse::from(inside);
+        assert_eq!(response.name, "元禄の湯");
+        assert_eq!(
+            response.quality.unwrap().name,
+            "ナトリウム・カルシウム－硫酸塩泉"
+        );
+        assert_eq!(response.liquid.unwrap(), "neutral");
+        assert_eq!(response.osmotic_pressure.unwrap(), "hypotonic");
+        assert_eq!(response.temperature.unwrap(), "hot");
+        assert_eq!(response.form, "uchiyu");
+        assert_eq!(response.is_day_use, true);
+        assert_eq!(response.url, "https://www.sekizenkan.co.jp/spa/#ank-spa1");
+        assert_eq!(
+            response.img_url.unwrap(),
+            "https://placehold.jp/150x150.png"
+        );
+        assert_eq!(response.description, "");
+    }
+}
