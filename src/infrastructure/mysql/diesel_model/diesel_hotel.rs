@@ -7,6 +7,7 @@ pub struct Hotel {
     pub id: u32,
     pub name: String,
     pub has_washitsu: bool,
+    pub solo_available: bool,
     pub url: String,
     pub description: String,
 }
@@ -17,6 +18,7 @@ impl From<Hotel> for HotelEntity {
             value.id,
             &value.name,
             value.has_washitsu,
+            value.solo_available,
             value.url.as_str(),
             value.description.as_str(),
             &vec![],
@@ -31,6 +33,7 @@ impl From<HotelEntity> for Hotel {
             id: value.id,
             name: value.name,
             has_washitsu: value.has_washitsu,
+            solo_available: value.solo_available,
             description: value.description,
             url: value.url,
         }

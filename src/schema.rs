@@ -46,6 +46,7 @@ diesel::table! {
         #[max_length = 255]
         name -> Varchar,
         has_washitsu -> Bool,
+        solo_available -> Bool,
         #[max_length = 255]
         url -> Varchar,
         description -> Text,
