@@ -21,6 +21,7 @@ pub struct OnsenRequest {
     pub url: String,
     pub img_url: Option<String>,
     pub description: String,
+    pub area_id: Option<u32>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -112,7 +113,7 @@ impl OnsenRequest {
             self.url.as_str(),
             self.img_url.as_deref(),
             self.description.as_str(),
-            None,
+            self.area_id,
         )
     }
 }
@@ -156,6 +157,7 @@ mod tests {
             url: "https://www.sekizenkan.co.jp/spa/#ank-spa1".to_string(),
             img_url: Some("https://placehold.jp/150x150.png".to_string()),
             description: "description".to_string(),
+            area_id: Some(1),
         };
         let entity = request.create_entity(1).unwrap();
         assert_eq!(entity.id, 1);
@@ -210,6 +212,7 @@ mod tests {
             url: "https://www.sekizenkan.co.jp/spa/#ank-spa1".to_string(),
             img_url: Some("https://placehold.jp/150x150.png".to_string()),
             description: "description".to_string(),
+            area_id: Some(1),
         };
         let entity = request.create_entity(1).unwrap();
         assert_eq!(entity.id, 1);
@@ -258,6 +261,7 @@ mod tests {
             url: "https://www.sekizenkan.co.jp/spa/#ank-spa1".to_string(),
             img_url: Some("https://placehold.jp/150x150.png".to_string()),
             description: "description".to_string(),
+            area_id: Some(1),
         };
         let entity = request.create_entity(1).unwrap();
         assert_eq!(entity.id, 1);
@@ -306,6 +310,7 @@ mod tests {
             url: "https://www.sekizenkan.co.jp/spa/#ank-spa1".to_string(),
             img_url: Some("https://placehold.jp/150x150.png".to_string()),
             description: "description".to_string(),
+            area_id: Some(1),
         };
         let entity = request.create_entity(1).unwrap();
         assert_eq!(entity.id, 1);
@@ -354,6 +359,7 @@ mod tests {
             url: "https://www.sekizenkan.co.jp/spa/#ank-spa1".to_string(),
             img_url: Some("https://placehold.jp/150x150.png".to_string()),
             description: "description".to_string(),
+            area_id: Some(1),
         };
         let entity = request.create_entity(1).unwrap();
         assert_eq!(entity.id, 1);
@@ -402,6 +408,7 @@ mod tests {
             url: "https://www.sekizenkan.co.jp/spa/#ank-spa1".to_string(),
             img_url: Some("https://placehold.jp/150x150.png".to_string()),
             description: "description".to_string(),
+            area_id: Some(1),
         };
         let entity = request.create_entity(1).unwrap();
         let quality = entity.quality.clone().unwrap();
@@ -453,6 +460,7 @@ mod tests {
             url: "https://www.sekizenkan.co.jp/spa/#ank-spa1".to_string(),
             img_url: Some("https://placehold.jp/150x150.png".to_string()),
             description: "description".to_string(),
+            area_id: Some(1),
         };
         let entity = request.create_entity(1).unwrap();
         let quality = entity.quality.clone().unwrap();
@@ -505,6 +513,7 @@ mod tests {
             url: "https://www.sekizenkan.co.jp/spa/#ank-spa1".to_string(),
             img_url: Some("https://placehold.jp/150x150.png".to_string()),
             description: "description".to_string(),
+            area_id: Some(1),
         };
         let entity = request.create_entity(1).unwrap();
         assert_eq!(entity.id, 1);
