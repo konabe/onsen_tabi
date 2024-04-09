@@ -13,6 +13,7 @@ diesel::table! {
         #[max_length = 255]
         url -> Varchar,
         description -> Text,
+        access -> Text,
     }
 }
 

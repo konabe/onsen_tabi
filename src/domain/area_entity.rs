@@ -9,6 +9,7 @@ pub struct AreaEntity {
     pub village: Option<String>,
     pub url: String,
     pub description: String,
+    pub access: String,
     pub onsens: Vec<OnsenEntity>,
 }
 
@@ -21,6 +22,7 @@ impl AreaEntity {
         village: Option<&str>,
         url: &str,
         description: &str,
+        access: &str,
         onsens: Vec<OnsenEntity>,
     ) -> Option<Self> {
         if name.is_empty() {
@@ -37,6 +39,7 @@ impl AreaEntity {
             village: village.map(|v| v.to_string()),
             url: url.to_string(),
             description: description.to_string(),
+            access: access.to_string(),
             onsens,
         })
     }
@@ -55,6 +58,7 @@ mod tests {
             true,
             None,
             "https://nakanojo-kanko.jp/shima/",
+            "",
             "",
             vec![],
         );
@@ -75,6 +79,7 @@ mod tests {
             None,
             "https://nakanojo-kanko.jp/shima/",
             "",
+            "",
             vec![],
         );
         area.unwrap();
@@ -90,6 +95,7 @@ mod tests {
             false,
             None,
             "https://nakanojo-kanko.jp/shima/",
+            "",
             "",
             vec![],
         );

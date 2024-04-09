@@ -11,6 +11,7 @@ pub struct Area {
     pub village: Option<String>,
     pub url: String,
     pub description: String,
+    pub access: String,
 }
 
 impl From<Area> for AreaEntity {
@@ -23,6 +24,7 @@ impl From<Area> for AreaEntity {
             value.village.as_deref(),
             &value.url,
             &value.description,
+            &value.access,
             vec![],
         )
         .expect("Saved data violates AreaEntity")
@@ -39,6 +41,7 @@ impl From<AreaEntity> for Area {
             village: value.village,
             url: value.url,
             description: value.description,
+            access: value.access,
         }
     }
 }
