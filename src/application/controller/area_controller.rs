@@ -1,4 +1,4 @@
-use crate::application::api_model::area_api_model::*;
+use crate::application::api_model::{area_request::*, area_response::*};
 use crate::application::controller::request_guard::ValidatedUser;
 use crate::infrastructure::repository::area_repository;
 use rocket::http::Status;

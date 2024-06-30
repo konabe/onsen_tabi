@@ -6,6 +6,8 @@ diesel::table! {
         #[max_length = 255]
         name -> Varchar,
         #[max_length = 255]
+        kana -> Varchar,
+        #[max_length = 255]
         prefecture -> Varchar,
         national_resort -> Bool,
         #[max_length = 255]
@@ -13,6 +15,7 @@ diesel::table! {
         #[max_length = 255]
         url -> Varchar,
         description -> Text,
+        access -> Text,
     }
 }
 

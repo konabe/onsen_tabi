@@ -1,0 +1,1 @@
+ALTER TABLE area DROP COLUMN access;

@@ -4,11 +4,13 @@ use crate::domain::onsen::onsen_entity::OnsenEntity;
 pub struct AreaEntity {
     pub id: u32,
     pub name: String,
+    pub kana: String,
     pub prefecture: String,
     pub national_resort: bool,
     pub village: Option<String>,
     pub url: String,
     pub description: String,
+    pub access: String,
     pub onsens: Vec<OnsenEntity>,
 }
 
@@ -16,11 +18,13 @@ impl AreaEntity {
     pub fn new(
         id: u32,
         name: &str,
+        kana: &str,
         prefecture: &str,
         national_resort: bool,
         village: Option<&str>,
         url: &str,
         description: &str,
+        access: &str,
         onsens: Vec<OnsenEntity>,
     ) -> Option<Self> {
         if name.is_empty() {
@@ -32,11 +36,13 @@ impl AreaEntity {
         Some(Self {
             id,
             name: name.to_string(),
+            kana: kana.to_string(),
             prefecture: prefecture.to_string(),
             national_resort,
             village: village.map(|v| v.to_string()),
             url: url.to_string(),
             description: description.to_string(),
+            access: access.to_string(),
             onsens,
         })
     }
@@ -51,10 +57,12 @@ mod tests {
         let area = AreaEntity::new(
             1,
             "四万",
+            "しま",
             "群馬県",
             true,
             None,
             "https://nakanojo-kanko.jp/shima/",
+            "",
             "",
             vec![],
         );
@@ -70,10 +78,12 @@ mod tests {
         let area = AreaEntity::new(
             1,
             "",
+            "しま",
             "群馬県",
             false,
             None,
             "https://nakanojo-kanko.jp/shima/",
+            "",
             "",
             vec![],
         );
@@ -86,10 +96,12 @@ mod tests {
         let area = AreaEntity::new(
             1,
             "四万",
+            "しま",
             "",
             false,
             None,
             "https://nakanojo-kanko.jp/shima/",
+            "",
             "",
             vec![],
         );
