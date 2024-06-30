@@ -6,6 +6,7 @@ use diesel::{Identifiable, Insertable, Queryable, Selectable};
 pub struct Area {
     pub id: u32,
     pub name: String,
+    pub kana: String,
     pub prefecture: String,
     pub national_resort: bool,
     pub village: Option<String>,
@@ -19,6 +20,7 @@ impl From<Area> for AreaEntity {
         AreaEntity::new(
             value.id,
             &value.name,
+            &value.kana,
             &value.prefecture,
             value.national_resort,
             value.village.as_deref(),
@@ -36,6 +38,7 @@ impl From<AreaEntity> for Area {
         Self {
             id: value.id,
             name: value.name,
+            kana: value.kana,
             prefecture: value.prefecture,
             national_resort: value.national_resort,
             village: value.village,

@@ -5,6 +5,7 @@ use serde::Deserialize;
 #[serde(rename_all = "camelCase")]
 pub struct AreaRequest {
     pub name: String,
+    pub kana: String,
     pub prefecture: String,
     pub national_resort: bool,
     pub village: Option<String>,
@@ -18,6 +19,7 @@ impl AreaRequest {
         AreaEntity::new(
             id,
             self.name.as_str(),
+            self.kana.as_str(),
             self.prefecture.as_str(),
             self.national_resort,
             self.village.as_deref(),
@@ -38,6 +40,7 @@ mod tests {
     fn test_create_entity() {
         let area_request = AreaRequest {
             name: "四万".to_string(),
+            kana: "しま".to_string(),
             prefecture: "群馬県".to_string(),
             national_resort: true,
             village: None,
@@ -48,6 +51,7 @@ mod tests {
         let area_entity: AreaEntity = area_request.create_entity(1).unwrap();
         assert_eq!(area_entity.id, 1);
         assert_eq!(area_entity.name, "四万");
+        assert_eq!(area_entity.kana, "しま");
         assert_eq!(area_entity.prefecture, "群馬県");
         assert_eq!(area_entity.national_resort, true);
         assert_eq!(area_entity.village, None);

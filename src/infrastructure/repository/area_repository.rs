@@ -54,11 +54,13 @@ pub fn put_area(area_entity: AreaEntity) -> () {
     let _ = diesel::update(area::table.find(updated_area.id))
         .set((
             area::dsl::name.eq(updated_area.name),
+            area::dsl::kana.eq(updated_area.kana),
             area::dsl::prefecture.eq(updated_area.prefecture),
             area::dsl::national_resort.eq(updated_area.national_resort),
             area::dsl::village.eq(updated_area.village),
             area::dsl::url.eq(updated_area.url),
             area::dsl::description.eq(updated_area.description),
+            area::dsl::access.eq(updated_area.access),
         ))
         .execute(connection)
         .expect("DB error");
