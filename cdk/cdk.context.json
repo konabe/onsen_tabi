@@ -1,0 +1,29 @@
+{
+  "vpc-provider:account=462749389129:filter.vpc-id=vpc-04d5f79bbdd85a9ad:region=ap-northeast-1:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-04d5f79bbdd85a9ad",
+    "vpcCidrBlock": "10.0.0.0/24",
+    "ownerAccountId": "462749389129",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-0dd0e745e1428c1b5",
+            "cidr": "10.0.0.0/28",
+            "availabilityZone": "ap-northeast-1a",
+            "routeTableId": "rtb-00a98e8a1861f7410"
+          },
+          {
+            "subnetId": "subnet-0a0bb994277679ecd",
+            "cidr": "10.0.0.16/28",
+            "availabilityZone": "ap-northeast-1c",
+            "routeTableId": "rtb-00a98e8a1861f7410"
+          }
+        ]
+      }
+    ]
+  },
+  "ssm:account=462749389129:parameterName=/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64:region=ap-northeast-1": "ami-0d03c6e00d5732e28"
+}
