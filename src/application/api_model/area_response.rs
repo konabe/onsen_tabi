@@ -38,7 +38,7 @@ mod tests {
     use once_cell::sync::Lazy;
 
     use crate::application::api_model::area_response::AreaResponse;
-    use crate::domain::area_entity::AreaEntity;
+    use crate::domain::area_entity::AreaEntityBuilder;
     use crate::domain::onsen::chemical::Chemical::*;
     use crate::domain::onsen::onsen_entity::OnsenEntity;
     use crate::domain::onsen::onsen_quality::OnsenQuality;
@@ -64,19 +64,19 @@ mod tests {
             None,
         )
         .expect("");
-        let area = AreaEntity::new(
-            1,
-            "四万",
-            "しま",
-            "群馬県",
-            true,
-            None,
-            "https://nakanojo-kanko.jp/shima/",
-            "",
-            "",
-            vec![onsen],
-        )
-        .expect("");
+        let area = AreaEntityBuilder::new()
+            .id(1)
+            .name("四万")
+            .kana("しま")
+            .prefecture("群馬県")
+            .national_resort(true)
+            .village(None)
+            .url("https://nakanojo-kanko.jp/shima/")
+            .description("")
+            .access("")
+            .onsens(vec![onsen])
+            .build()
+            .expect("");
         let response = AreaResponse::from(area);
         assert_eq!(response.id, 1);
         assert_eq!(response.name, "四万");
