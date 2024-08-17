@@ -13,13 +13,13 @@ pub struct HotelEntity {
 
 #[derive(Clone, Default)]
 pub struct HotelEntityBuilder {
-    pub id: u32,
-    pub name: String,
-    pub has_washitsu: bool,
-    pub solo_available: bool,
-    pub url: String,
-    pub description: String,
-    pub onsens: Vec<OnsenEntity>,
+    id: u32,
+    name: String,
+    has_washitsu: bool,
+    solo_available: bool,
+    url: String,
+    description: String,
+    onsens: Vec<OnsenEntity>,
 }
 
 impl HotelEntityBuilder {
@@ -82,27 +82,27 @@ impl HotelEntityBuilder {
 mod tests {
     use crate::domain::{
         hotel_entity::{HotelEntity, HotelEntityBuilder},
-        onsen::onsen_entity::OnsenEntity,
+        onsen::onsen_entity::{OnsenEntity, OnsenEntityBuilder},
     };
     use once_cell::sync::Lazy;
 
     const COMMON_ONSEN: Lazy<OnsenEntity> = Lazy::new(|| {
-        OnsenEntity::new(
-            1,
-            "積善館 元禄の湯",
-            None,
-            "単純温泉",
-            Some("neutral"),
-            Some("isotonic"),
-            Some("hot"),
-            "sotoyu",
-            true,
-            "https://www.sekizenkan.co.jp/spa/#ank-spa1",
-            Some("https://placehold.jp/150x150.png"),
-            "",
-            None,
-        )
-        .expect("")
+        OnsenEntityBuilder::new()
+            .id(1)
+            .name("積善館 元禄の湯")
+            .quality(None)
+            .spring_quality("neutral")
+            .liquid(Some("neutral"))
+            .osmotic_pressure(Some("neutral"))
+            .temperature(Some("hot"))
+            .form("sotoyu")
+            .is_day_use(true)
+            .url("https://www.sekizenkan.co.jp/spa/#ank-spa1")
+            .img_url(Some("https://placehold.jp/150x150.png"))
+            .description("")
+            .area_id(None)
+            .build()
+            .expect("")
     });
 
     #[test]

@@ -16,16 +16,16 @@ pub struct AreaEntity {
 
 #[derive(Clone, Default)]
 pub struct AreaEntityBuilder {
-    pub id: u32,
-    pub name: String,
-    pub kana: String,
-    pub prefecture: String,
-    pub national_resort: bool,
-    pub village: Option<String>,
-    pub url: String,
-    pub description: String,
-    pub access: String,
-    pub onsens: Vec<OnsenEntity>,
+    id: u32,
+    name: String,
+    kana: String,
+    prefecture: String,
+    national_resort: bool,
+    village: Option<String>,
+    url: String,
+    description: String,
+    access: String,
+    onsens: Vec<OnsenEntity>,
 }
 
 impl AreaEntityBuilder {

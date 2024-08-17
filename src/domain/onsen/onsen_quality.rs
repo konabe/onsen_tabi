@@ -1,11 +1,8 @@
 use crate::domain::onsen::chemical::Chemical::{self, *};
-use crate::domain::onsen::chemical::ClType;
-use crate::domain::onsen::chemical::RnType;
+use crate::domain::onsen::chemical::{ClType, FeType, RnType};
 use crate::domain::onsen::onsen_entity::SpringLiquid;
 use crate::domain::onsen::onsen_entity::SpringLiquid::*;
 use std::{fmt, vec};
-
-use super::chemical::FeType;
 
 #[derive(Clone)]
 pub struct OnsenQuality {
@@ -14,6 +11,19 @@ pub struct OnsenQuality {
     pub cations: Vec<Chemical>,
     pub anions: Vec<Chemical>,
     pub inclusions: Vec<Chemical>,
+}
+
+impl Default for OnsenQuality {
+    // 単純温泉
+    fn default() -> Self {
+        Self {
+            is_simple: true,
+            liquid: None,
+            cations: vec![],
+            anions: vec![],
+            inclusions: vec![],
+        }
+    }
 }
 
 // https://www.env.go.jp/nature/onsen/pdf/2-5_p_16.pdf
@@ -169,6 +179,12 @@ mod tests {
     #[test]
     fn test_tanjun_onsen_if_no_liquid_is_given() {
         let quality = OnsenQuality::new(&vec![], None);
+        assert_eq!(quality.to_string(), "単純温泉");
+    }
+
+    #[test]
+    fn test_tanjun_onsen_if_it_is_default() {
+        let quality = OnsenQuality::default();
         assert_eq!(quality.to_string(), "単純温泉");
     }
 
