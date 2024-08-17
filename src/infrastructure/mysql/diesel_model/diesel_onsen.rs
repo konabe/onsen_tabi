@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use crate::domain::onsen::onsen_entity::{OnsenEntity, SpringLiquid};
+use crate::domain::onsen::onsen_entity::{OnsenEntity, OnsenEntityBuilder, SpringLiquid};
 use crate::infrastructure::mysql::diesel_model::{
     diesel_chemical::DieselChemical, diesel_hotel::Hotel,
 };
@@ -33,22 +33,22 @@ impl OnsenEntity {
             .clone()
             .and_then(|v| SpringLiquid::from_str(&v).ok());
         let onsen_quality = diesel_chemical.map(|v| v.create(liquid));
-        OnsenEntity::new(
-            onsen.id,
-            &onsen.name,
-            onsen_quality,
-            &onsen.spring_quality,
-            onsen.liquid.as_deref(),
-            onsen.osmotic_pressure.as_deref(),
-            onsen.temperature.as_deref(),
-            &onsen.category,
-            onsen.day_use,
-            &onsen.url,
-            onsen.img_url.as_deref(),
-            &onsen.description,
-            onsen.area_id,
-        )
-        .expect("Saved data violates OnsenEntity")
+        OnsenEntityBuilder::new()
+            .id(onsen.id)
+            .name(&onsen.name)
+            .quality(onsen_quality)
+            .spring_quality(&onsen.spring_quality)
+            .liquid(onsen.liquid.as_deref())
+            .osmotic_pressure(onsen.osmotic_pressure.as_deref())
+            .temperature(onsen.temperature.as_deref())
+            .form(&onsen.category)
+            .is_day_use(onsen.day_use)
+            .url(&onsen.url)
+            .img_url(onsen.img_url.as_deref())
+            .description(&onsen.description)
+            .area_id(onsen.area_id)
+            .build()
+            .expect("Saved data violates OnsenEntity")
     }
 }
 

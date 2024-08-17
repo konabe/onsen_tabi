@@ -3,7 +3,7 @@ use std::str::FromStr;
 
 use crate::domain::onsen::{
     chemical::{Chemical, ClType, FeType, RnType},
-    onsen_entity::{OnsenEntity, SpringLiquid},
+    onsen_entity::{OnsenEntity, OnsenEntityBuilder, SpringLiquid},
     onsen_quality::OnsenQuality,
 };
 
@@ -100,21 +100,21 @@ impl OnsenRequest {
             .chemicals
             .clone()
             .map(|v| v.create(self.liquid.clone()));
-        OnsenEntity::new(
-            id,
-            self.name.as_str(),
-            quality,
-            self.other_spring_quality.as_str(),
-            self.liquid.as_deref(),
-            self.osmotic_pressure.as_deref(),
-            self.temperature.as_deref(),
-            self.form.as_str(),
-            self.is_day_use,
-            self.url.as_str(),
-            self.img_url.as_deref(),
-            self.description.as_str(),
-            self.area_id,
-        )
+        OnsenEntityBuilder::new()
+            .id(id)
+            .name(&self.name)
+            .quality(quality)
+            .spring_quality(&self.other_spring_quality)
+            .liquid(self.liquid.as_deref())
+            .osmotic_pressure(self.osmotic_pressure.as_deref())
+            .temperature(self.temperature.as_deref())
+            .form(&self.form)
+            .is_day_use(self.is_day_use)
+            .url(&self.url)
+            .img_url(self.img_url.as_deref())
+            .description(&self.description)
+            .area_id(self.area_id)
+            .build()
     }
 }
 
