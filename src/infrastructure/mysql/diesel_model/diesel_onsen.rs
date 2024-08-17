@@ -1,7 +1,9 @@
 use std::str::FromStr;
 
-use super::{diesel_chemical::DieselChemical, diesel_hotel::Hotel};
 use crate::domain::onsen::onsen_entity::{OnsenEntity, SpringLiquid};
+use crate::infrastructure::mysql::diesel_model::{
+    diesel_chemical::DieselChemical, diesel_hotel::Hotel,
+};
 use diesel::{Associations, Identifiable, Insertable, Queryable, Selectable};
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Associations, Debug, Clone)]

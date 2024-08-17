@@ -27,7 +27,7 @@ impl HotelRequest {
 
 #[cfg(test)]
 mod tests {
-    use super::HotelRequest;
+    use crate::application::api_model::hotel_request::HotelRequest;
 
     #[test]
     fn test_hotel_request_create_entity() {

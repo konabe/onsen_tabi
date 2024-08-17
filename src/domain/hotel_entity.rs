@@ -1,4 +1,4 @@
-use super::onsen::onsen_entity::OnsenEntity;
+use crate::domain::onsen::onsen_entity::OnsenEntity;
 
 #[derive(Clone)]
 pub struct HotelEntity {

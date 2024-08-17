@@ -34,7 +34,7 @@ impl From<HotelEntity> for HotelResponse {
 
 #[cfg(test)]
 mod tests {
-    use super::HotelResponse;
+    use crate::application::api_model::hotel_response::HotelResponse;
     use crate::domain::hotel_entity::HotelEntityBuilder;
 
     #[test]

@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use strum_macros::{Display, EnumString};
 
-use super::onsen_quality::OnsenQuality;
+use crate::domain::onsen::onsen_quality::OnsenQuality;
 
 /// 液性
 #[derive(Display, Debug, PartialEq, EnumString, Clone)]
