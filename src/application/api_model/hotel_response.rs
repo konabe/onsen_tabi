@@ -35,20 +35,20 @@ impl From<HotelEntity> for HotelResponse {
 #[cfg(test)]
 mod tests {
     use super::HotelResponse;
-    use crate::domain::hotel_entity::HotelEntity;
+    use crate::domain::hotel_entity::HotelEntityBuilder;
 
     #[test]
     fn test_hotel_response_from() {
-        let hotel = HotelEntity::new(
-            1,
-            "ホテル",
-            true,
-            true,
-            "https://example.com/hotel",
-            "いい感じのホテル",
-            &vec![],
-        )
-        .unwrap();
+        let hotel = HotelEntityBuilder::new()
+            .id(1)
+            .name("ホテル")
+            .has_washitsu(true)
+            .solo_available(true)
+            .url("https://example.com/hotel")
+            .description("いい感じのホテル")
+            .onsens(vec![])
+            .build()
+            .unwrap();
         let response = HotelResponse::from(hotel);
         assert_eq!(response.id, 1);
         assert_eq!(response.name, "ホテル");

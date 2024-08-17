@@ -1,4 +1,4 @@
-use crate::domain::hotel_entity::HotelEntity;
+use crate::domain::hotel_entity::{HotelEntity, HotelEntityBuilder};
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -13,15 +13,15 @@ pub struct HotelRequest {
 
 impl HotelRequest {
     pub fn create_entity(&self, id: u32) -> Option<HotelEntity> {
-        HotelEntity::new(
-            id,
-            self.name.as_str(),
-            self.has_washitsu,
-            self.solo_available,
-            self.url.as_str(),
-            self.description.as_str(),
-            &vec![],
-        )
+        HotelEntityBuilder::new()
+            .id(id)
+            .name(&self.name)
+            .has_washitsu(self.has_washitsu)
+            .solo_available(self.solo_available)
+            .url(&self.url)
+            .description(&self.description)
+            .onsens(vec![])
+            .build()
     }
 }
 
