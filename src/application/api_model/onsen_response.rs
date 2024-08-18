@@ -71,7 +71,7 @@ mod tests {
 
     use crate::application::api_model::onsen_response::OnsenResponse;
     use crate::domain::onsen::chemical::Chemical::*;
-    use crate::domain::onsen::onsen_entity::OnsenEntity;
+    use crate::domain::onsen::onsen_entity::OnsenEntityBuilder;
     use crate::domain::onsen::onsen_quality::OnsenQuality;
 
     const COMMON_ONSEN_QUALITY: Lazy<OnsenQuality> =
@@ -79,21 +79,21 @@ mod tests {
 
     #[test]
     fn test_onsen_response_from_onsen_entity() {
-        let onsen = OnsenEntity::new(
-            1,
-            "元禄の湯",
-            Some(COMMON_ONSEN_QUALITY.clone()),
-            "",
-            Some("neutral"),
-            Some("hypotonic"),
-            Some("hot"),
-            "uchiyu",
-            true,
-            "https://www.sekizenkan.co.jp/spa/#ank-spa1",
-            Some("https://placehold.jp/150x150.png"),
-            "",
-            None,
-        );
+        let onsen = OnsenEntityBuilder::new()
+            .id(1)
+            .name("元禄の湯")
+            .quality(Some(COMMON_ONSEN_QUALITY.clone()))
+            .spring_quality("")
+            .liquid(Some("neutral"))
+            .osmotic_pressure(Some("hypotonic"))
+            .temperature(Some("hot"))
+            .form("uchiyu")
+            .is_day_use(true)
+            .url("https://www.sekizenkan.co.jp/spa/#ank-spa1")
+            .img_url(Some("https://placehold.jp/150x150.png"))
+            .description("")
+            .area_id(None)
+            .build();
         let response: OnsenResponse = OnsenResponse::create(onsen.unwrap(), None);
         assert_eq!(response.name, "元禄の湯");
         assert_eq!(

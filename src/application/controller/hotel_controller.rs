@@ -1,6 +1,6 @@
-use super::request_guard::ValidatedUser;
 use crate::application::api_model::hotel_request::*;
 use crate::application::api_model::hotel_response::*;
+use crate::application::controller::request_guard::ValidatedUser;
 use crate::infrastructure::repository::hotel_repository;
 use rocket::http::Status;
 use rocket::serde::json::Json;

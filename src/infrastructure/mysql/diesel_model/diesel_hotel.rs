@@ -1,4 +1,4 @@
-use crate::domain::hotel_entity::HotelEntity;
+use crate::domain::hotel_entity::{HotelEntity, HotelEntityBuilder};
 use diesel::{Identifiable, Insertable, Queryable, Selectable};
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Debug, Clone)]
@@ -14,16 +14,16 @@ pub struct Hotel {
 
 impl From<Hotel> for HotelEntity {
     fn from(value: Hotel) -> Self {
-        HotelEntity::new(
-            value.id,
-            &value.name,
-            value.has_washitsu,
-            value.solo_available,
-            value.url.as_str(),
-            value.description.as_str(),
-            &vec![],
-        )
-        .expect("Saved data violates HotelEntity")
+        HotelEntityBuilder::new()
+            .id(value.id)
+            .name(&value.name)
+            .has_washitsu(value.has_washitsu)
+            .solo_available(value.solo_available)
+            .url(&value.url)
+            .description(&value.description)
+            .onsens(vec![])
+            .build()
+            .expect("Saved data violates HotelEntity")
     }
 }
 

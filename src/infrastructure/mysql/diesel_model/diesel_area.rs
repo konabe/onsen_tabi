@@ -1,4 +1,4 @@
-use crate::domain::area_entity::AreaEntity;
+use crate::domain::area_entity::{AreaEntity, AreaEntityBuilder};
 use diesel::{Identifiable, Insertable, Queryable, Selectable};
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Debug, Clone)]
@@ -17,19 +17,19 @@ pub struct Area {
 
 impl From<Area> for AreaEntity {
     fn from(value: Area) -> Self {
-        AreaEntity::new(
-            value.id,
-            &value.name,
-            &value.kana,
-            &value.prefecture,
-            value.national_resort,
-            value.village.as_deref(),
-            &value.url,
-            &value.description,
-            &value.access,
-            vec![],
-        )
-        .expect("Saved data violates AreaEntity")
+        AreaEntityBuilder::new()
+            .id(value.id)
+            .name(&value.name)
+            .kana(&value.kana)
+            .prefecture(&value.prefecture)
+            .national_resort(value.national_resort)
+            .village(value.village.as_deref())
+            .url(&value.url)
+            .description(&value.description)
+            .access(&value.access)
+            .onsens(vec![])
+            .build()
+            .expect("Saved data violates AreaEntity")
     }
 }
 

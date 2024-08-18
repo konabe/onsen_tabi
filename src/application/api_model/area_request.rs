@@ -1,4 +1,4 @@
-use crate::domain::area_entity::AreaEntity;
+use crate::domain::area_entity::{AreaEntity, AreaEntityBuilder};
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -16,18 +16,18 @@ pub struct AreaRequest {
 
 impl AreaRequest {
     pub fn create_entity(&self, id: u32) -> Option<AreaEntity> {
-        AreaEntity::new(
-            id,
-            self.name.as_str(),
-            self.kana.as_str(),
-            self.prefecture.as_str(),
-            self.national_resort,
-            self.village.as_deref(),
-            self.url.as_str(),
-            self.description.as_str(),
-            self.access.as_str(),
-            vec![],
-        )
+        AreaEntityBuilder::new()
+            .id(id)
+            .name(&self.name)
+            .kana(&self.kana)
+            .prefecture(&self.prefecture)
+            .national_resort(self.national_resort)
+            .village(self.village.as_deref())
+            .url(&self.url)
+            .description(&self.description)
+            .access(&self.access)
+            .onsens(vec![])
+            .build()
     }
 }
 
