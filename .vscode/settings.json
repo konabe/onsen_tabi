@@ -1,5 +1,6 @@
 {
   "rust-analyzer.linkedProjects": ["./Cargo.toml"],
   "rust-analyzer.showUnlinkedFileNotification": false,
-  "editor.inlayHints.enabled": "offUnlessPressed"
+  "editor.inlayHints.enabled": "offUnlessPressed",
+  "karateRunner.karateJar.commandLineArgs": "java -cp karate-1.5.0.jar com.intuit.karate.Main"
 }
