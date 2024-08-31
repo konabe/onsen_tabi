@@ -80,6 +80,7 @@ export class CdkStack extends cdk.Stack {
           - sudo docker pull ${dockerHubRepository}:latest
           - export DATABASE_URL=\`aws ssm get-parameter --with-decryption --name /prod/DATABASE_URL | jq -r ".Parameter.Value"\`
           - export JWT_SECRET_KEY=\`aws ssm get-parameter --with-decryption --name /prod/JWT_SECRET_KEY | jq -r ".Parameter.Value"\`
+          - export ALLOW_ORIGIN=\`aws ssm get-parameter --with-decryption --name /prod/ALLOW_ORIGIN | jq -r ".Parameter.Value"\`
           - sudo docker run --rm --env DATABASE_URL="$DATABASE_URL" --env JWT_SECRET_KEY="$JWT_SECRET_KEY" --publish 8000:8000 --name web_server ${dockerHubRepository}:latest
         `
       ),

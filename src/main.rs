@@ -10,6 +10,7 @@ use application::controller::area_controller::*;
 use application::controller::hotel_controller::*;
 use application::controller::onsen_controller::*;
 use application::controller::user_controller::*;
+use dotenvy::dotenv;
 use rocket::fairing::Fairing;
 use rocket::fairing::Info;
 use rocket::fairing::Kind;
@@ -19,6 +20,7 @@ use rocket::http::Status;
 use rocket::response;
 use rocket::Request;
 use rocket::Response;
+use std::env;
 
 #[get("/")]
 fn index() -> &'static str {
@@ -58,15 +60,20 @@ impl Fairing for CORS {
     }
 
     async fn on_response<'r>(&self, request: &'r Request<'_>, response: &mut Response<'r>) {
+        dotenv().ok();
+        let origin = env::var("ALLOW_ORIGIN").expect("ALLOW_ORIGIN must be set");
         if request.method() == Method::Options {
             response.set_status(Status::NoContent);
             response.set_header(Header::new(
                 "Access-Control-Allow-Methods",
                 "POST, PUT, PATCH, GET, DELETE",
             ));
-            response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
+            response.set_header(Header::new(
+                "Access-Control-Allow-Headers",
+                "Authorization, Baggage, Sentry-Trace",
+            ));
         }
-        response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
+        response.set_header(Header::new("Access-Control-Allow-Origin", origin));
         response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
     }
 }
