@@ -3,8 +3,9 @@ use std::str::FromStr;
 
 use crate::domain::onsen::{
     chemical::{Chemical, ClType, FeType, RnType},
-    onsen_entity::{OnsenEntity, OnsenEntityBuilder, SpringLiquid},
+    onsen_entity::{OnsenEntity, OnsenEntityBuilder},
     onsen_quality::OnsenQuality,
+    spring_liquid::SpringLiquid,
 };
 
 #[derive(Debug, Deserialize)]

@@ -1,6 +1,6 @@
 use crate::domain::onsen::chemical::{ClType, FeType};
 use crate::domain::onsen::onsen_quality::OnsenQuality;
-use crate::domain::onsen::{chemical::Chemical, chemical::RnType, onsen_entity::SpringLiquid};
+use crate::domain::onsen::{chemical::Chemical, chemical::RnType, spring_liquid::SpringLiquid};
 use diesel::{Identifiable, Insertable, Queryable, Selectable};
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Debug, Clone)]

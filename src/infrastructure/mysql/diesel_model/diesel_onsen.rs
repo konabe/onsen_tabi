@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
-use crate::domain::onsen::onsen_entity::{OnsenEntity, OnsenEntityBuilder, SpringLiquid};
+use crate::domain::onsen::onsen_entity::{OnsenEntity, OnsenEntityBuilder};
+use crate::domain::onsen::spring_liquid::SpringLiquid;
 use crate::infrastructure::mysql::diesel_model::{
     diesel_chemical::DieselChemical, diesel_hotel::Hotel,
 };

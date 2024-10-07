@@ -1,7 +1,7 @@
 use crate::domain::onsen::chemical::Chemical::{self, *};
 use crate::domain::onsen::chemical::{ClType, FeType, RnType};
-use crate::domain::onsen::onsen_entity::SpringLiquid;
-use crate::domain::onsen::onsen_entity::SpringLiquid::*;
+use crate::domain::onsen::spring_liquid::SpringLiquid;
+use crate::domain::onsen::spring_liquid::SpringLiquid::*;
 use std::{fmt, vec};
 
 #[derive(Clone)]
