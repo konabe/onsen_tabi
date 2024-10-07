@@ -1,16 +1,21 @@
 use strum_macros::{Display, EnumString};
 
-/// 液性
 #[derive(Display, Debug, PartialEq, EnumString, Clone)]
+/// 温泉の液性
 pub enum SpringLiquid {
     #[strum(serialize = "acidic")]
-    Acidic, // 酸性
+    /// 酸性
+    Acidic,
     #[strum(serialize = "mildly_acidic")]
-    MildlyAcidic, // 弱酸性
+    /// 弱酸性
+    MildlyAcidic,
     #[strum(serialize = "neutral")]
-    Neutral, // 中性
+    /// 中性
+    Neutral,
     #[strum(serialize = "mildly_alkaline")]
-    MildlyAlkaline, // 弱アルカリ性
+    /// 弱アルカリ性
+    MildlyAlkaline,
     #[strum(serialize = "alkaline")]
-    Alkaline, // アルカリ性
+    /// アルカリ性
+    Alkaline,
 }

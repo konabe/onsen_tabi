@@ -1,42 +1,10 @@
 use std::str::FromStr;
-use strum_macros::{Display, EnumString};
 
 use crate::domain::onsen::onsen_quality::OnsenQuality;
+use crate::domain::onsen::spring_form::SpringForm;
 use crate::domain::onsen::spring_liquid::SpringLiquid;
-
-/// 浸透圧
-#[derive(Display, Debug, PartialEq, EnumString, Clone)]
-pub enum SpringOsmoticPressure {
-    #[strum(serialize = "hypotonic")]
-    Hypotonic, // 低張性
-    #[strum(serialize = "isotonic")]
-    Isotonic, // 等張性
-    #[strum(serialize = "hypertonic")]
-    Hypertonic, // 高張性
-}
-
-/// 温度
-#[derive(Display, Debug, PartialEq, EnumString, Clone)]
-pub enum SpringTemperature {
-    #[strum(serialize = "hot")]
-    Hot, // 高温泉
-    #[strum(serialize = "normal")]
-    Warm, // 温泉
-    #[strum(serialize = "cool")]
-    Cool, // 低温泉
-    #[strum(serialize = "cold")]
-    Cold, // 冷鉱泉
-}
-
-/// 営業形態
-#[derive(Display, Debug, PartialEq, EnumString, Clone, Default)]
-pub enum SpringForm {
-    #[default]
-    #[strum(serialize = "uchiyu")]
-    Uchiyu, // 内湯
-    #[strum(serialize = "sotoyu")]
-    Sotoyu, // 外湯
-}
+use crate::domain::onsen::spring_osmotic_pressure::SpringOsmoticPressure;
+use crate::domain::onsen::spring_temperature::SpringTemperature;
 
 /// 温泉法が定義する温泉。
 /// ◯◯温泉とは別
