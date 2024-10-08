@@ -6,23 +6,36 @@ use crate::domain::onsen::spring_liquid::SpringLiquid;
 use crate::domain::onsen::spring_osmotic_pressure::SpringOsmoticPressure;
 use crate::domain::onsen::spring_temperature::SpringTemperature;
 
+#[derive(Clone)]
 /// 温泉法が定義する温泉。
 /// ◯◯温泉とは別
-#[derive(Clone)]
 pub struct OnsenEntity {
     pub id: u32,
+    /// 名前
     pub name: String,
     // TODO: "その他の泉質"を格納する場所を作る
+    /// 泉質
     pub quality: Option<OnsenQuality>,
+    /// 泉質名
+    /// 泉質がNoneのときに名前を格納する
     pub spring_quality: String,
+    /// 液性
     pub liquid: Option<SpringLiquid>,
+    /// 浸透圧
     pub osmotic_pressure: Option<SpringOsmoticPressure>,
+    /// 温度
     pub temperature: Option<SpringTemperature>,
+    /// 営業形態
     pub form: SpringForm,
+    /// 日帰り入浴可能か
     pub is_day_use: bool,
+    /// URL
     pub url: String,
+    /// 画像URL
     pub img_url: Option<String>,
+    /// 説明
     pub description: String,
+    /// エリアID
     pub area_id: Option<u32>,
 }
 
@@ -47,17 +60,17 @@ impl OnsenEntityBuilder {
     pub fn new() -> Self {
         Self {
             id: 0,
-            name: "".to_string(),
+            name: String::new(),
             quality: None,
-            spring_quality: "".to_string(),
+            spring_quality: String::new(),
             liquid: None,
             osmotic_pressure: None,
             temperature: None,
-            form: SpringForm::Uchiyu,
+            form: SpringForm::default(),
             is_day_use: false,
-            url: "".to_string(),
+            url: String::new(),
             img_url: None,
-            description: "".to_string(),
+            description: String::new(),
             area_id: None,
         }
     }
@@ -83,27 +96,23 @@ impl OnsenEntityBuilder {
     }
 
     pub fn liquid(&mut self, liquid: Option<&str>) -> &mut Self {
-        let liquid = liquid.and_then(|v| SpringLiquid::from_str(v).ok());
-        self.liquid = liquid;
+        self.liquid = liquid.and_then(|v| SpringLiquid::from_str(v).ok());
         self
     }
 
     pub fn osmotic_pressure(&mut self, osmotic_pressure: Option<&str>) -> &mut Self {
-        let osmotic_pressure =
+        self.osmotic_pressure =
             osmotic_pressure.and_then(|v| SpringOsmoticPressure::from_str(v).ok());
-        self.osmotic_pressure = osmotic_pressure;
         self
     }
 
     pub fn temperature(&mut self, temperature: Option<&str>) -> &mut Self {
-        let temperature = temperature.and_then(|v| SpringTemperature::from_str(v).ok());
-        self.temperature = temperature;
+        self.temperature = temperature.and_then(|v| SpringTemperature::from_str(v).ok());
         self
     }
 
     pub fn form(&mut self, form: &str) -> &mut Self {
-        let form = SpringForm::from_str(form).ok().unwrap_or_default();
-        self.form = form;
+        self.form = SpringForm::from_str(form).unwrap_or_default();
         self
     }
 
@@ -161,12 +170,13 @@ mod tests {
     use crate::domain::onsen::chemical::Chemical::*;
     use crate::domain::onsen::onsen_entity::{OnsenEntity, OnsenEntityBuilder};
     use crate::domain::onsen::onsen_quality::OnsenQuality;
+    use crate::domain::onsen::spring_form::SpringForm;
 
     const COMMON_ONSEN_QUALITY: Lazy<OnsenQuality> =
         Lazy::new(|| OnsenQuality::new(&vec![NaIon, CaIon, SO4Ion], None));
 
     #[test]
-    fn new_test() {
+    fn build_test() {
         let onsen = OnsenEntityBuilder::new()
             .id(1)
             .name("元禄の湯")
@@ -188,10 +198,10 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn new_test_return_none_when_name_is_empty() {
+    fn build_test_return_none_when_name_is_empty() {
         let onsen = OnsenEntityBuilder::new()
             .id(1)
-            .name("")
+            .name("") // nameが空文字のとき
             .quality(Some(COMMON_ONSEN_QUALITY.clone()))
             .spring_quality("ナトリウム・カルシウム 塩化物硫酸塩温泉")
             .liquid(Some("neutral"))
@@ -204,6 +214,27 @@ mod tests {
             .description("")
             .area_id(None)
             .build();
-        onsen.expect("");
+        onsen.expect(""); // Noneになる。
+    }
+
+    #[test]
+    fn build_test_return_uchiyu_when_form_is_entered_with_unknown_text() {
+        let onsen = OnsenEntityBuilder::new()
+            .id(1)
+            .name("元禄の湯")
+            .quality(Some(COMMON_ONSEN_QUALITY.clone()))
+            .spring_quality("ナトリウム・カルシウム 塩化物硫酸塩温泉")
+            .liquid(Some("neutral"))
+            .osmotic_pressure(Some("hypotonic"))
+            .temperature(Some("hot"))
+            .form("unknown") // 定義されてない文字列をformに入れる
+            .is_day_use(true)
+            .url("https://www.sekizenkan.co.jp/spa/#ank-spa1")
+            .img_url(Some("https://placehold.jp/150x150.png"))
+            .description("")
+            .area_id(None)
+            .build();
+        let inside: OnsenEntity = onsen.expect("");
+        assert!(inside.form == SpringForm::Uchiyu); // Uchiyuになる
     }
 }
