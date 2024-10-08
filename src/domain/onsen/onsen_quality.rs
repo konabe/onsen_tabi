@@ -119,20 +119,20 @@ impl fmt::Display for OnsenQuality {
             let name = if let FeIon(_) = target {
                 "鉄".to_string()
             } else {
-                target.jp()
+                target.jp().to_string()
             };
             return write!(f, "単純{}泉", name);
         }
         let cation_enumrated_text = self
             .cations
             .iter()
-            .map(|v| v.jp())
+            .map(|v| v.jp().to_string())
             .collect::<Vec<String>>()
             .join("・");
         let anion_enumrated_text = self
             .anions
             .iter()
-            .map(|v| v.jp())
+            .map(|v| v.jp().to_string())
             .collect::<Vec<String>>()
             .join("・");
         let inclusion_h_ion_excluded = self
@@ -142,7 +142,7 @@ impl fmt::Display for OnsenQuality {
             .collect::<Vec<&Chemical>>();
         let inclusion_enumerated_text = inclusion_h_ion_excluded
             .iter()
-            .map(|v| v.jp())
+            .map(|v| v.jp().to_string())
             .collect::<Vec<String>>()
             .join("・");
         let mut text: String = format!("{}泉", anion_enumrated_text);
