@@ -92,7 +92,7 @@ impl From<OnsenQuality> for DieselChemical {
             s: 0,
             rn: 0,
             strong_na_cl: value.is_strong_na_cl(),
-            fe_type: value.fe_type(),
+            fe_type: value.fe_type().to_string(),
             weak_rn: value.is_weak_rn(),
         };
         for (i, v) in value.cations.iter().enumerate() {

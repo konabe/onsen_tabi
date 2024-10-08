@@ -1,7 +1,7 @@
 use strum_macros::{Display, EnumString};
 use Chemical::*;
 
-#[derive(Display, PartialEq, Clone, Debug, Default)]
+#[derive(Display, PartialEq, Clone, Copy, Debug, Default)]
 /// 塩化物イオンタイプ
 pub enum ClType {
     #[default]
@@ -20,7 +20,7 @@ impl ClType {
     }
 }
 
-#[derive(Display, PartialEq, Clone, Debug, Default)]
+#[derive(Display, PartialEq, Clone, Copy, Debug, Default)]
 /// 鉄イオンタイプ
 pub enum FeType {
     #[default]
@@ -43,7 +43,7 @@ impl FeType {
     }
 }
 
-#[derive(Display, PartialEq, Clone, Debug, Default)]
+#[derive(Display, PartialEq, Clone, Copy, Debug, Default)]
 /// ラドンタイプ
 pub enum RnType {
     #[default]
@@ -64,7 +64,7 @@ impl RnType {
 }
 
 #[allow(dead_code)]
-#[derive(Display, PartialEq, Clone, EnumString, Debug)]
+#[derive(Display, PartialEq, Clone, Copy, EnumString, Debug)]
 /// 温泉成分
 pub enum Chemical {
     /// ナトリウムイオン
