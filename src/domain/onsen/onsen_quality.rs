@@ -1,15 +1,19 @@
 use crate::domain::onsen::chemical::Chemical::{self, *};
 use crate::domain::onsen::chemical::{ClType, FeType, RnType};
-use crate::domain::onsen::onsen_entity::SpringLiquid;
-use crate::domain::onsen::onsen_entity::SpringLiquid::*;
+use crate::domain::onsen::spring_liquid::SpringLiquid;
+use crate::domain::onsen::spring_liquid::SpringLiquid::*;
 use std::{fmt, vec};
 
 #[derive(Clone)]
+/// 泉質
 pub struct OnsenQuality {
-    is_simple: bool,
+    /// 液性
     liquid: Option<SpringLiquid>,
+    /// 陽イオン
     pub cations: Vec<Chemical>,
+    /// 陰イオン
     pub anions: Vec<Chemical>,
+    /// 含有物
     pub inclusions: Vec<Chemical>,
 }
 
@@ -17,7 +21,6 @@ impl Default for OnsenQuality {
     // 単純温泉
     fn default() -> Self {
         Self {
-            is_simple: true,
             liquid: None,
             cations: vec![],
             anions: vec![],
@@ -26,40 +29,41 @@ impl Default for OnsenQuality {
     }
 }
 
+impl SpringLiquid {
+    /// 泉質表記のための日本語表記
+    fn jp(&self) -> &str {
+        match self {
+            Acidic | MildlyAcidic | Neutral => "",
+            MildlyAlkaline => "弱アルカリ性",
+            Alkaline => "アルカリ性",
+        }
+    }
+}
+
 // https://www.env.go.jp/nature/onsen/pdf/2-5_p_16.pdf
 impl OnsenQuality {
     pub fn new(chemicals: &[Chemical], liquid: Option<SpringLiquid>) -> Self {
-        if chemicals.contains(&HIon) && liquid != Some(Acidic) {
-            panic!("酸性泉は必ず液性は酸性である");
-        }
-        if chemicals.is_empty() {
-            return Self {
-                is_simple: true,
-                liquid,
-                cations: vec![],
-                anions: vec![],
-                inclusions: vec![],
-            };
-        }
+        assert!(
+            !chemicals.contains(&HIon) || liquid == Some(Acidic),
+            "酸性泉は必ず液性は酸性である"
+        );
         let cations: Vec<Chemical> = chemicals
             .iter()
             .filter(|v| v.is_cation())
-            .map(|v| v.clone())
+            .map(|&v| v)
             .collect();
         let anions: Vec<Chemical> = chemicals
             .iter()
             .filter(|v| v.is_anion())
-            .map(|v| v.clone())
+            .map(|&v| v)
             .collect();
         let inclusions: Vec<Chemical> = chemicals
             .iter()
             .filter(|v| v.is_inclusion())
-            .map(|v| v.clone())
+            .map(|&v| v)
             .collect();
 
-        let is_simple = cations.is_empty() && anions.is_empty();
         Self {
-            is_simple,
             liquid,
             cations,
             anions,
@@ -67,72 +71,76 @@ impl OnsenQuality {
         }
     }
 
-    fn liquid_string(&self) -> String {
-        let empty = "".to_string();
+    /// 液性部分の表記
+    fn liquid_string(&self) -> &str {
         match &self.liquid {
-            Some(liquid) => match liquid {
-                Acidic | MildlyAcidic | Neutral => empty,
-                MildlyAlkaline => "弱アルカリ性".to_string(),
-                Alkaline => "アルカリ性".to_string(),
-            },
-            None => "".to_string(),
+            Some(liquid) => liquid.jp(),
+            None => "",
         }
     }
 
+    /// 単純温泉かどうか
+    fn is_simple(&self) -> bool {
+        self.cations.is_empty() && self.anions.is_empty()
+    }
+
+    /// 塩化物強塩泉かどうか
     pub fn is_strong_na_cl(&self) -> bool {
         self.cations.contains(&NaIon) && self.anions.contains(&ClIon(ClType::Strong))
     }
 
-    pub fn fe_type(&self) -> String {
+    /// 鉄イオンの種類
+    pub fn fe_type(&self) -> &str {
         if self.inclusions.contains(&FeIon(FeType::Two)) {
-            return "Two".to_string();
+            return "Two";
         }
         if self.inclusions.contains(&FeIon(FeType::Three)) {
-            return "Three".to_string();
+            return "Three";
         }
         if self.inclusions.contains(&FeIon(FeType::Normal)) {
-            return "Normal".to_string();
+            return "Normal";
         }
-        "".to_string()
+        ""
     }
 
+    /// 弱放射能泉かどうか
     pub fn is_weak_rn(&self) -> bool {
         self.inclusions.contains(&Rn(RnType::Weak))
     }
 
+    /// 泉質の文字列配列
     pub fn to_string_vec(&self) -> Vec<String> {
-        let cations_string_vec: Vec<String> = self.cations.iter().map(|v| v.to_string()).collect();
-        let anions_string_vec: Vec<String> = self.anions.iter().map(|v| v.to_string()).collect();
-        let inclusions_string_vec: Vec<String> =
-            self.inclusions.iter().map(|v| v.to_string()).collect();
-        return [cations_string_vec, anions_string_vec, inclusions_string_vec].concat();
+        (self.cations.iter().map(|v| v.to_string()))
+            .chain(self.anions.iter().map(|v| v.to_string()))
+            .chain(self.inclusions.iter().map(|v| v.to_string()))
+            .collect()
     }
 }
 
 impl fmt::Display for OnsenQuality {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if self.is_simple && self.inclusions.is_empty() {
+        if self.is_simple() && self.inclusions.is_empty() {
             return write!(f, "{}単純温泉", self.liquid_string());
         }
-        if self.is_simple && !self.inclusions.is_empty() {
+        if self.is_simple() && !self.inclusions.is_empty() {
             let target = &self.inclusions[0];
             let name = if let FeIon(_) = target {
                 "鉄".to_string()
             } else {
-                target.jp()
+                target.jp().to_string()
             };
             return write!(f, "単純{}泉", name);
         }
         let cation_enumrated_text = self
             .cations
             .iter()
-            .map(|v| v.jp())
+            .map(|v| v.jp().to_string())
             .collect::<Vec<String>>()
             .join("・");
         let anion_enumrated_text = self
             .anions
             .iter()
-            .map(|v| v.jp())
+            .map(|v| v.jp().to_string())
             .collect::<Vec<String>>()
             .join("・");
         let inclusion_h_ion_excluded = self
@@ -142,7 +150,7 @@ impl fmt::Display for OnsenQuality {
             .collect::<Vec<&Chemical>>();
         let inclusion_enumerated_text = inclusion_h_ion_excluded
             .iter()
-            .map(|v| v.jp())
+            .map(|v| v.jp().to_string())
             .collect::<Vec<String>>()
             .join("・");
         let mut text: String = format!("{}泉", anion_enumrated_text);

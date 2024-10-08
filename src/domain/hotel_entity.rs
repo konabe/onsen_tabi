@@ -1,13 +1,20 @@
 use crate::domain::onsen::onsen_entity::OnsenEntity;
 
 #[derive(Clone)]
+/// 宿泊所
 pub struct HotelEntity {
     pub id: u32,
+    /// 名前
     pub name: String,
+    /// 和室があるか
     pub has_washitsu: bool,
+    /// 一人泊可能か
     pub solo_available: bool,
+    /// URL
     pub url: String,
+    /// 説明
     pub description: String,
+    /// 温泉リスト
     pub onsens: Vec<OnsenEntity>,
 }
 

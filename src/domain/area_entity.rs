@@ -1,16 +1,26 @@
 use crate::domain::onsen::onsen_entity::OnsenEntity;
 
 #[derive(Clone)]
+/// 温泉エリア
 pub struct AreaEntity {
     pub id: u32,
+    /// エリア名
     pub name: String,
+    /// エリア名（カナ）
     pub kana: String,
+    /// 都道府県
     pub prefecture: String,
+    /// 国民保養地かどうか
     pub national_resort: bool,
+    /// 温泉郷名
     pub village: Option<String>,
+    /// URL
     pub url: String,
+    /// 説明
     pub description: String,
+    /// アクセス
     pub access: String,
+    /// 温泉リスト
     pub onsens: Vec<OnsenEntity>,
 }
 
@@ -134,7 +144,7 @@ mod tests {
     fn new_test_return_none_if_name_is_empty() {
         let area = AreaEntityBuilder::new()
             .id(1)
-            .name("")
+            .name("") // 名前が空のとき
             .kana("しま")
             .prefecture("群馬県")
             .national_resort(false)
@@ -144,7 +154,7 @@ mod tests {
             .access("")
             .onsens(vec![])
             .build();
-        area.unwrap();
+        area.unwrap(); // Noneが返ってくる
     }
 
     #[test]
@@ -154,7 +164,7 @@ mod tests {
             .id(1)
             .name("四万")
             .kana("しま")
-            .prefecture("")
+            .prefecture("") // 都道府県が空のとき
             .national_resort(false)
             .village(None)
             .url("https://nakanojo-kanko.jp/shima/")
@@ -162,6 +172,6 @@ mod tests {
             .access("")
             .onsens(vec![])
             .build();
-        area.unwrap();
+        area.unwrap(); // Noneが返ってくる
     }
 }

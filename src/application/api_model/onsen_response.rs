@@ -45,7 +45,7 @@ impl OnsenResponse {
                 name: v.to_string(),
                 chemicals: v.to_string_vec(),
                 is_strong_na_cl: v.is_strong_na_cl(),
-                fe_type: v.fe_type(),
+                fe_type: v.fe_type().to_string(),
                 is_weak_rn: v.is_weak_rn(),
             }),
             other_spring_quality: onsen.spring_quality.clone(),

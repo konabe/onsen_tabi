@@ -1,6 +1,6 @@
 use crate::domain::onsen::chemical::{ClType, FeType};
 use crate::domain::onsen::onsen_quality::OnsenQuality;
-use crate::domain::onsen::{chemical::Chemical, chemical::RnType, onsen_entity::SpringLiquid};
+use crate::domain::onsen::{chemical::Chemical, chemical::RnType, spring_liquid::SpringLiquid};
 use diesel::{Identifiable, Insertable, Queryable, Selectable};
 
 #[derive(Queryable, Selectable, Identifiable, Insertable, Debug, Clone)]
@@ -92,7 +92,7 @@ impl From<OnsenQuality> for DieselChemical {
             s: 0,
             rn: 0,
             strong_na_cl: value.is_strong_na_cl(),
-            fe_type: value.fe_type(),
+            fe_type: value.fe_type().to_string(),
             weak_rn: value.is_weak_rn(),
         };
         for (i, v) in value.cations.iter().enumerate() {
