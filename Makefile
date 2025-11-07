@@ -1,4 +1,4 @@
-.PHONY: help setup check fmt lint test build run migration-generate migration-run migration-revert clean install-hooks
+.PHONY: help setup check fmt lint test build run migration-generate migration-run migration-revert clean install-hooks setup-test-db test-integration test-e2e
 
 # デフォルトターゲット: ヘルプを表示
 help:
@@ -10,6 +10,9 @@ help:
 	@echo "  lint               - Clippy実行"
 	@echo "  test               - テスト実行"
 	@echo "  test-coverage      - カバレッジ付きテスト実行"
+	@echo "  test-integration   - 統合テスト実行（DB接続必要）"
+	@echo "  test-e2e           - E2Eテスト実行（DB接続必要）"
+	@echo "  setup-test-db      - テスト用データベースのセットアップ"
 	@echo "  build              - リリースビルド"
 	@echo "  build-dev          - デバッグビルド"
 	@echo "  run                - アプリケーション実行"
@@ -50,10 +53,27 @@ test:
 	@echo "🧪 Running tests..."
 	cargo test
 
+# 統合テスト実行（データベース接続必要）
+test-integration:
+	@echo "🧪 Running integration tests (database required)..."
+	@echo "⚠️  TEST_DATABASE_URL環境変数が設定されていることを確認してください"
+	cargo test -- --ignored
+
+# E2Eテスト実行（データベース接続必要）
+test-e2e:
+	@echo "🧪 Running E2E tests (database required)..."
+	@echo "⚠️  TEST_DATABASE_URL環境変数が設定されていることを確認してください"
+	cargo test --test e2e_tests -- --ignored --test-threads=1
+
 # カバレッジ付きテスト
 test-coverage:
 	@echo "🧪 Running tests with coverage..."
 	cargo tarpaulin --out Html --output-dir coverage
+
+# テスト用データベースのセットアップ
+setup-test-db:
+	@echo "🗄️ Setting up test database..."
+	@./scripts/setup-test-db.sh
 
 # リリースビルド
 build:

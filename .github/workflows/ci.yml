@@ -133,9 +133,30 @@ jobs:
       - name: Run tests
         env:
           DATABASE_URL: mysql://root:password@127.0.0.1:3306/onsen_tabi_test
+          TEST_DATABASE_URL: mysql://root:password@127.0.0.1:3306/onsen_tabi_test
           JWT_SECRET_KEY: test-secret-key-for-ci
           RUST_LOG: debug
         run: cargo test --verbose
+
+      - name: Run integration tests
+        env:
+          DATABASE_URL: mysql://root:password@127.0.0.1:3306/onsen_tabi_test
+          TEST_DATABASE_URL: mysql://root:password@127.0.0.1:3306/onsen_tabi_test
+          JWT_SECRET_KEY: test-secret-key-for-ci
+          RUST_LOG: debug
+        run: |
+          echo "Running integration tests with database connection..."
+          cargo test -- --ignored --test-threads=1
+
+      - name: Run E2E tests
+        env:
+          DATABASE_URL: mysql://root:password@127.0.0.1:3306/onsen_tabi_test
+          TEST_DATABASE_URL: mysql://root:password@127.0.0.1:3306/onsen_tabi_test
+          JWT_SECRET_KEY: test-secret-key-for-ci
+          RUST_LOG: debug
+        run: |
+          echo "Running E2E tests..."
+          cargo test --test e2e_tests -- --ignored --test-threads=1
 
       - name: Generate code coverage
         if: github.event_name == 'pull_request'

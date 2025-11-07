@@ -252,6 +252,92 @@ make audit
 5. **コード品質**: 命名規則、エラーハンドリング、テストカバレッジ
 6. **Git管理**: コミットメッセージ、ブランチ戦略
 
+## テスト
+
+### テストの種類
+
+このプロジェクトには3種類のテストがあります：
+
+1. **単体テスト**: データベース接続不要（61テスト）
+2. **統合テスト**: データベース接続必要（22テスト）
+3. **E2Eテスト**: 完全なシナリオテスト（5テスト）
+
+### クイックスタート
+
+```bash
+# 1. テスト用データベースのセットアップ
+make setup-test-db
+
+# 2. 単体テストのみ実行
+make test
+
+# 3. 統合テスト実行（データベース接続必要）
+make test-integration
+
+# 4. E2Eテスト実行
+make test-e2e
+```
+
+### テスト用データベースのセットアップ（詳細）
+
+#### 自動セットアップ（推奨）
+
+```bash
+# .envファイルにTEST_DATABASE_URLを設定後
+make setup-test-db
+```
+
+このコマンドは以下を自動実行します：
+- テストDBの作成（存在しない場合）
+- マイグレーションの実行
+- テーブルの確認
+
+#### 手動セットアップ
+
+```bash
+# 1. テスト用データベースの作成
+mysql -u root -p
+CREATE DATABASE onsen_tabi_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+GRANT ALL PRIVILEGES ON onsen_tabi_test.* TO 'root'@'localhost';
+FLUSH PRIVILEGES;
+
+# 2. .envに追加
+echo "TEST_DATABASE_URL=mysql://root:password@localhost:3306/onsen_tabi_test" >> .env
+
+# 3. マイグレーション実行
+DATABASE_URL=$TEST_DATABASE_URL diesel migration run
+```
+
+### テスト実行コマンド
+
+```bash
+# 単体テストのみ（デフォルト）
+cargo test
+
+# 統合テスト（データベース接続必要）
+cargo test -- --ignored
+
+# E2Eテスト（直列実行）
+cargo test --test e2e_tests -- --ignored --test-threads=1
+
+# カバレッジ付きテスト
+make test-coverage
+```
+
+### テスト詳細
+
+詳細なテスト実行方法は以下を参照：
+- **[tests/README.md](tests/README.md)**: 統合テスト実行ガイド
+- **[doc/TEST_COVERAGE.md](doc/TEST_COVERAGE.md)**: テストカバレッジレポート
+
+### テスト統計
+
+- **総テスト数**: 96
+  - 単体テスト: 61
+  - RequestGuard: 8
+  - 統合テスト: 22
+  - E2Eテスト: 5
+
 ## テストカバレッジ
 
 ![sunburst](https://codecov.io/gh/konabe/onsen_tabi/graphs/sunburst.svg?token=WRRRJTB2BE)
