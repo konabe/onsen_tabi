@@ -4,7 +4,7 @@
 
 ## 概要
 
-このプロジェクトでは、コード品質を保証するため に**多層的なガードレール**を実装しています：
+このプロジェクトでは、コード品質を保証するために**多層的なガードレール**を実装しています：
 
 1. **ローカル開発時**: Pre-commitフック
 2. **プルリクエスト時**: GitHub Actions CI
@@ -361,6 +361,7 @@ options: >-
 **対処法**:
 ```yaml
 # バージョン固定と--locked フラグを使用
+# || true: キャッシュから既にインストール済みの場合のエラーを許容
 cargo install diesel_cli --version 2.1.1 --no-default-features --features mysql --locked || true
 ```
 
@@ -395,8 +396,10 @@ cargo install diesel_cli --version 2.1.1 --no-default-features --features mysql 
 
 ### モニタリング
 
-- GitHub Actions実行履歴: https://github.com/konabe/onsen_tabi/actions
-- Codecovレポート: https://codecov.io/gh/konabe/onsen_tabi
+詳細なCI実行履歴とカバレッジレポートは以下で確認できます：
+
+- **GitHub Actions**: リポジトリの Actions タブ
+- **Codecov**: README.md のカバレッジバッジからアクセス可能
 
 ## まとめ
 
