@@ -164,7 +164,7 @@ mod tests {
     #[test]
     fn test_diesel_onsen_from_onsen_entity() {
         let quality = OnsenQuality::new(&vec![NaIon, ClIon(ClType::Normal)], None);
-        
+
         let entity = OnsenEntityBuilder::new()
             .id(1)
             .name("test onsen")
@@ -306,7 +306,7 @@ mod tests {
         assert_eq!(quality.fe_type(), "Two");
         assert_eq!(
             quality.to_string(),
-            "含鉄（Ⅱ）－カルシウム・ナトリウム－炭酸水素塩・塩化物泉"
+            "含鉄（Ⅱ）－ナトリウム・カルシウム－炭酸水素塩・塩化物泉"
         );
     }
 

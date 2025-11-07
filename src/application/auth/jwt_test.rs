@@ -1,11 +1,14 @@
 #[cfg(test)]
 mod tests {
-    use super::super::{encode_jwt, decode_jwt, Claims};
+    use super::super::{decode_jwt, encode_jwt, Claims};
     use chrono::Utc;
     use std::env;
 
     fn setup_test_env() {
-        env::set_var("JWT_SECRET_KEY", "test_secret_key_for_testing_purposes_only");
+        env::set_var(
+            "JWT_SECRET_KEY",
+            "test_secret_key_for_testing_purposes_only",
+        );
     }
 
     #[test]
@@ -13,7 +16,7 @@ mod tests {
         setup_test_env();
         let email = "test@example.com";
         let token = encode_jwt(email);
-        
+
         assert!(!token.is_empty());
         assert!(token.contains('.'));
         let parts: Vec<&str> = token.split('.').collect();
@@ -25,10 +28,10 @@ mod tests {
         setup_test_env();
         let email = "test@example.com";
         let token = encode_jwt(email);
-        
+
         let claims = decode_jwt(&token);
         assert!(claims.is_some());
-        
+
         let claims = claims.unwrap();
         assert_eq!(claims.email, email);
         assert!(claims.iat > 0);
@@ -39,7 +42,7 @@ mod tests {
     fn test_decode_jwt_with_invalid_token() {
         setup_test_env();
         let invalid_token = "invalid.token.string";
-        
+
         let claims = decode_jwt(invalid_token);
         assert!(claims.is_none());
     }
@@ -48,7 +51,7 @@ mod tests {
     fn test_decode_jwt_with_empty_token() {
         setup_test_env();
         let empty_token = "";
-        
+
         let claims = decode_jwt(empty_token);
         assert!(claims.is_none());
     }
@@ -57,7 +60,7 @@ mod tests {
     fn test_decode_jwt_with_malformed_token() {
         setup_test_env();
         let malformed_token = "not_a_jwt_at_all";
-        
+
         let claims = decode_jwt(malformed_token);
         assert!(claims.is_none());
     }
@@ -67,10 +70,10 @@ mod tests {
         setup_test_env();
         let email = "test@example.com";
         let token = encode_jwt(email);
-        
+
         let claims = decode_jwt(&token).unwrap();
         let duration = claims.exp - claims.iat;
-        
+
         // 24時間 = 86400秒
         assert_eq!(duration, 86400);
     }
@@ -83,7 +86,7 @@ mod tests {
             "admin@test.jp",
             "test.user+tag@domain.co.uk",
         ];
-        
+
         for email in test_emails {
             let token = encode_jwt(email);
             let claims = decode_jwt(&token).unwrap();
@@ -98,9 +101,9 @@ mod tests {
         let now_before = Utc::now().timestamp();
         let token = encode_jwt(email);
         let now_after = Utc::now().timestamp();
-        
+
         let claims = decode_jwt(&token).unwrap();
-        
+
         // iatは現在時刻の前後数秒以内
         assert!(claims.iat >= now_before);
         assert!(claims.iat <= now_after + 1);
@@ -110,11 +113,11 @@ mod tests {
     fn test_different_tokens_for_same_email() {
         setup_test_env();
         let email = "test@example.com";
-        
+
         let token1 = encode_jwt(email);
         std::thread::sleep(std::time::Duration::from_millis(1001)); // 1秒待つ
         let token2 = encode_jwt(email);
-        
+
         // 異なる発行時刻により異なるトークンが生成される
         assert_ne!(token1, token2);
     }
@@ -124,7 +127,7 @@ mod tests {
         setup_test_env();
         let email = "test+special@example.com";
         let token = encode_jwt(email);
-        
+
         let claims = decode_jwt(&token).unwrap();
         assert_eq!(claims.email, email);
     }
@@ -134,14 +137,14 @@ mod tests {
         setup_test_env();
         let email = "test@example.com";
         let token = encode_jwt(email);
-        
+
         // 異なるシークレットキーを設定
         env::set_var("JWT_SECRET_KEY", "different_secret_key");
-        
+
         // デコードは失敗するはず
         let claims = decode_jwt(&token);
         assert!(claims.is_none());
-        
+
         // 元に戻す
         setup_test_env();
     }
@@ -153,7 +156,7 @@ mod tests {
             iat: 1234567890,
             exp: 1234654290,
         };
-        
+
         assert_eq!(claims.email, "test@example.com");
         assert_eq!(claims.iat, 1234567890);
         assert_eq!(claims.exp, 1234654290);

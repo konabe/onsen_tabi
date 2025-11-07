@@ -22,7 +22,7 @@ mod tests {
     fn test_auth_request_deserialization() {
         let json = r#"{"email":"test@example.com","password":"password123"}"#;
         let request: AuthRequest = serde_json::from_str(json).unwrap();
-        
+
         assert_eq!(request.email, "test@example.com");
         assert_eq!(request.password, "password123");
     }
@@ -31,7 +31,7 @@ mod tests {
     fn test_auth_request_deserialization_camel_case() {
         let json = r#"{"email":"user@test.com","password":"pass"}"#;
         let request: AuthRequest = serde_json::from_str(json).unwrap();
-        
+
         assert_eq!(request.email, "user@test.com");
         assert_eq!(request.password, "pass");
     }
@@ -40,7 +40,7 @@ mod tests {
     fn test_auth_request_with_empty_values() {
         let json = r#"{"email":"","password":""}"#;
         let request: AuthRequest = serde_json::from_str(json).unwrap();
-        
+
         assert_eq!(request.email, "");
         assert_eq!(request.password, "");
     }
@@ -49,7 +49,7 @@ mod tests {
     fn test_auth_request_with_special_characters() {
         let json = r#"{"email":"test+tag@example.com","password":"p@ssw0rd!#$%"}"#;
         let request: AuthRequest = serde_json::from_str(json).unwrap();
-        
+
         assert_eq!(request.email, "test+tag@example.com");
         assert_eq!(request.password, "p@ssw0rd!#$%");
     }
@@ -60,7 +60,7 @@ mod tests {
             token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9".to_string(),
         };
         let json = serde_json::to_string(&response).unwrap();
-        
+
         assert!(json.contains("token"));
         assert!(json.contains("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"));
     }
@@ -71,7 +71,7 @@ mod tests {
             token: "test_token".to_string(),
         };
         let json = serde_json::to_string(&response).unwrap();
-        
+
         // camelCaseで出力されることを確認
         assert!(json.contains("\"token\""));
     }
@@ -82,7 +82,7 @@ mod tests {
             token: "".to_string(),
         };
         let json = serde_json::to_string(&response).unwrap();
-        
+
         assert_eq!(json, r#"{"token":""}"#);
     }
 
@@ -93,7 +93,7 @@ mod tests {
             token: long_token.clone(),
         };
         let json = serde_json::to_string(&response).unwrap();
-        
+
         assert!(json.contains(&long_token));
     }
 

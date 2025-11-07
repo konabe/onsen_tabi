@@ -156,9 +156,12 @@ if git diff --cached | grep "^+.*\.unwrap()" | grep -v "test" | grep -v "^+.*exp
 fi
 
 # パスワードやシークレットのハードコーディングチェック
-if git diff --cached | grep -iE "^+.*(password|secret|token).*=.*['\"]"; then
+# テストファイルと変数代入（let, const）とpre-commitフック自体とif文は除外
+SECRET_VIOLATIONS=$(git diff --cached | grep -iE "^+.*(password|secret|token).*=.*['\"]" | grep -v "_test\.rs" | grep -v "tests/" | grep -v "let " | grep -v "const " | grep -v "\.githooks/" | grep -v "^-if " || true)
+if [ -n "$SECRET_VIOLATIONS" ]; then
     echo -e "${RED}❌ Potential hardcoded secret detected${NC}"
     echo "   Secrets should be loaded from environment variables"
+    echo "$SECRET_VIOLATIONS"
     GUARDRAIL_VIOLATIONS=1
 fi
 

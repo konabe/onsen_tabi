@@ -8,16 +8,16 @@
 
 #[cfg(test)]
 mod controller_integration_tests {
+    use rocket::http::{ContentType, Status};
     use rocket::local::blocking::Client;
-    use rocket::http::{Status, ContentType, Header};
     use serde_json::json;
-    
+
     fn rocket() -> rocket::Rocket<rocket::Build> {
         // テスト用のRocketインスタンスを構築
         rocket::build()
             .mount(
                 "/",
-                routes![
+                rocket::routes![
                     onsen_tabi::application::controller::area_controller::get_areas,
                     onsen_tabi::application::controller::area_controller::get_area,
                     onsen_tabi::application::controller::area_controller::post_area,
@@ -36,31 +36,29 @@ mod controller_integration_tests {
             )
             .attach(onsen_tabi::CORS)
     }
-    
+
     // GET /area のテスト
     #[test]
     #[ignore] // データベース接続が必要なため通常はスキップ
     fn test_get_areas_returns_ok() {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
         let response = client.get("/area").dispatch();
-        
+
         assert_eq!(response.status(), Status::Ok);
         assert_eq!(response.content_type(), Some(ContentType::JSON));
     }
-    
+
     // GET /area/<id> のテスト
     #[test]
     #[ignore]
     fn test_get_area_by_id() {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
         let response = client.get("/area/1").dispatch();
-        
+
         // エリアが存在する場合はOk、存在しない場合はNotFound
-        assert!(
-            response.status() == Status::Ok || response.status() == Status::NotFound
-        );
+        assert!(response.status() == Status::Ok || response.status() == Status::NotFound);
     }
-    
+
     // POST /area のテスト（認証なし）
     #[test]
     #[ignore]
@@ -78,17 +76,17 @@ mod controller_integration_tests {
                 "access": "テスト駅から徒歩5分"
             }))
             .dispatch();
-        
+
         assert_eq!(response.status(), Status::Unauthorized);
     }
-    
+
     // POST /signup のテスト
     #[test]
     #[ignore]
     fn test_signup_with_valid_data() {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
         let unique_email = format!("test_{}@example.com", chrono::Utc::now().timestamp());
-        
+
         let response = client
             .post("/signup")
             .header(ContentType::JSON)
@@ -97,19 +95,19 @@ mod controller_integration_tests {
                 "password": "SecurePassword123!"
             }))
             .dispatch();
-        
+
         // 成功または既に存在する場合のエラー
         assert!(
             response.status() == Status::Ok || response.status() == Status::InternalServerError
         );
     }
-    
+
     // POST /signin のテスト
     #[test]
     #[ignore]
     fn test_signin_with_invalid_credentials() {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
-        
+
         let response = client
             .post("/signin")
             .header(ContentType::JSON)
@@ -118,21 +116,21 @@ mod controller_integration_tests {
                 "password": "WrongPassword123!"
             }))
             .dispatch();
-        
+
         // 認証失敗のステータスを確認
         assert!(
-            response.status() == Status::Unauthorized || 
-            response.status() == Status::InternalServerError
+            response.status() == Status::Unauthorized
+                || response.status() == Status::InternalServerError
         );
     }
-    
+
     // 統合的な認証フローのテスト
     #[test]
     #[ignore]
     fn test_complete_auth_flow() {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
         let unique_email = format!("auth_flow_{}@example.com", chrono::Utc::now().timestamp());
-        
+
         // 1. ユーザー登録
         let signup_response = client
             .post("/signup")
@@ -142,11 +140,11 @@ mod controller_integration_tests {
                 "password": "SecurePassword123!"
             }))
             .dispatch();
-        
+
         if signup_response.status() != Status::Ok {
             return; // 登録失敗の場合はスキップ
         }
-        
+
         // 2. ログイン
         let signin_response = client
             .post("/signin")
@@ -156,12 +154,12 @@ mod controller_integration_tests {
                 "password": "SecurePassword123!"
             }))
             .dispatch();
-        
+
         assert_eq!(signin_response.status(), Status::Ok);
-        
+
         // 3. トークンの取得（実装はレスポンスボディからトークンを抽出する必要あり）
         // let token = signin_response.into_json::<AuthResponse>().unwrap().access_token;
-        
+
         // 4. トークンを使用してエリア作成（実装例）
         // let create_response = client
         //     .post("/area")
@@ -171,39 +169,39 @@ mod controller_integration_tests {
         //     .dispatch();
         // assert_eq!(create_response.status(), Status::Ok);
     }
-    
+
     // GET /hotel のテスト
     #[test]
     #[ignore]
     fn test_get_hotels_returns_ok() {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
         let response = client.get("/hotel").dispatch();
-        
+
         assert_eq!(response.status(), Status::Ok);
         assert_eq!(response.content_type(), Some(ContentType::JSON));
     }
-    
+
     // GET /onsen のテスト
     #[test]
     #[ignore]
     fn test_get_onsens_returns_ok() {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
         let response = client.get("/onsen").dispatch();
-        
+
         assert_eq!(response.status(), Status::Ok);
         assert_eq!(response.content_type(), Some(ContentType::JSON));
     }
-    
+
     // エラーハンドリングのテスト
     #[test]
     #[ignore]
     fn test_nonexistent_endpoint_returns_not_found() {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
         let response = client.get("/nonexistent").dispatch();
-        
+
         assert_eq!(response.status(), Status::NotFound);
     }
-    
+
     // 不正なJSONのテスト
     #[test]
     #[ignore]
@@ -214,10 +212,10 @@ mod controller_integration_tests {
             .header(ContentType::JSON)
             .body("{invalid json}")
             .dispatch();
-        
+
         assert!(
-            response.status() == Status::BadRequest ||
-            response.status() == Status::UnprocessableEntity
+            response.status() == Status::BadRequest
+                || response.status() == Status::UnprocessableEntity
         );
     }
 }

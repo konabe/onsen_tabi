@@ -276,10 +276,7 @@ mod tests {
 
     #[test]
     fn test_from_onsen_quality_to_diesel_chemical() {
-        let quality = OnsenQuality::new(
-            &vec![NaIon, ClIon(ClType::Normal)],
-            None
-        );
+        let quality = OnsenQuality::new(&vec![NaIon, ClIon(ClType::Normal)], None);
 
         let diesel: DieselChemical = quality.into();
         assert_eq!(diesel.na_ion, 1);
@@ -290,10 +287,7 @@ mod tests {
 
     #[test]
     fn test_from_onsen_quality_with_multiple_cations() {
-        let quality = OnsenQuality::new(
-            &vec![NaIon, CaIon, MgIon, ClIon(ClType::Normal)],
-            None
-        );
+        let quality = OnsenQuality::new(&vec![NaIon, CaIon, MgIon, ClIon(ClType::Normal)], None);
 
         let diesel: DieselChemical = quality.into();
         assert_eq!(diesel.na_ion, 1);
@@ -304,10 +298,7 @@ mod tests {
 
     #[test]
     fn test_from_onsen_quality_with_strong_nacl() {
-        let quality = OnsenQuality::new(
-            &vec![NaIon, ClIon(ClType::Strong)],
-            None
-        );
+        let quality = OnsenQuality::new(&vec![NaIon, ClIon(ClType::Strong)], None);
 
         let diesel: DieselChemical = quality.into();
         assert_eq!(diesel.strong_na_cl, true);
@@ -317,7 +308,7 @@ mod tests {
     fn test_from_onsen_quality_with_fe_types() {
         let quality = OnsenQuality::new(
             &vec![FeIon(FeType::Two), NaIon, ClIon(ClType::Normal)],
-            None
+            None,
         );
 
         let diesel: DieselChemical = quality.into();
@@ -328,8 +319,14 @@ mod tests {
     #[test]
     fn test_roundtrip_conversion() {
         let original_quality = OnsenQuality::new(
-            &vec![NaIon, CaIon, HCO3Ion, ClIon(ClType::Normal), FeIon(FeType::Two)],
-            Some(SpringLiquid::Neutral)
+            &vec![
+                NaIon,
+                CaIon,
+                HCO3Ion,
+                ClIon(ClType::Normal),
+                FeIon(FeType::Two),
+            ],
+            Some(SpringLiquid::Neutral),
         );
 
         let diesel: DieselChemical = original_quality.clone().into();
