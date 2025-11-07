@@ -26,8 +26,8 @@ APIエンドポイントの統合テスト（Rocketテストクライアント�
 
 **実装状況**: ✅ 完了（12テスト）
 
-### 3. `e2e_tests.rs`
-エンドツーエンドテスト
+### 3. `e2e_app_tests.rs`
+エンドツーエンドテスト（アプリケーションレベル）
 
 **テスト内容**:
 - ユーザー登録→ログインフロー
@@ -36,6 +36,19 @@ APIエンドポイントの統合テスト（Rocketテストクライアント�
 - エラーハンドリングシナリオ
 
 **実装状況**: ✅ 完了（5テスト）
+
+### 4. `e2e_server_tests.rs`
+エンドツーエンドテスト（サーバーレベル）
+
+**テスト内容**:
+- 実際のHTTPサーバーに対するテスト
+- 実際のHTTPクライアントを使用
+- サーバー起動・停止の確認
+- CORSヘッダーの検証
+
+**実装状況**: ✅ 完了（8テスト）
+
+**注意**: これらのテストは実際のサーバーが起動している必要があります。
 
 ---
 
@@ -134,7 +147,43 @@ cargo test --test controller_tests -- --ignored
 # Repository統合テスト
 cargo test --test repository_tests -- --ignored
 
-# E2Eテスト
+# アプリケーションレベルE2Eテスト
+cargo test --test e2e_app_tests -- --ignored
+```
+
+### サーバーE2Eテストの実行
+
+サーバーE2Eテストは実際のHTTPサーバーが起動している必要があります。
+
+#### 方法1: 手動でサーバーを起動
+
+```bash
+# ターミナル1: サーバー起動
+cargo run
+
+# ターミナル2: E2Eテスト実行
+cargo test --test e2e_server_tests -- --ignored --test-threads=1
+```
+
+#### 方法2: CI環境での自動実行
+
+CI環境では、サーバーが自動的にバックグラウンドで起動・停止されます。
+
+```bash
+# .github/workflows/ci.yml で自動実行されます
+```
+
+#### 方法3: Pre-commitフックでの実行（オプション）
+
+```bash
+# 環境変数を設定してpre-commitで実行
+export RUN_SERVER_E2E=true
+git commit -m "your message"
+```
+
+### 特定の統合テストを実行
+
+```bash
 cargo test --test e2e_tests -- --ignored --test-threads=1
 
 # 特定のテスト関数

@@ -79,16 +79,57 @@ if docker ps --format '{{.Names}}' | grep -q "onsen_tabi_test_mysql"; then
             CHECKS_FAILED=1
         fi
     fi
+    
+    # サーバーE2Eテスト（オプション: 環境変数で有効化）
+    if [ "$RUN_SERVER_E2E" = "true" ]; then
+        echo ""
+        echo "🌐 Running server E2E tests..."
+        echo "   Starting server in background..."
+        
+        # サーバーをバックグラウンドで起動
+        cargo run --release > /tmp/onsen_tabi_server.log 2>&1 &
+        SERVER_PID=$!
+        
+        # サーバー起動待機（最大30秒）
+        SERVER_READY=0
+        for i in {1..30}; do
+            if curl -s http://localhost:8000/area > /dev/null 2>&1; then
+                SERVER_READY=1
+                echo -e "${GREEN}   Server is ready${NC}"
+                break
+            fi
+            sleep 1
+        done
+        
+        if [ $SERVER_READY -eq 0 ]; then
+            echo -e "${RED}❌ Server failed to start within 30 seconds${NC}"
+            kill $SERVER_PID 2>/dev/null || true
+            CHECKS_FAILED=1
+        else
+            # E2Eテスト実行
+            if cargo test --test e2e_server_tests -- --ignored --test-threads=1 > /dev/null 2>&1; then
+                echo -e "${GREEN}✅ Server E2E tests passed${NC}"
+            else
+                echo -e "${RED}❌ Server E2E tests failed${NC}"
+                cargo test --test e2e_server_tests -- --ignored --test-threads=1
+                CHECKS_FAILED=1
+            fi
+            
+            # サーバー停止
+            echo "   Stopping server..."
+            kill $SERVER_PID 2>/dev/null || true
+            wait $SERVER_PID 2>/dev/null || true
+        fi
+    else
+        echo ""
+        echo -e "${YELLOW}ℹ️  Server E2E tests are optional${NC}"
+        echo "   To run them, set: export RUN_SERVER_E2E=true"
+    fi
 else
     echo -e "${YELLOW}⚠️  Test database not running - skipping integration tests${NC}"
     echo "   To run integration tests, start the database with:"
     echo "   docker start onsen_tabi_test_mysql"
 fi
-echo ""
-
-# Note about server E2E tests
-echo -e "${YELLOW}ℹ️  Note: Server E2E tests (e2e_server_tests) are not run in pre-commit${NC}"
-echo "   These require a running server and should be run manually"
 echo ""
 
 # 5. セキュリティチェック（オプション）
