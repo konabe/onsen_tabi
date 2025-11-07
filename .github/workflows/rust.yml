@@ -84,8 +84,11 @@ jobs:
           rustup component add llvm-tools-preview
           
           # Run coverage including integration tests (--ignored)
+          # Note: Exclude e2e_server_tests as they require a running server
           # Note: --test-threads=1 to avoid database race conditions
-          cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info -- --test-threads=1 --include-ignored
+          cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info \
+            --ignore-filename-regex 'e2e_server_tests\.rs' \
+            -- --test-threads=1 --ignored --skip e2e_server_tests
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
