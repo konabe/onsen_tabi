@@ -130,3 +130,211 @@ impl From<OnsenQuality> for DieselChemical {
         self_
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::domain::onsen::chemical::Chemical::*;
+    use crate::domain::onsen::spring_liquid::SpringLiquid;
+
+    #[test]
+    fn test_diesel_chemical_create_simple_onsen() {
+        let diesel_chemical = DieselChemical {
+            id: 1,
+            na_ion: 1,
+            ca_ion: 0,
+            mg_ion: 0,
+            cl_ion: 4,
+            hco3_ion: 0,
+            so4_ion: 0,
+            co2_ion: 0,
+            fe_ion: 0,
+            al_ion: 0,
+            cu_ion: 0,
+            h_ion: 0,
+            i_ion: 0,
+            s: 0,
+            rn: 0,
+            strong_na_cl: false,
+            fe_type: "Normal".to_string(),
+            weak_rn: false,
+        };
+
+        let quality = diesel_chemical.create(None);
+        assert_eq!(quality.to_string(), "ナトリウム－塩化物泉");
+    }
+
+    #[test]
+    fn test_diesel_chemical_create_with_liquid() {
+        let diesel_chemical = DieselChemical {
+            id: 1,
+            na_ion: 0,
+            ca_ion: 0,
+            mg_ion: 0,
+            cl_ion: 0,
+            hco3_ion: 0,
+            so4_ion: 0,
+            co2_ion: 0,
+            fe_ion: 0,
+            al_ion: 0,
+            cu_ion: 0,
+            h_ion: 0,
+            i_ion: 0,
+            s: 0,
+            rn: 0,
+            strong_na_cl: false,
+            fe_type: "Normal".to_string(),
+            weak_rn: false,
+        };
+
+        let quality = diesel_chemical.create(Some(SpringLiquid::MildlyAlkaline));
+        assert_eq!(quality.to_string(), "弱アルカリ性単純温泉");
+    }
+
+    #[test]
+    fn test_diesel_chemical_create_strong_nacl() {
+        let diesel_chemical = DieselChemical {
+            id: 1,
+            na_ion: 1,
+            ca_ion: 0,
+            mg_ion: 0,
+            cl_ion: 4,
+            hco3_ion: 0,
+            so4_ion: 0,
+            co2_ion: 0,
+            fe_ion: 0,
+            al_ion: 0,
+            cu_ion: 0,
+            h_ion: 0,
+            i_ion: 0,
+            s: 0,
+            rn: 0,
+            strong_na_cl: true,
+            fe_type: "Normal".to_string(),
+            weak_rn: false,
+        };
+
+        let quality = diesel_chemical.create(None);
+        assert!(quality.is_strong_na_cl());
+        assert_eq!(quality.to_string(), "ナトリウム－塩化物強塩泉");
+    }
+
+    #[test]
+    fn test_diesel_chemical_create_with_fe_two() {
+        let diesel_chemical = DieselChemical {
+            id: 1,
+            na_ion: 1,
+            ca_ion: 0,
+            mg_ion: 0,
+            cl_ion: 4,
+            hco3_ion: 0,
+            so4_ion: 0,
+            co2_ion: 0,
+            fe_ion: 7,
+            al_ion: 0,
+            cu_ion: 0,
+            h_ion: 0,
+            i_ion: 0,
+            s: 0,
+            rn: 0,
+            strong_na_cl: false,
+            fe_type: "Two".to_string(),
+            weak_rn: false,
+        };
+
+        let quality = diesel_chemical.create(None);
+        assert_eq!(quality.fe_type(), "Two");
+        assert_eq!(quality.to_string(), "含鉄（Ⅱ）－ナトリウム－塩化物泉");
+    }
+
+    #[test]
+    fn test_diesel_chemical_create_with_weak_rn() {
+        let diesel_chemical = DieselChemical {
+            id: 1,
+            na_ion: 1,
+            ca_ion: 0,
+            mg_ion: 0,
+            cl_ion: 4,
+            hco3_ion: 0,
+            so4_ion: 0,
+            co2_ion: 0,
+            fe_ion: 0,
+            al_ion: 0,
+            cu_ion: 0,
+            h_ion: 0,
+            i_ion: 0,
+            s: 0,
+            rn: 7,
+            strong_na_cl: false,
+            fe_type: "Normal".to_string(),
+            weak_rn: true,
+        };
+
+        let quality = diesel_chemical.create(None);
+        assert!(quality.is_weak_rn());
+    }
+
+    #[test]
+    fn test_from_onsen_quality_to_diesel_chemical() {
+        let quality = OnsenQuality::new(
+            &vec![NaIon, ClIon(ClType::Normal)],
+            None
+        );
+
+        let diesel: DieselChemical = quality.into();
+        assert_eq!(diesel.na_ion, 1);
+        assert_eq!(diesel.cl_ion, 4);
+        assert_eq!(diesel.ca_ion, 0);
+        assert_eq!(diesel.strong_na_cl, false);
+    }
+
+    #[test]
+    fn test_from_onsen_quality_with_multiple_cations() {
+        let quality = OnsenQuality::new(
+            &vec![NaIon, CaIon, MgIon, ClIon(ClType::Normal)],
+            None
+        );
+
+        let diesel: DieselChemical = quality.into();
+        assert_eq!(diesel.na_ion, 1);
+        assert_eq!(diesel.ca_ion, 2);
+        assert_eq!(diesel.mg_ion, 3);
+        assert_eq!(diesel.cl_ion, 4);
+    }
+
+    #[test]
+    fn test_from_onsen_quality_with_strong_nacl() {
+        let quality = OnsenQuality::new(
+            &vec![NaIon, ClIon(ClType::Strong)],
+            None
+        );
+
+        let diesel: DieselChemical = quality.into();
+        assert_eq!(diesel.strong_na_cl, true);
+    }
+
+    #[test]
+    fn test_from_onsen_quality_with_fe_types() {
+        let quality = OnsenQuality::new(
+            &vec![FeIon(FeType::Two), NaIon, ClIon(ClType::Normal)],
+            None
+        );
+
+        let diesel: DieselChemical = quality.into();
+        assert_eq!(diesel.fe_type, "Two");
+        assert_eq!(diesel.fe_ion, 7);
+    }
+
+    #[test]
+    fn test_roundtrip_conversion() {
+        let original_quality = OnsenQuality::new(
+            &vec![NaIon, CaIon, HCO3Ion, ClIon(ClType::Normal), FeIon(FeType::Two)],
+            Some(SpringLiquid::Neutral)
+        );
+
+        let diesel: DieselChemical = original_quality.clone().into();
+        let restored_quality = diesel.create(Some(SpringLiquid::Neutral));
+
+        assert_eq!(original_quality.to_string(), restored_quality.to_string());
+    }
+}
