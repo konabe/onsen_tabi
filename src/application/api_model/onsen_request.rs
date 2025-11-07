@@ -175,7 +175,7 @@ mod tests {
             entity.quality.unwrap().to_string(),
             "含鉄（Ⅱ）－カルシウム・ナトリウム－炭酸水素塩・塩化物泉"
         );
-        assert_eq!(entity.is_day_use, true);
+        assert!(entity.is_day_use);
         assert_eq!(entity.url, "https://www.sekizenkan.co.jp/spa/#ank-spa1");
         assert_eq!(entity.img_url.unwrap(), "https://placehold.jp/150x150.png");
         assert_eq!(entity.description, "description");
@@ -531,7 +531,7 @@ mod tests {
             entity.quality.unwrap().to_string(),
             "含鉄（Ⅱ）－ナトリウム・カルシウム－塩化物・炭酸水素塩泉"
         );
-        assert_eq!(entity.is_day_use, true);
+        assert!(entity.is_day_use);
         assert_eq!(entity.url, "https://www.sekizenkan.co.jp/spa/#ank-spa1");
         assert_eq!(entity.img_url.unwrap(), "https://placehold.jp/150x150.png");
         assert_eq!(entity.description, "description");

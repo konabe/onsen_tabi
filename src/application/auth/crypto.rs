@@ -17,11 +17,11 @@ pub fn create_hash(plain_password: &str) -> String {
         ad: &[],
         hash_length: 32,
     };
-    argon2::hash_encoded(plain_password.as_bytes(), &salt.as_bytes(), &config).unwrap()
+    argon2::hash_encoded(plain_password.as_bytes(), salt.as_bytes(), &config).unwrap()
 }
 
 pub fn verify_hash(plain_password: &str, hashed_password: &str) -> bool {
     let matches =
         argon2::verify_encoded(hashed_password, plain_password.as_bytes()).unwrap_or(false);
-    return matches;
+    matches
 }

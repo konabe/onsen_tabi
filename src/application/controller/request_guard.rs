@@ -30,7 +30,7 @@ impl<'r> FromRequest<'r> for ValidatedUser {
             let token = &bearer_token[7..];
             if let Some(claims) = decode_jwt(token) {
                 let email = claims.email;
-                let exp = Utc.timestamp_opt(claims.exp as i64, 0).unwrap();
+                let exp = Utc.timestamp_opt(claims.exp, 0).unwrap();
                 if exp < Utc::now() {
                     return Outcome::Error((Status::Unauthorized, ApiTokenError::Missing));
                 }

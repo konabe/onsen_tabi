@@ -43,7 +43,7 @@ pub fn put_onsen(
     }
     let onsen_entity = onsen_req.create_entity(onsen_id);
     if let Some(onsen_entity) = onsen_entity {
-        let _ = onsen_repository::put_onsen(onsen_entity);
+        onsen_repository::put_onsen(onsen_entity);
     } else {
         return Err(Status::BadRequest);
     }
@@ -61,8 +61,8 @@ pub fn post_onsen(
     let onsen_entity = onsen_req.create_entity(0);
     if let Some(onsen_entity) = onsen_entity {
         let created_onsen = onsen_repository::post_onsen(onsen_entity);
-        return Ok(Json(OnsenResponse::create(created_onsen.clone(), None)));
+        Ok(Json(OnsenResponse::create(created_onsen.clone(), None)))
     } else {
-        return Err(Status::BadRequest);
+        Err(Status::BadRequest)
     }
 }

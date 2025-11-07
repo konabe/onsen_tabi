@@ -128,7 +128,7 @@ mod tests {
         assert_eq!(entity.name, "元禄の湯");
         assert_eq!(entity.spring_quality, "ナトリウム－塩化物泉");
         assert_eq!(entity.form, SpringForm::Uchiyu);
-        assert_eq!(entity.is_day_use, true);
+        assert!(entity.is_day_use);
         assert!(entity.quality.is_some());
     }
 
@@ -156,13 +156,13 @@ mod tests {
         assert_eq!(entity.id, 2);
         assert_eq!(entity.name, "単純温泉");
         assert_eq!(entity.form, SpringForm::Sotoyu);
-        assert_eq!(entity.is_day_use, false);
+        assert!(!entity.is_day_use);
         assert!(entity.quality.is_none());
     }
 
     #[test]
     fn test_diesel_onsen_from_onsen_entity() {
-        let quality = OnsenQuality::new(&vec![NaIon, ClIon(ClType::Normal)], None);
+        let quality = OnsenQuality::new(&[NaIon, ClIon(ClType::Normal)], None);
 
         let entity = OnsenEntityBuilder::new()
             .id(1)
@@ -190,7 +190,7 @@ mod tests {
         assert_eq!(diesel.osmotic_pressure, Some("hypotonic".to_string()));
         assert_eq!(diesel.temperature, Some("hot".to_string()));
         assert_eq!(diesel.category, "uchiyu");
-        assert_eq!(diesel.day_use, true);
+        assert!(diesel.day_use);
         assert_eq!(diesel.url, "https://example.com");
         assert_eq!(diesel.area_id, Some(1));
     }

@@ -24,10 +24,7 @@ pub fn get_onsens(area_id: Option<u32>, hotel_id: Option<u32>) -> Vec<OnsenEntit
         .expect("DB error");
     let onsen_entities = results
         .iter()
-        .map(|v: &(Onsen, Option<DieselChemical>)| {
-            let onsen_entity = OnsenEntity::create(v.0.clone(), v.1.clone());
-            return onsen_entity;
-        })
+        .map(|v: &(Onsen, Option<DieselChemical>)| OnsenEntity::create(v.0.clone(), v.1.clone()))
         .collect();
     onsen_entities
 }
@@ -46,10 +43,7 @@ pub fn get_onsen(id: u32) -> Option<OnsenEntity> {
 
 pub fn put_onsen(onsen_entity: OnsenEntity) {
     let updated_onsen = Onsen::from(onsen_entity.clone());
-    let updated_chemicals = onsen_entity
-        .clone()
-        .quality
-        .map(|v| DieselChemical::from(v));
+    let updated_chemicals = onsen_entity.clone().quality.map(DieselChemical::from);
     let connection = &mut establish_connection();
     let _ = connection.transaction(|connection| {
         let target_onsen_record: Vec<Onsen> = onsen::table
@@ -133,10 +127,7 @@ pub fn put_onsen(onsen_entity: OnsenEntity) {
 
 pub fn post_onsen(onsen_entity: OnsenEntity) -> OnsenEntity {
     let mut new_onsen = Onsen::from(onsen_entity.clone());
-    let new_chemicals = onsen_entity
-        .clone()
-        .quality
-        .map(|v| DieselChemical::from(v));
+    let new_chemicals = onsen_entity.clone().quality.map(DieselChemical::from);
     let connection = &mut establish_connection();
     let _ = connection.transaction(|connection| {
         let mut generated_id: Option<u32> = None;

@@ -54,8 +54,8 @@ pub fn post_hotel(
     let hotel_entity = hotel_req.create_entity(0);
     if let Some(hotel_entity) = hotel_entity {
         let created_hotel = hotel_repository::post_hotel(hotel_entity);
-        return Ok(Json(HotelResponse::from(created_hotel.clone())));
+        Ok(Json(HotelResponse::from(created_hotel.clone())))
     } else {
-        return Err(Status::BadRequest);
-    };
+        Err(Status::BadRequest)
+    }
 }

@@ -163,24 +163,30 @@ impl OnsenEntityBuilder {
     }
 }
 
+impl Default for OnsenEntityBuilder {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use once_cell::sync::Lazy;
 
     use crate::domain::onsen::chemical::Chemical::*;
     use crate::domain::onsen::onsen_entity::{OnsenEntity, OnsenEntityBuilder};
     use crate::domain::onsen::onsen_quality::OnsenQuality;
     use crate::domain::onsen::spring_form::SpringForm;
 
-    const COMMON_ONSEN_QUALITY: Lazy<OnsenQuality> =
-        Lazy::new(|| OnsenQuality::new(&vec![NaIon, CaIon, SO4Ion], None));
+    fn common_onsen_quality() -> OnsenQuality {
+        OnsenQuality::new(&[NaIon, CaIon, SO4Ion], None)
+    }
 
     #[test]
     fn build_test() {
         let onsen = OnsenEntityBuilder::new()
             .id(1)
             .name("元禄の湯")
-            .quality(Some(COMMON_ONSEN_QUALITY.clone()))
+            .quality(Some(common_onsen_quality()))
             .spring_quality("ナトリウム・カルシウム 塩化物硫酸塩温泉")
             .liquid(Some("neutral"))
             .osmotic_pressure(Some("hypotonic"))
@@ -202,7 +208,7 @@ mod tests {
         let onsen = OnsenEntityBuilder::new()
             .id(1)
             .name("") // nameが空文字のとき
-            .quality(Some(COMMON_ONSEN_QUALITY.clone()))
+            .quality(Some(common_onsen_quality()))
             .spring_quality("ナトリウム・カルシウム 塩化物硫酸塩温泉")
             .liquid(Some("neutral"))
             .osmotic_pressure(Some("hypotonic"))
@@ -222,7 +228,7 @@ mod tests {
         let onsen = OnsenEntityBuilder::new()
             .id(1)
             .name("元禄の湯")
-            .quality(Some(COMMON_ONSEN_QUALITY.clone()))
+            .quality(Some(common_onsen_quality()))
             .spring_quality("ナトリウム・カルシウム 塩化物硫酸塩温泉")
             .liquid(Some("neutral"))
             .osmotic_pressure(Some("hypotonic"))

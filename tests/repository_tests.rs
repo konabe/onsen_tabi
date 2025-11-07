@@ -299,7 +299,7 @@ mod repository_unit_tests {
     #[test]
     fn test_repository_module_exists() {
         // リポジトリモジュールが存在することを確認
-        assert!(true);
+        // placeholder assertion removed (was always true)
     }
 }
 

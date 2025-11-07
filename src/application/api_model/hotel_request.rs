@@ -41,8 +41,8 @@ mod tests {
         let entity = request.create_entity(1).unwrap();
         assert_eq!(entity.id, 1);
         assert_eq!(entity.name, "ホテル");
-        assert_eq!(entity.has_washitsu, true);
-        assert_eq!(entity.solo_available, true);
+        assert!(entity.has_washitsu);
+        assert!(entity.solo_available);
         assert_eq!(entity.url, "https://example.com/hotel");
         assert_eq!(entity.description, "いい感じのホテル");
     }

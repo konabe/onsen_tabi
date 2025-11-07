@@ -36,13 +36,11 @@ pub fn get_hotel_with_onsen(id: u32) -> Option<HotelEntity> {
         .load(connection)
         .expect("DB error");
     let hotel = &hotels_onsens.first()?.0;
-    let related_onsens: Vec<&Option<Onsen>> = hotels_onsens.iter().map(|r| &r.1).collect();
-    let mut onsen_entities: Vec<OnsenEntity> = vec![];
-    for onsen in related_onsens {
-        if let Some(onsen) = onsen {
-            onsen_entities.push(OnsenEntity::create(onsen.clone(), None));
-        }
-    }
+    let _onsen_entities: Vec<OnsenEntity> = hotels_onsens
+        .iter()
+        .filter_map(|r| r.1.clone())
+        .map(|onsen| OnsenEntity::create(onsen, None))
+        .collect();
     Some(HotelEntity::from(hotel.clone()))
 }
 

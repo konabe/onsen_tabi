@@ -34,9 +34,9 @@ pub fn put_area(
     }
     let area_entity = area_req.create_entity(area_id);
     if let Some(area_entity) = area_entity {
-        let _ = area_repository::put_area(area_entity);
+        area_repository::put_area(area_entity);
     } else {
-        return Err(Status::BadRequest);
+        Err(Status::BadRequest)?;
     }
     Ok(())
 }
@@ -52,8 +52,8 @@ pub fn post_area(
     let area_entity = area_req.create_entity(0);
     if let Some(area_entity) = area_entity {
         let created_area = area_repository::post_area(area_entity);
-        return Ok(Json(AreaResponse::from(created_area.clone())));
+        Ok(Json(AreaResponse::from(created_area.clone())))
     } else {
-        return Err(Status::BadRequest);
+        Err(Status::BadRequest)
     }
 }

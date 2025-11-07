@@ -41,7 +41,7 @@ pub fn get_area(id: u32) -> Option<AreaEntity> {
         .filter(area::dsl::id.eq(id))
         .load(connection)
         .expect("error");
-    if results.len() == 0 {
+    if results.is_empty() {
         return None;
     }
     let area = results.first()?;

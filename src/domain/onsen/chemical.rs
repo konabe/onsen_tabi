@@ -100,26 +100,20 @@ pub enum Chemical {
 impl Chemical {
     /// 陽イオンであるかどうか
     pub fn is_cation(&self) -> bool {
-        match self {
-            NaIon | CaIon | MgIon => true,
-            _ => false,
-        }
+        matches!(self, NaIon | CaIon | MgIon)
     }
 
     /// 陰イオンであるかどうか
     pub fn is_anion(&self) -> bool {
-        match self {
-            ClIon(_) | HCO3Ion | SO4Ion => true,
-            _ => false,
-        }
+        matches!(self, ClIon(_) | HCO3Ion | SO4Ion)
     }
 
     /// 含有成分であるかどうか
     pub fn is_inclusion(&self) -> bool {
-        match self {
-            CO2 | FeIon(_) | AlIon | CuIon | HIon | IIon | S | Rn(_) => true,
-            _ => false,
-        }
+        matches!(
+            self,
+            CO2 | FeIon(_) | AlIon | CuIon | HIon | IIon | S | Rn(_)
+        )
     }
 
     /// 日本語表記

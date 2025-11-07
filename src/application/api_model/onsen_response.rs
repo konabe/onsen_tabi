@@ -67,22 +67,18 @@ impl OnsenResponse {
 
 #[cfg(test)]
 mod tests {
-    use once_cell::sync::Lazy;
-
     use crate::application::api_model::onsen_response::OnsenResponse;
     use crate::domain::onsen::chemical::Chemical::*;
     use crate::domain::onsen::onsen_entity::OnsenEntityBuilder;
     use crate::domain::onsen::onsen_quality::OnsenQuality;
 
-    const COMMON_ONSEN_QUALITY: Lazy<OnsenQuality> =
-        Lazy::new(|| OnsenQuality::new(&vec![NaIon, CaIon, SO4Ion], None));
-
     #[test]
     fn test_onsen_response_from_onsen_entity() {
+        let common_onsen_quality = OnsenQuality::new(&[NaIon, CaIon, SO4Ion], None);
         let onsen = OnsenEntityBuilder::new()
             .id(1)
             .name("元禄の湯")
-            .quality(Some(COMMON_ONSEN_QUALITY.clone()))
+            .quality(Some(common_onsen_quality))
             .spring_quality("")
             .liquid(Some("neutral"))
             .osmotic_pressure(Some("hypotonic"))
@@ -104,7 +100,7 @@ mod tests {
         assert_eq!(response.osmotic_pressure.unwrap(), "hypotonic");
         assert_eq!(response.temperature.unwrap(), "hot");
         assert_eq!(response.form, "uchiyu");
-        assert_eq!(response.is_day_use, true);
+        assert!(response.is_day_use);
         assert_eq!(response.url, "https://www.sekizenkan.co.jp/spa/#ank-spa1");
         assert_eq!(
             response.img_url.unwrap(),

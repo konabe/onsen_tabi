@@ -2,9 +2,9 @@ use crate::domain::onsen::chemical::Chemical::{self, *};
 use crate::domain::onsen::chemical::{ClType, FeType, RnType};
 use crate::domain::onsen::spring_liquid::SpringLiquid;
 use crate::domain::onsen::spring_liquid::SpringLiquid::*;
-use std::{fmt, vec};
+use std::fmt;
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 /// 泉質
 pub struct OnsenQuality {
     /// 液性
@@ -17,17 +17,7 @@ pub struct OnsenQuality {
     pub inclusions: Vec<Chemical>,
 }
 
-impl Default for OnsenQuality {
-    // 単純温泉
-    fn default() -> Self {
-        Self {
-            liquid: None,
-            cations: vec![],
-            anions: vec![],
-            inclusions: vec![],
-        }
-    }
-}
+// Default is derived
 
 impl SpringLiquid {
     /// 泉質表記のための日本語表記
@@ -50,17 +40,13 @@ impl OnsenQuality {
         let cations: Vec<Chemical> = chemicals
             .iter()
             .filter(|v| v.is_cation())
-            .map(|&v| v)
+            .copied()
             .collect();
-        let anions: Vec<Chemical> = chemicals
-            .iter()
-            .filter(|v| v.is_anion())
-            .map(|&v| v)
-            .collect();
+        let anions: Vec<Chemical> = chemicals.iter().filter(|v| v.is_anion()).copied().collect();
         let inclusions: Vec<Chemical> = chemicals
             .iter()
             .filter(|v| v.is_inclusion())
-            .map(|&v| v)
+            .copied()
             .collect();
 
         Self {
@@ -146,7 +132,7 @@ impl fmt::Display for OnsenQuality {
         let inclusion_h_ion_excluded = self
             .inclusions
             .iter()
-            .filter(|&v| v.clone() != HIon)
+            .filter(|&v| *v != HIon)
             .collect::<Vec<&Chemical>>();
         let inclusion_enumerated_text = inclusion_h_ion_excluded
             .iter()
@@ -178,7 +164,7 @@ mod tests {
 
     #[test]
     fn test_tanjun_onsen() {
-        let quality = OnsenQuality::new(&vec![], Some(Neutral));
+        let quality = OnsenQuality::new(&[], Some(Neutral));
         assert_eq!(quality.to_string(), "単純温泉");
         let cloned_quality = quality.clone();
         assert_eq!(cloned_quality.to_string(), "単純温泉");
@@ -186,7 +172,7 @@ mod tests {
 
     #[test]
     fn test_tanjun_onsen_if_no_liquid_is_given() {
-        let quality = OnsenQuality::new(&vec![], None);
+        let quality = OnsenQuality::new(&[], None);
         assert_eq!(quality.to_string(), "単純温泉");
     }
 
@@ -198,124 +184,122 @@ mod tests {
 
     #[test]
     fn test_mildly_alkaline_tanjun_onsen() {
-        let quality = OnsenQuality::new(&vec![], Some(MildlyAlkaline));
+        let quality = OnsenQuality::new(&[], Some(MildlyAlkaline));
         assert_eq!(quality.to_string(), "弱アルカリ性単純温泉");
     }
 
     #[test]
     fn test_alkaline_tanjun_onsen() {
-        let quality = OnsenQuality::new(&vec![], Some(Alkaline));
+        let quality = OnsenQuality::new(&[], Some(Alkaline));
         assert_eq!(quality.to_string(), "アルカリ性単純温泉");
     }
 
     #[test]
     fn test_na_cl_onsen() {
-        let quality = OnsenQuality::new(&vec![NaIon, ClIon(ClType::Normal)], None);
+        let quality = OnsenQuality::new(&[NaIon, ClIon(ClType::Normal)], None);
         assert_eq!(quality.to_string(), "ナトリウム－塩化物泉");
     }
 
     #[test]
     fn test_strong_na_cl_onsen() {
-        let quality = OnsenQuality::new(&vec![NaIon, ClIon(ClType::Strong)], None);
+        let quality = OnsenQuality::new(&[NaIon, ClIon(ClType::Strong)], None);
         assert_eq!(quality.to_string(), "ナトリウム－塩化物強塩泉");
     }
 
     #[test]
     fn test_strong_na_cl_onsen_if_other_anion_is_less() {
-        let quality = OnsenQuality::new(&vec![NaIon, ClIon(ClType::Strong), SO4Ion], None);
+        let quality = OnsenQuality::new(&[NaIon, ClIon(ClType::Strong), SO4Ion], None);
         assert_eq!(quality.to_string(), "ナトリウム－塩化物強塩・硫酸塩泉");
     }
 
     #[test]
     fn test_na_mg_cl_onsen() {
-        let quality = OnsenQuality::new(&vec![NaIon, MgIon, ClIon(ClType::Normal)], None);
+        let quality = OnsenQuality::new(&[NaIon, MgIon, ClIon(ClType::Normal)], None);
         assert_eq!(quality.to_string(), "ナトリウム・マグネシウム－塩化物泉");
     }
 
     #[test]
     fn test_na_ca_cl_onsen() {
-        let quality = OnsenQuality::new(&vec![NaIon, CaIon, ClIon(ClType::Normal)], None);
+        let quality = OnsenQuality::new(&[NaIon, CaIon, ClIon(ClType::Normal)], None);
         assert_eq!(quality.to_string(), "ナトリウム・カルシウム－塩化物泉");
     }
 
     #[test]
     fn test_ca_hco3_onsen() {
-        let quality = OnsenQuality::new(&vec![CaIon, HCO3Ion], None);
+        let quality = OnsenQuality::new(&[CaIon, HCO3Ion], None);
         assert_eq!(quality.to_string(), "カルシウム－炭酸水素塩泉");
     }
 
     #[test]
     fn test_na_hco3_onsen() {
-        let quality = OnsenQuality::new(&vec![NaIon, HCO3Ion], None);
+        let quality = OnsenQuality::new(&[NaIon, HCO3Ion], None);
         assert_eq!(quality.to_string(), "ナトリウム－炭酸水素塩泉");
     }
 
     #[test]
     fn test_so4_onsen() {
-        let quality = OnsenQuality::new(&vec![SO4Ion], None);
+        let quality = OnsenQuality::new(&[SO4Ion], None);
         assert_eq!(quality.to_string(), "硫酸塩泉");
     }
 
     #[test]
     fn test_mg_so4_onsen() {
-        let quality = OnsenQuality::new(&vec![MgIon, SO4Ion], None);
+        let quality = OnsenQuality::new(&[MgIon, SO4Ion], None);
         assert_eq!(quality.to_string(), "マグネシウム－硫酸塩泉");
     }
 
     #[test]
     fn test_na_so4_onsen() {
-        let quality = OnsenQuality::new(&vec![NaIon, SO4Ion], None);
+        let quality = OnsenQuality::new(&[NaIon, SO4Ion], None);
         assert_eq!(quality.to_string(), "ナトリウム－硫酸塩泉");
     }
 
     #[test]
     fn test_ca_so4_onsen() {
-        let quality = OnsenQuality::new(&vec![CaIon, SO4Ion], None);
+        let quality = OnsenQuality::new(&[CaIon, SO4Ion], None);
         assert_eq!(quality.to_string(), "カルシウム－硫酸塩泉");
     }
 
     #[test]
     fn test_co2_onsen() {
-        let quality = OnsenQuality::new(&vec![CO2], None);
+        let quality = OnsenQuality::new(&[CO2], None);
         assert_eq!(quality.to_string(), "単純二酸化炭素泉");
     }
 
     #[test]
     fn test_fe_onsen() {
-        let quality = OnsenQuality::new(&vec![FeIon(FeType::Two)], None);
+        let quality = OnsenQuality::new(&[FeIon(FeType::Two)], None);
         assert_eq!(quality.to_string(), "単純鉄泉");
     }
 
     #[test]
     fn test_fe_hco3_onsen() {
-        let quality = OnsenQuality::new(&vec![FeIon(FeType::Two), HCO3Ion], None);
+        let quality = OnsenQuality::new(&[FeIon(FeType::Two), HCO3Ion], None);
         assert_eq!(quality.to_string(), "含鉄（Ⅱ）－炭酸水素塩泉");
     }
 
     #[test]
     fn test_fe2_so4_onsen() {
-        let quality = OnsenQuality::new(&vec![FeIon(FeType::Two), SO4Ion], None);
+        let quality = OnsenQuality::new(&[FeIon(FeType::Two), SO4Ion], None);
         assert_eq!(quality.to_string(), "含鉄（Ⅱ）－硫酸塩泉");
     }
 
     #[test]
     fn test_fe3_so4_onsen() {
-        let quality = OnsenQuality::new(&vec![FeIon(FeType::Three), SO4Ion], None);
+        let quality = OnsenQuality::new(&[FeIon(FeType::Three), SO4Ion], None);
         assert_eq!(quality.to_string(), "含鉄（Ⅲ）－硫酸塩泉");
     }
 
     #[test]
     fn test_fe_so4_onsen() {
-        let quality = OnsenQuality::new(&vec![FeIon(FeType::Normal), SO4Ion], None);
+        let quality = OnsenQuality::new(&[FeIon(FeType::Normal), SO4Ion], None);
         assert_eq!(quality.to_string(), "含鉄－硫酸塩泉");
     }
 
     #[test]
     fn test_al_onsen() {
-        let quality = OnsenQuality::new(
-            &vec![S, AlIon, FeIon(FeType::Two), NaIon, CaIon, SO4Ion],
-            None,
-        );
+        let quality =
+            OnsenQuality::new(&[S, AlIon, FeIon(FeType::Two), NaIon, CaIon, SO4Ion], None);
         assert_eq!(
             quality.to_string(),
             "含硫黄・アルミニウム・鉄（Ⅱ）－ナトリウム・カルシウム－硫酸塩泉"
@@ -324,63 +308,62 @@ mod tests {
 
     #[test]
     fn test_cu_onsen() {
-        let quality =
-            OnsenQuality::new(&vec![HIon, CuIon, FeIon(FeType::Two), SO4Ion], Some(Acidic));
+        let quality = OnsenQuality::new(&[HIon, CuIon, FeIon(FeType::Two), SO4Ion], Some(Acidic));
         assert_eq!(quality.to_string(), "酸性－含銅・鉄（Ⅱ）－硫酸塩泉");
     }
 
     #[test]
     fn test_h_onsen() {
-        let quality = OnsenQuality::new(&vec![HIon], Some(Acidic));
+        let quality = OnsenQuality::new(&[HIon], Some(Acidic));
         assert_eq!(quality.to_string(), "単純酸性泉");
     }
 
     #[test]
     #[should_panic]
     fn test_h_onsen_without_acidic_liquid() {
-        OnsenQuality::new(&vec![HIon], Some(Neutral));
+        OnsenQuality::new(&[HIon], Some(Neutral));
     }
 
     #[test]
     fn test_h_na_cl_onsen() {
-        let quality = OnsenQuality::new(&vec![NaIon, ClIon(ClType::Normal), HIon], Some(Acidic));
+        let quality = OnsenQuality::new(&[NaIon, ClIon(ClType::Normal), HIon], Some(Acidic));
         assert_eq!(quality.to_string(), "酸性－ナトリウム－塩化物泉");
     }
 
     #[test]
     fn test_h_s_na_cl_onsen() {
-        let quality = OnsenQuality::new(&vec![NaIon, ClIon(ClType::Normal), HIon, S], Some(Acidic));
+        let quality = OnsenQuality::new(&[NaIon, ClIon(ClType::Normal), HIon, S], Some(Acidic));
         // "酸性"はさらに仕切られる
         assert_eq!(quality.to_string(), "酸性－含硫黄－ナトリウム－塩化物泉");
     }
 
     #[test]
     fn test_i_na_cl_onsen() {
-        let quality = OnsenQuality::new(&vec![IIon, NaIon, ClIon(ClType::Normal)], None);
+        let quality = OnsenQuality::new(&[IIon, NaIon, ClIon(ClType::Normal)], None);
         assert_eq!(quality.to_string(), "含よう素－ナトリウム－塩化物泉");
     }
 
     #[test]
     fn test_s_onsen() {
-        let quality = OnsenQuality::new(&vec![S], None);
+        let quality = OnsenQuality::new(&[S], None);
         assert_eq!(quality.to_string(), "単純硫黄泉");
     }
 
     #[test]
     fn test_rn_onsen() {
-        let quality = OnsenQuality::new(&vec![Rn(RnType::Normal)], None);
+        let quality = OnsenQuality::new(&[Rn(RnType::Normal)], None);
         assert_eq!(quality.to_string(), "単純放射能泉");
     }
 
     #[test]
     fn test_weak_rn_onsen() {
-        let quality = OnsenQuality::new(&vec![Rn(RnType::Weak)], None);
+        let quality = OnsenQuality::new(&[Rn(RnType::Weak)], None);
         assert_eq!(quality.to_string(), "単純弱放射能泉");
     }
 
     #[test]
     fn test_multi_inclusion_onsen() {
-        let quality = OnsenQuality::new(&vec![S, FeIon(FeType::Two), NaIon, CaIon, SO4Ion], None);
+        let quality = OnsenQuality::new(&[S, FeIon(FeType::Two), NaIon, CaIon, SO4Ion], None);
         assert_eq!(
             quality.to_string(),
             // "含"は先頭にのみつける
@@ -390,61 +373,61 @@ mod tests {
 
     #[test]
     fn test_is_strong_na_cl_false() {
-        let quality = OnsenQuality::new(&vec![NaIon, ClIon(ClType::Normal)], None);
-        assert_eq!(quality.is_strong_na_cl(), false);
+        let quality = OnsenQuality::new(&[NaIon, ClIon(ClType::Normal)], None);
+        assert!(!quality.is_strong_na_cl());
     }
 
     #[test]
     fn test_is_strong_na_cl() {
-        let quality = OnsenQuality::new(&vec![NaIon, ClIon(ClType::Strong)], None);
-        assert_eq!(quality.is_strong_na_cl(), true);
+        let quality = OnsenQuality::new(&[NaIon, ClIon(ClType::Strong)], None);
+        assert!(quality.is_strong_na_cl());
     }
 
     #[test]
     fn test_is_fe_type_normal() {
-        let quality = OnsenQuality::new(&vec![FeIon(FeType::Normal)], None);
+        let quality = OnsenQuality::new(&[FeIon(FeType::Normal)], None);
         assert_eq!(quality.fe_type(), "Normal".to_string());
     }
 
     #[test]
     fn test_is_fe_type_two() {
-        let quality = OnsenQuality::new(&vec![FeIon(FeType::Two)], None);
+        let quality = OnsenQuality::new(&[FeIon(FeType::Two)], None);
         assert_eq!(quality.fe_type(), "Two".to_string());
     }
 
     #[test]
     fn test_is_fe_type_three() {
-        let quality = OnsenQuality::new(&vec![FeIon(FeType::Three)], None);
+        let quality = OnsenQuality::new(&[FeIon(FeType::Three)], None);
         assert_eq!(quality.fe_type(), "Three".to_string());
     }
 
     #[test]
     fn test_is_fe_type_nothing() {
-        let quality = OnsenQuality::new(&vec![], None);
+        let quality = OnsenQuality::new(&[], None);
         assert_eq!(quality.fe_type(), "".to_string());
     }
 
     #[test]
     fn test_is_weak_rn() {
-        let quality = OnsenQuality::new(&vec![Rn(RnType::Weak)], None);
-        assert_eq!(quality.is_weak_rn(), true);
+        let quality = OnsenQuality::new(&[Rn(RnType::Weak)], None);
+        assert!(quality.is_weak_rn());
     }
 
     #[test]
     fn test_is_weak_rn_false() {
-        let quality = OnsenQuality::new(&vec![Rn(RnType::Normal)], None);
-        assert_eq!(quality.is_weak_rn(), false);
+        let quality = OnsenQuality::new(&[Rn(RnType::Normal)], None);
+        assert!(!quality.is_weak_rn());
     }
 
     #[test]
     fn test_is_weak_rn_not_contain() {
-        let quality = OnsenQuality::new(&vec![], None);
-        assert_eq!(quality.is_weak_rn(), false);
+        let quality = OnsenQuality::new(&[], None);
+        assert!(!quality.is_weak_rn());
     }
 
     #[test]
     fn test_to_string_vec() {
-        let quality = OnsenQuality::new(&vec![FeIon(FeType::Two), NaIon, HCO3Ion], None);
+        let quality = OnsenQuality::new(&[FeIon(FeType::Two), NaIon, HCO3Ion], None);
         assert_eq!(quality.to_string(), "含鉄（Ⅱ）－ナトリウム－炭酸水素塩泉");
         assert_eq!(quality.to_string_vec(), vec!["NaIon", "HCO3Ion", "FeIon"]);
     }

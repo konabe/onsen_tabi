@@ -33,9 +33,9 @@ impl DieselChemical {
         } else {
             ClType::Normal
         };
-        let fe_type: FeType = if self.fe_type == "Two".to_string() {
+        let fe_type: FeType = if self.fe_type == "Two" {
             FeType::Two
-        } else if self.fe_type == "Three".to_string() {
+        } else if self.fe_type == "Three" {
             FeType::Three
         } else {
             FeType::Normal
@@ -276,18 +276,18 @@ mod tests {
 
     #[test]
     fn test_from_onsen_quality_to_diesel_chemical() {
-        let quality = OnsenQuality::new(&vec![NaIon, ClIon(ClType::Normal)], None);
+        let quality = OnsenQuality::new(&[NaIon, ClIon(ClType::Normal)], None);
 
         let diesel: DieselChemical = quality.into();
         assert_eq!(diesel.na_ion, 1);
         assert_eq!(diesel.cl_ion, 4);
         assert_eq!(diesel.ca_ion, 0);
-        assert_eq!(diesel.strong_na_cl, false);
+        assert!(!diesel.strong_na_cl);
     }
 
     #[test]
     fn test_from_onsen_quality_with_multiple_cations() {
-        let quality = OnsenQuality::new(&vec![NaIon, CaIon, MgIon, ClIon(ClType::Normal)], None);
+        let quality = OnsenQuality::new(&[NaIon, CaIon, MgIon, ClIon(ClType::Normal)], None);
 
         let diesel: DieselChemical = quality.into();
         assert_eq!(diesel.na_ion, 1);
@@ -298,18 +298,15 @@ mod tests {
 
     #[test]
     fn test_from_onsen_quality_with_strong_nacl() {
-        let quality = OnsenQuality::new(&vec![NaIon, ClIon(ClType::Strong)], None);
+        let quality = OnsenQuality::new(&[NaIon, ClIon(ClType::Strong)], None);
 
         let diesel: DieselChemical = quality.into();
-        assert_eq!(diesel.strong_na_cl, true);
+        assert!(diesel.strong_na_cl);
     }
 
     #[test]
     fn test_from_onsen_quality_with_fe_types() {
-        let quality = OnsenQuality::new(
-            &vec![FeIon(FeType::Two), NaIon, ClIon(ClType::Normal)],
-            None,
-        );
+        let quality = OnsenQuality::new(&[FeIon(FeType::Two), NaIon, ClIon(ClType::Normal)], None);
 
         let diesel: DieselChemical = quality.into();
         assert_eq!(diesel.fe_type, "Two");
@@ -319,7 +316,7 @@ mod tests {
     #[test]
     fn test_roundtrip_conversion() {
         let original_quality = OnsenQuality::new(
-            &vec![
+            &[
                 NaIon,
                 CaIon,
                 HCO3Ion,

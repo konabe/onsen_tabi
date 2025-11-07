@@ -52,8 +52,8 @@ mod tests {
         let response = HotelResponse::from(hotel);
         assert_eq!(response.id, 1);
         assert_eq!(response.name, "ホテル");
-        assert_eq!(response.has_washitsu, true);
-        assert_eq!(response.solo_available, true);
+        assert!(response.has_washitsu);
+        assert!(response.solo_available);
         assert_eq!(response.url, "https://example.com/hotel");
         assert_eq!(response.description, "いい感じのホテル");
         assert_eq!(response.onsens.len(), 0);

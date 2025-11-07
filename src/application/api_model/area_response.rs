@@ -35,8 +35,6 @@ impl From<AreaEntity> for AreaResponse {
 
 #[cfg(test)]
 mod tests {
-    use once_cell::sync::Lazy;
-
     use crate::application::api_model::area_response::AreaResponse;
     use crate::domain::area_entity::AreaEntityBuilder;
     use crate::domain::onsen::chemical::Chemical::*;
@@ -45,7 +43,7 @@ mod tests {
 
     #[test]
     fn test_area_response() {
-        let common_onsen_quality = OnsenQuality::new(&vec![NaIon, CaIon, SO4Ion], None);
+        let common_onsen_quality = OnsenQuality::new(&[NaIon, CaIon, SO4Ion], None);
         let onsen = OnsenEntityBuilder::new()
             .id(2)
             .name("元禄の湯")

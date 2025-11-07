@@ -91,9 +91,7 @@ mod tests {
         hotel_entity::{HotelEntity, HotelEntityBuilder},
         onsen::onsen_entity::{OnsenEntity, OnsenEntityBuilder},
     };
-    use once_cell::sync::Lazy;
-
-    const COMMON_ONSEN: Lazy<OnsenEntity> = Lazy::new(|| {
+    fn common_onsen() -> OnsenEntity {
         OnsenEntityBuilder::new()
             .id(1)
             .name("積善館 元禄の湯")
@@ -110,7 +108,7 @@ mod tests {
             .area_id(None)
             .build()
             .expect("")
-    });
+    }
 
     #[test]
     fn new_and_clone_test() {
@@ -121,14 +119,14 @@ mod tests {
             .solo_available(false)
             .url("https://www.sekizenkan.co.jp/")
             .description("")
-            .onsens(vec![COMMON_ONSEN.clone()])
+            .onsens(vec![common_onsen()])
             .build();
         let hotel: HotelEntity = hotel.expect("");
         assert!(hotel.name == "積善館");
-        assert!(hotel.has_washitsu == true);
+        assert!(hotel.has_washitsu);
         let cloned_hotel = hotel.clone();
         assert!(cloned_hotel.name == "積善館");
-        assert!(cloned_hotel.has_washitsu == true);
+        assert!(cloned_hotel.has_washitsu);
     }
 
     #[test]

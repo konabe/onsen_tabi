@@ -12,9 +12,11 @@ pub struct Claims {
 }
 
 pub fn encode_jwt(email: &str) -> String {
-    let mut header = Header::default();
-    header.typ = Some("JWT".to_string());
-    header.alg = Algorithm::HS256;
+    let header = Header {
+        typ: Some("JWT".to_string()),
+        alg: Algorithm::HS256,
+        ..Default::default()
+    };
     let now = Utc::now();
     let iat = now.timestamp();
     let exp = (now + Duration::hours(24)).timestamp();

@@ -19,7 +19,7 @@ pub fn get_user(email: &str) -> Option<User> {
         .filter(user::dsl::email.eq(email))
         .load(connection)
         .expect("DB Error");
-    results.first().map(|v| v.clone())
+    results.first().cloned()
 }
 
 pub fn post_user(email: &str, hashed_password: &str) {
