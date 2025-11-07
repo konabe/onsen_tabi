@@ -43,15 +43,13 @@ mod tests {
     use crate::domain::onsen::onsen_entity::OnsenEntityBuilder;
     use crate::domain::onsen::onsen_quality::OnsenQuality;
 
-    const COMMON_ONSEN_QUALITY: Lazy<OnsenQuality> =
-        Lazy::new(|| OnsenQuality::new(&vec![NaIon, CaIon, SO4Ion], None));
-
     #[test]
     fn test_area_response() {
+        let common_onsen_quality = OnsenQuality::new(&vec![NaIon, CaIon, SO4Ion], None);
         let onsen = OnsenEntityBuilder::new()
             .id(2)
             .name("元禄の湯")
-            .quality(Some(COMMON_ONSEN_QUALITY.clone()))
+            .quality(Some(common_onsen_quality))
             .spring_quality("")
             .liquid(Some("neutral"))
             .osmotic_pressure(Some("hypotonic"))
@@ -82,7 +80,7 @@ mod tests {
         assert_eq!(response.name, "四万");
         assert_eq!(response.kana, "しま");
         assert_eq!(response.prefecture, "群馬県");
-        assert_eq!(response.national_resort, true);
+        assert!(response.national_resort);
         assert_eq!(response.village, None);
         assert_eq!(response.url, "https://nakanojo-kanko.jp/shima/");
         assert_eq!(response.description, "");

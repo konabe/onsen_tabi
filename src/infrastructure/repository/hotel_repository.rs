@@ -56,7 +56,7 @@ pub fn post_hotel(hotel_entity: HotelEntity) -> HotelEntity {
     HotelEntity::from(new_hotel)
 }
 
-pub fn put_hotel(hotel_entity: HotelEntity) -> () {
+pub fn put_hotel(hotel_entity: HotelEntity) {
     let updated_hotel = Hotel::from(hotel_entity);
     let connection = &mut establish_connection();
     let _ = diesel::update(hotel::dsl::hotel.find(updated_hotel.id))

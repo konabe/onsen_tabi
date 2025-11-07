@@ -53,7 +53,7 @@ mod tests {
         assert_eq!(area_entity.name, "四万");
         assert_eq!(area_entity.kana, "しま");
         assert_eq!(area_entity.prefecture, "群馬県");
-        assert_eq!(area_entity.national_resort, true);
+        assert!(area_entity.national_resort);
         assert_eq!(area_entity.village, None);
         assert_eq!(area_entity.url, "https://nakanojo-kanko.jp/shima/");
         assert_eq!(area_entity.description, "");

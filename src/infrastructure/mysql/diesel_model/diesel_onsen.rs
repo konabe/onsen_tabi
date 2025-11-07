@@ -78,10 +78,9 @@ impl From<OnsenEntity> for Onsen {
 mod tests {
     use super::*;
     use crate::domain::onsen::chemical::Chemical::*;
-    use crate::domain::onsen::chemical::{ClType, FeType};
+    use crate::domain::onsen::chemical::ClType;
     use crate::domain::onsen::onsen_quality::OnsenQuality;
     use crate::domain::onsen::spring_form::SpringForm;
-    use crate::domain::onsen::spring_liquid::SpringLiquid;
 
     #[test]
     fn test_onsen_entity_create_from_diesel_onsen() {

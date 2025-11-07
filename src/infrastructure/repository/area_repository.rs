@@ -48,7 +48,7 @@ pub fn get_area(id: u32) -> Option<AreaEntity> {
     Some(AreaEntity::from(area.clone()))
 }
 
-pub fn put_area(area_entity: AreaEntity) -> () {
+pub fn put_area(area_entity: AreaEntity) {
     let updated_area = Area::from(area_entity);
     let connection = &mut establish_connection();
     let _ = diesel::update(area::table.find(updated_area.id))
