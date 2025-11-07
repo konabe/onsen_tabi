@@ -1,0 +1,156 @@
+#!/bin/bash
+
+# AIガードレール: pre-commitフック
+# このスクリプトはコミット前に自動でコード品質チェックを行います
+
+set -e
+
+echo "🔍 Running pre-commit checks..."
+echo ""
+
+# カラー定義
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# チェック失敗フラグ
+CHECKS_FAILED=0
+
+# 1. フォーマットチェック
+echo "📝 Checking code format..."
+if cargo fmt --check --quiet; then
+    echo -e "${GREEN}✅ Format check passed${NC}"
+else
+    echo -e "${RED}❌ Format check failed${NC}"
+    echo "   Run 'cargo fmt' to fix formatting issues"
+    CHECKS_FAILED=1
+fi
+echo ""
+
+# 2. Clippyチェック
+echo "🔧 Running Clippy..."
+if cargo clippy --all-targets --all-features -- -D warnings 2>&1 | grep -q "warning:"; then
+    echo -e "${RED}❌ Clippy found issues${NC}"
+    cargo clippy --all-targets --all-features -- -D warnings
+    CHECKS_FAILED=1
+else
+    if cargo clippy --all-targets --all-features -- -D warnings > /dev/null 2>&1; then
+        echo -e "${GREEN}✅ Clippy check passed${NC}"
+    else
+        echo -e "${RED}❌ Clippy check failed${NC}"
+        CHECKS_FAILED=1
+    fi
+fi
+echo ""
+
+# 3. テスト実行
+echo "🧪 Running tests..."
+if cargo test --quiet 2>&1 | grep -q "test result:.*FAILED"; then
+    echo -e "${RED}❌ Tests failed${NC}"
+    cargo test
+    CHECKS_FAILED=1
+else
+    if cargo test > /dev/null 2>&1; then
+        echo -e "${GREEN}✅ All tests passed${NC}"
+    else
+        echo -e "${RED}❌ Tests failed${NC}"
+        cargo test
+        CHECKS_FAILED=1
+    fi
+fi
+echo ""
+
+# 4. セキュリティチェック（オプション）
+if command -v cargo-audit &> /dev/null; then
+    echo "🔒 Running security audit..."
+    if cargo audit 2>&1 | grep -q "Crate:.*ID:"; then
+        echo -e "${YELLOW}⚠️  Security vulnerabilities found${NC}"
+        cargo audit
+        echo ""
+        echo -e "${YELLOW}警告: セキュリティ脆弱性が見つかりました。確認してください。${NC}"
+        echo "このチェックはコミットをブロックしませんが、対応を推奨します。"
+    else
+        if cargo audit > /dev/null 2>&1; then
+            echo -e "${GREEN}✅ No security vulnerabilities found${NC}"
+        fi
+    fi
+    echo ""
+fi
+
+# 5. マイグレーションファイルのチェック
+echo "🗄️  Checking migration files..."
+MIGRATION_ERROR=0
+
+# 新しいマイグレーションファイルがある場合のチェック
+if git diff --cached --name-only | grep -q "^migrations/.*\.sql$"; then
+    echo "   New migration files detected"
+    
+    # 各マイグレーションディレクトリをチェック
+    for migration_dir in $(git diff --cached --name-only | grep "^migrations/" | sed 's|/[^/]*$||' | sort -u); do
+        if [[ -d "$migration_dir" ]]; then
+            if [[ ! -f "$migration_dir/up.sql" ]] || [[ ! -f "$migration_dir/down.sql" ]]; then
+                echo -e "${RED}❌ Migration $migration_dir is missing up.sql or down.sql${NC}"
+                MIGRATION_ERROR=1
+            fi
+        fi
+    done
+    
+    if [[ $MIGRATION_ERROR -eq 0 ]]; then
+        echo -e "${GREEN}✅ Migration files check passed${NC}"
+    else
+        CHECKS_FAILED=1
+    fi
+else
+    echo "   No migration changes detected"
+fi
+echo ""
+
+# 6. ガードレール違反チェック
+echo "🛡️  Checking for guardrail violations..."
+GUARDRAIL_VIOLATIONS=0
+
+# Domain層がInfrastructure層に依存していないかチェック
+if git diff --cached --name-only | grep -q "^src/domain/"; then
+    if git diff --cached src/domain/ | grep -q "use crate::infrastructure"; then
+        echo -e "${RED}❌ Domain layer should not depend on Infrastructure layer${NC}"
+        echo "   Found 'use crate::infrastructure' in domain layer"
+        GUARDRAIL_VIOLATIONS=1
+    fi
+fi
+
+# unwrap()の使用チェック（テストファイル以外）
+if git diff --cached | grep "^+.*\.unwrap()" | grep -v "test" | grep -v "^+.*expect"; then
+    echo -e "${YELLOW}⚠️  Found unwrap() usage (consider using expect() with a message)${NC}"
+    echo "   Check the lines above"
+fi
+
+# パスワードやシークレットのハードコーディングチェック
+if git diff --cached | grep -iE "^+.*(password|secret|token).*=.*['\"]"; then
+    echo -e "${RED}❌ Potential hardcoded secret detected${NC}"
+    echo "   Secrets should be loaded from environment variables"
+    GUARDRAIL_VIOLATIONS=1
+fi
+
+if [[ $GUARDRAIL_VIOLATIONS -eq 0 ]]; then
+    echo -e "${GREEN}✅ No guardrail violations detected${NC}"
+else
+    CHECKS_FAILED=1
+fi
+echo ""
+
+# 結果サマリー
+echo "================================"
+if [[ $CHECKS_FAILED -eq 1 ]]; then
+    echo -e "${RED}❌ Pre-commit checks FAILED${NC}"
+    echo ""
+    echo "Please fix the issues above before committing."
+    echo "If you need to bypass these checks (not recommended), use:"
+    echo "  git commit --no-verify"
+    exit 1
+else
+    echo -e "${GREEN}✅ All pre-commit checks PASSED${NC}"
+    echo ""
+    echo "Ready to commit! 🚀"
+    exit 0
+fi

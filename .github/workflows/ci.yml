@@ -1,0 +1,289 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, feature/**]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  check:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          components: rustfmt, clippy
+
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-registry-
+
+      - name: Cache cargo index
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-index-
+
+      - name: Cache cargo build
+        uses: actions/cache@v3
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-build-target-
+
+      - name: Check code formatting
+        run: cargo fmt --all -- --check
+
+      - name: Run Clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+      - name: Check for security vulnerabilities
+        run: |
+          cargo install cargo-audit || true
+          cargo audit || true
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs: check
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: onsen_tabi_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo index
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo build
+        uses: actions/cache@v3
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Install Diesel CLI
+        run: cargo install diesel_cli --no-default-features --features mysql || true
+
+      - name: Wait for MySQL
+        run: |
+          for i in {1..30}; do
+            if mysqladmin ping -h 127.0.0.1 -P 3306 -u root -ppassword &> /dev/null; then
+              echo "MySQL is ready"
+              break
+            fi
+            echo "Waiting for MySQL... ($i/30)"
+            sleep 2
+          done
+
+      - name: Run database migrations
+        env:
+          DATABASE_URL: mysql://root:password@127.0.0.1:3306/onsen_tabi_test
+        run: |
+          diesel migration run || echo "Migrations may have already been run"
+
+      - name: Run tests
+        env:
+          DATABASE_URL: mysql://root:password@127.0.0.1:3306/onsen_tabi_test
+          JWT_SECRET_KEY: test-secret-key-for-ci
+          RUST_LOG: debug
+        run: cargo test --verbose
+
+      - name: Generate code coverage
+        if: github.event_name == 'pull_request'
+        run: |
+          cargo install cargo-tarpaulin || true
+          cargo tarpaulin --out Xml || true
+
+      - name: Upload coverage to Codecov
+        if: github.event_name == 'pull_request'
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./cobertura.xml
+          fail_ci_if_error: false
+
+  build:
+    name: Build Release
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo index
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build release binary
+        run: cargo build --release
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: onsen_tabi-binary
+          path: target/release/onsen_tabi
+          retention-days: 7
+
+  migration-check:
+    name: Check Migrations
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check migration files
+        run: |
+          echo "Checking migration files structure..."
+
+          # 新しく追加されたマイグレーションディレクトリを取得
+          CHANGED_MIGRATIONS=$(git diff --name-only origin/main...HEAD | grep "^migrations/" | sed 's|/[^/]*$||' | sort -u)
+
+          if [ -z "$CHANGED_MIGRATIONS" ]; then
+            echo "No new migrations detected"
+            exit 0
+          fi
+
+          echo "New migrations detected:"
+          echo "$CHANGED_MIGRATIONS"
+
+          # 各マイグレーションディレクトリをチェック
+          EXIT_CODE=0
+          for migration_dir in $CHANGED_MIGRATIONS; do
+            echo "Checking $migration_dir..."
+            
+            if [ ! -f "$migration_dir/up.sql" ]; then
+              echo "❌ Missing up.sql in $migration_dir"
+              EXIT_CODE=1
+            fi
+            
+            if [ ! -f "$migration_dir/down.sql" ]; then
+              echo "❌ Missing down.sql in $migration_dir"
+              EXIT_CODE=1
+            fi
+            
+            if [ -f "$migration_dir/up.sql" ] && [ -f "$migration_dir/down.sql" ]; then
+              echo "✅ Migration files are valid for $migration_dir"
+            fi
+          done
+
+          exit $EXIT_CODE
+
+  guardrail-check:
+    name: AI Guardrail Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check layer dependencies
+        run: |
+          echo "Checking for architecture violations..."
+
+          # Domain層がInfrastructure層に依存していないかチェック
+          if grep -r "use crate::infrastructure" src/domain/ 2>/dev/null; then
+            echo "❌ Architecture violation: Domain layer depends on Infrastructure layer"
+            exit 1
+          fi
+
+          echo "✅ No architecture violations detected"
+
+      - name: Check for security issues
+        run: |
+          echo "Checking for potential security issues..."
+
+          # ハードコードされたシークレットのチェック
+          if git diff origin/main...HEAD | grep -iE "^\+.*(password|secret|token).*=.*['\"][^$]"; then
+            echo "⚠️  Warning: Potential hardcoded secret detected"
+            git diff origin/main...HEAD | grep -iE "^\+.*(password|secret|token).*=.*['\"]"
+            echo "Please ensure secrets are loaded from environment variables"
+            # 警告のみでCIは通す
+          fi
+
+          echo "✅ Security check completed"
+
+      - name: Check unwrap usage
+        run: |
+          echo "Checking for unwrap() usage..."
+
+          # unwrap()の使用チェック（テストファイル以外）
+          UNWRAP_COUNT=$(git diff origin/main...HEAD | grep "^\+.*\.unwrap()" | grep -v "test" | grep -v "expect" | wc -l)
+
+          if [ "$UNWRAP_COUNT" -gt 0 ]; then
+            echo "⚠️  Warning: Found $UNWRAP_COUNT new unwrap() calls"
+            echo "Consider using expect() with descriptive error messages"
+            git diff origin/main...HEAD | grep "^\+.*\.unwrap()" | grep -v "test" | grep -v "expect"
+            # 警告のみでCIは通す
+          else
+            echo "✅ No problematic unwrap() usage detected"
+          fi
