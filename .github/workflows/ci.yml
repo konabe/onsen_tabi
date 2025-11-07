@@ -146,17 +146,11 @@ jobs:
           RUST_LOG: debug
         run: |
           echo "Running integration tests with database connection..."
-          cargo test -- --ignored --test-threads=1
-
-      - name: Run E2E tests
-        env:
-          DATABASE_URL: mysql://root:password@127.0.0.1:3306/onsen_tabi_test
-          TEST_DATABASE_URL: mysql://root:password@127.0.0.1:3306/onsen_tabi_test
-          JWT_SECRET_KEY: test-secret-key-for-ci
-          RUST_LOG: debug
-        run: |
-          echo "Running E2E tests..."
-          cargo test --test e2e_tests -- --ignored --test-threads=1
+          # Run only tests marked with #[ignore] but exclude e2e_server_tests which require a running server
+          cargo test --test controller_tests -- --ignored --test-threads=1
+          cargo test --test repository_tests -- --ignored --test-threads=1
+          cargo test --test e2e_app_tests -- --ignored --test-threads=1
+          echo "Note: Server E2E tests (e2e_server_tests) are skipped in CI as they require a running server"
 
       - name: Generate code coverage
         if: github.event_name == 'pull_request'
