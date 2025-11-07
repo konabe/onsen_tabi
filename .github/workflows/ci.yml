@@ -111,7 +111,7 @@ jobs:
           key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Diesel CLI
-        run: cargo install diesel_cli --no-default-features --features mysql || true
+        run: cargo install diesel_cli --version 2.1.1 --no-default-features --features mysql || true
 
       - name: Wait for MySQL
         run: |
