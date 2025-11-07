@@ -160,12 +160,12 @@ jobs:
           echo "Starting server in background for E2E tests..."
           # Build the application first
           cargo build --release
-          
+
           # Start server in background
           ./target/release/onsen_tabi > server.log 2>&1 &
           SERVER_PID=$!
           echo "Server started with PID: $SERVER_PID"
-          
+
           # Wait for server to be ready (max 30 seconds)
           echo "Waiting for server to start..."
           for i in {1..30}; do
@@ -182,16 +182,16 @@ jobs:
             echo "Waiting for server... ($i/30)"
             sleep 1
           done
-          
+
           # Run E2E server tests
           echo "Running E2E server tests..."
           cargo test --test e2e_server_tests -- --ignored --test-threads=1 || TEST_RESULT=$?
-          
+
           # Stop the server
           echo "Stopping server..."
           kill $SERVER_PID || true
           wait $SERVER_PID 2>/dev/null || true
-          
+
           # Show server logs if tests failed
           if [ ! -z "$TEST_RESULT" ]; then
             echo "Server logs:"

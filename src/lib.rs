@@ -34,3 +34,23 @@ impl Fairing for CORS {
         response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_cors_fairing_info() {
+        let cors = CORS;
+        let info = cors.info();
+        assert_eq!(info.name, "Add CORS headers to responses");
+        // Kind doesn't implement PartialEq, so we just verify it returns Info
+        // The actual CORS behavior is tested in E2E tests
+    }
+
+    #[test]
+    fn test_cors_struct_exists() {
+        // Verify the CORS struct can be instantiated
+        let _cors = CORS;
+    }
+}
