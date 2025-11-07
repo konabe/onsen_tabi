@@ -218,9 +218,44 @@ docker run --rm \
 
 このプロジェクトはAI駆動開発に対応したガードレールを実装しています。
 
-### 自動チェック
+### Git Pre-commitフック
 
 コミット前に以下のチェックが自動実行されます：
+
+- **単体テスト**: `cargo test`（データベース不要）
+- **統合テスト**: `cargo test -- --ignored`（データベース接続時のみ）
+
+```bash
+# pre-commitフックの確認
+cat .git/hooks/pre-commit
+
+# pre-commitフックのテスト実行
+.git/hooks/pre-commit
+```
+
+**注意**: 
+- テストデータベースが起動している場合は統合テストも実行されます
+- サーバーE2Eテスト（`e2e_server_tests`）は手動実行が必要です
+
+### 手動チェック（追加のコードチェック）
+
+```bash
+# フォーマットチェック
+cargo fmt --check
+
+# Lintチェック
+cargo clippy -- -D warnings
+
+# すべてのチェックを実行
+make check
+
+# セキュリティ監査
+make audit
+```
+
+### 旧自動チェック（参考）
+
+以前のガードレール設定では以下が自動実行されていました：
 
 - **フォーマットチェック**: `cargo fmt --check`
 - **Lintチェック**: `cargo clippy -- -D warnings`
@@ -258,9 +293,13 @@ make audit
 
 このプロジェクトには3種類のテストがあります：
 
-1. **単体テスト**: データベース接続不要（61テスト）
-2. **統合テスト**: データベース接続必要（22テスト）
-3. **E2Eテスト**: 完全なシナリオテスト（5テスト）
+1. **単体テスト**: データベース接続不要（126テスト）
+2. **アプリケーション統合テスト**: データベース接続必要（27テスト）
+   - `controller_tests.rs`: コントローラ層のテスト（10テスト）
+   - `e2e_app_tests.rs`: Rocket内部クライアントを使用したE2Eテスト（5テスト）
+   - `repository_tests.rs`: リポジトリ層のテスト（12テスト）
+3. **サーバーE2Eテスト**: 実際のHTTPサーバー接続が必要（8テスト）
+   - `e2e_server_tests.rs`: reqwestを使用した実際のHTTPリクエストテスト
 
 ### クイックスタート
 
@@ -268,14 +307,18 @@ make audit
 # 1. テスト用データベースのセットアップ
 make setup-test-db
 
-# 2. 単体テストのみ実行
-make test
+# 2. 単体テストのみ実行（DB不要）
+cargo test
 
 # 3. 統合テスト実行（データベース接続必要）
-make test-integration
+cargo test -- --ignored
 
-# 4. E2Eテスト実行
-make test-e2e
+# 4. サーバーE2Eテスト実行（サーバー起動が必要）
+# ターミナル1: サーバー起動
+cargo run
+
+# ターミナル2: E2Eテスト実行
+cargo test --test e2e_server_tests -- --ignored
 ```
 
 ### テスト用データベースのセットアップ（詳細）
@@ -311,17 +354,39 @@ DATABASE_URL=$TEST_DATABASE_URL diesel migration run
 ### テスト実行コマンド
 
 ```bash
-# 単体テストのみ（デフォルト）
+# 単体テストのみ（デフォルト、DB不要）
 cargo test
 
 # 統合テスト（データベース接続必要）
 cargo test -- --ignored
 
-# E2Eテスト（直列実行）
-cargo test --test e2e_tests -- --ignored --test-threads=1
+# 特定のテストファイルのみ実行
+cargo test --test controller_tests -- --ignored
+cargo test --test e2e_app_tests -- --ignored
+cargo test --test repository_tests -- --ignored
+
+# サーバーE2Eテスト（サーバー起動が必要）
+cargo test --test e2e_server_tests -- --ignored
 
 # カバレッジ付きテスト
 make test-coverage
+```
+
+### Git Pre-commitフック
+
+コミット時に自動的にテストが実行されます：
+
+```bash
+# コミット時の自動実行内容
+# 1. 単体テスト（常に実行）
+# 2. 統合テスト（テストDBが起動している場合のみ）
+# 3. サーバーE2Eテストは手動実行が必要
+
+# pre-commitフックの内容確認
+cat .git/hooks/pre-commit
+
+# pre-commitフックの手動テスト
+.git/hooks/pre-commit
 ```
 
 ### テスト詳細
@@ -332,11 +397,10 @@ make test-coverage
 
 ### テスト統計
 
-- **総テスト数**: 96
-  - 単体テスト: 61
-  - RequestGuard: 8
-  - 統合テスト: 22
-  - E2Eテスト: 5
+- **総テスト数**: 161
+  - 単体テスト: 126
+  - 統合テスト: 27（controller: 10, e2e_app: 5, repository: 12）
+  - サーバーE2Eテスト: 8
 
 ## テストカバレッジ
 
