@@ -3,3 +3,6 @@ pub mod hotel_controller;
 pub mod onsen_controller;
 pub mod request_guard;
 pub mod user_controller;
+
+#[cfg(test)]
+mod request_guard_test;

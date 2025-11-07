@@ -6,6 +6,40 @@
 
 ## 実装済みテスト
 
+### 0. Controller層（統合テストテンプレート）
+
+#### 📝 RequestGuard（認証ガード - 単体テスト）
+- **ファイル**: `src/application/controller/request_guard_test.rs`
+- **テスト数**: 8
+- **カバレッジ**: 中
+- **テスト内容**:
+  - JWTトークンフォーマットの検証
+  - Bearerトークン形式の確認
+  - 有効期限切れトークンの検出
+  - 不正なAuthorizationヘッダーの処理
+  - ValidatedUser構造体のテスト
+  - ユーザーロールのテスト
+
+#### 📝 Controller統合テスト（テンプレート）
+- **ファイル**: `tests/controller_tests.rs`
+- **テスト数**: プレースホルダー
+- **実装状況**: テンプレートとガイド作成済み
+- **必要な実装**:
+  - エンドポイントテスト（GET, POST, PUT）
+  - 認証テスト（signup, signin）
+  - エラーハンドリングテスト
+  - HTTPステータスコードの検証
+
+#### 📝 Repository統合テスト（テンプレート）
+- **ファイル**: `tests/repository_tests.rs`
+- **テスト数**: プレースホルダー
+- **実装状況**: テンプレートとガイド作成済み
+- **必要な実装**:
+  - CRUD操作のテスト
+  - トランザクション処理のテスト
+  - JOIN操作のテスト
+  - テスト用データベースのセットアップ
+
 ### 1. Domain層（ドメインロジック）
 
 #### ✅ OnsenQuality（泉質）
@@ -126,32 +160,33 @@
 
 ### ⚠️ 要対応
 
-#### 1. Controller層
-- **ファイル**: `src/application/controller/*_controller.rs`
-- **現状**: テストなし
-- **必要なテスト**:
-  - エンドポイントの統合テスト
-  - 認証・認可のテスト
+#### 1. Controller層（統合テスト実装）
+- **ファイル**: `tests/controller_tests.rs`
+- **現状**: テンプレート作成済み、実装は未完了
+- **必要な実装**:
+  - Rocketテストクライアントのセットアップ
+  - エンドポイントの統合テスト（GET, POST, PUT）
+  - 認証・認可フローのテスト
   - エラーハンドリングのテスト
   - HTTPステータスコードの確認
 
-#### 2. RequestGuard（認証ガード）
+#### 2. RequestGuard（Rocket統合テスト）
 - **ファイル**: `src/application/controller/request_guard.rs`
-- **現状**: テストなし
+- **現状**: 単体テスト追加済み、Rocket統合テストは未実装
 - **必要なテスト**:
-  - Authorizationヘッダーの検証
-  - Bearerトークンの解析
-  - JWT有効期限の検証
-  - ユーザー存在確認
+  - Rocketリクエストコンテキストでのテスト
+  - 実際のHTTPヘッダーを使用したテスト
+  - データベースと連携した認証テスト
 
-#### 3. Repository層
-- **ファイル**: `src/infrastructure/repository/*_repository.rs`
-- **現状**: テストなし
-- **必要なテスト**:
-  - データベースCRUD操作
-  - トランザクション処理
-  - エラーハンドリング
-  - JOIN操作の正確性
+#### 3. Repository層（統合テスト実装）
+- **ファイル**: `tests/repository_tests.rs`
+- **現状**: テンプレート作成済み、実装は未完了
+- **必要な実装**:
+  - テスト用データベースのセットアップ
+  - データベースCRUD操作のテスト
+  - トランザクション処理のテスト
+  - エラーハンドリングのテスト
+  - JOIN操作の正確性テスト
 
 ### ℹ️ 検討事項
 
@@ -227,17 +262,17 @@ GitHub Actionsで以下が自動実行されます：
 
 ---
 
-## 次のステップ
+### 次のステップ
 
 ### 優先度：高
 1. ✅ Authentication（Crypto, JWT）のテスト追加 - **完了**
 2. ✅ User API Modelsのテスト追加 - **完了**
 3. ✅ DieselChemicalのテスト追加 - **完了**
-4. ⏳ Controller層の統合テスト追加
-5. ⏳ RequestGuardのテスト追加
+4. ✅ RequestGuardのテスト追加 - **完了**（単体テスト部分）
+5. 📝 Controller層の統合テスト追加 - **テンプレート作成済み**
 
 ### 優先度：中
-6. ⏳ Repository層のテスト追加
+6. 📝 Repository層のテスト追加 - **テンプレート作成済み**
 7. ⏳ DieselOnsenのテスト追加
 
 ### 優先度：低
@@ -259,8 +294,11 @@ GitHub Actionsで以下が自動実行されます：
 - ✅ JWT（トークン管理）: 13テスト
 - ✅ User API Models: 11テスト
 - ✅ DieselChemical: 11テスト
+- ✅ RequestGuard（単体テスト）: 8テスト
+- 📝 Controller統合テスト: テンプレート作成
+- 📝 Repository統合テスト: テンプレート作成
 
-**合計追加**: 44テスト
+**合計追加**: 52テスト + 統合テストテンプレート
 
 ### 推奨事項
 1. Controller層の統合テストを優先的に追加
