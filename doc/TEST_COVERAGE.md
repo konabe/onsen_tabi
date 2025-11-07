@@ -4,6 +4,12 @@
 
 このドキュメントは、onsen_tabiプロジェクトのテストカバレッジ状況をまとめたものです。
 
+## 統計情報
+
+- **総テスト数**: 69（単体テスト61 + RequestGuardテスト8）
+- **実装済みレイヤー**: Domain, Application（一部）, Infrastructure（一部）
+- **統合テスト**: テンプレート作成済み、実装待ち
+
 ## 実装済みテスト
 
 ### 0. Controller層（統合テストテンプレート）
@@ -190,8 +196,21 @@
 
 ### ℹ️ 検討事項
 
-#### 4. DieselOnsen（DBモデル）
+#### ✅ DieselOnsen（DBモデル）
 - **ファイル**: `src/infrastructure/mysql/diesel_model/diesel_onsen.rs`
+- **テスト数**: 9
+- **カバレッジ**: 高
+- **テスト内容**:
+  - OnsenEntity::create()の動作確認（化学成分あり/なし）
+  - OnsenEntityからDieselモデルへの変換
+  - 異なる温泉形態（内湯/外湯）の変換
+  - 異なる液性の変換
+  - 複雑な化学成分の処理
+  - オプショナルフィールドの処理
+  - 往復変換の整合性確認
+
+#### 4. DieselHotel / DieselArea（DBモデル）
+- **ファイル**: `src/infrastructure/mysql/diesel_model/diesel_hotel.rs`, `diesel_area.rs`
 - **現状**: テストなし
 - **推奨テスト**:
   - エンティティとの相互変換
@@ -273,10 +292,10 @@ GitHub Actionsで以下が自動実行されます：
 
 ### 優先度：中
 6. 📝 Repository層のテスト追加 - **テンプレート作成済み**
-7. ⏳ DieselOnsenのテスト追加
+7. ✅ DieselOnsenのテスト追加 - **完了**
 
 ### 優先度：低
-8. E2Eテストの追加
+8. ⏳ E2Eテストの追加
 9. パフォーマンステストの追加
 10. ロードテストの追加
 
@@ -295,10 +314,11 @@ GitHub Actionsで以下が自動実行されます：
 - ✅ User API Models: 11テスト
 - ✅ DieselChemical: 11テスト
 - ✅ RequestGuard（単体テスト）: 8テスト
+- ✅ DieselOnsen（DBモデル）: 9テスト
 - 📝 Controller統合テスト: テンプレート作成
 - 📝 Repository統合テスト: テンプレート作成
 
-**合計追加**: 52テスト + 統合テストテンプレート
+**合計追加**: 61単体テスト + 統合テストテンプレート
 
 ### 推奨事項
 1. Controller層の統合テストを優先的に追加
