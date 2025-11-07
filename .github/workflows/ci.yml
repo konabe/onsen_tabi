@@ -23,7 +23,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: stable
+          toolchain: 1.76.0
           override: true
           components: rustfmt, clippy
 
@@ -89,7 +89,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: stable
+          toolchain: 1.76.0
           override: true
 
       - name: Cache cargo registry
@@ -185,7 +185,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: stable
+          toolchain: 1.76.0
           override: true
 
       - name: Cache cargo registry
