@@ -36,7 +36,6 @@ impl<'r> response::Responder<'r, 'static> for PfResponse {
                 "POST, PUT, PATCH, GET, DELETE",
             ))
             .header(Header::new("Access-Control-Allow-Headers", "*"))
-            .header(Header::new("Access-Control-Allow-Credentials", "true"))
             .ok()
     }
 }
@@ -67,7 +66,6 @@ impl Fairing for CORS {
             response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
         }
         response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
-        response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
     }
 }
 
