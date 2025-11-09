@@ -36,11 +36,9 @@ jobs:
       - uses: Swatinem/rust-cache@v2
 
       - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
           toolchain: 1.76.0
-          override: true
 
       - name: Install Diesel CLI
         run: cargo install diesel_cli --version 2.1.1 --no-default-features --features mysql --locked || true

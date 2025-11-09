@@ -27,7 +27,16 @@ echo ""
 # 環境変数の読み込み
 if [ -f .env ]; then
     echo -e "${GREEN}✓${NC} .env ファイルを読み込んでいます..."
-    export $(cat .env | grep -v '^#' | xargs)
+    # 安全に環境変数を読み込む（空白や特殊文字を含む値を正しく扱う）
+    set -a  # 自動的にexportを有効化
+    while IFS= read -r line || [ -n "$line" ]; do
+        # コメント行と空行をスキップ
+        if [[ ! "$line" =~ ^[[:space:]]*# ]] && [[ -n "$line" ]]; then
+            # 各行をexport（key=value形式）
+            eval "export $line"
+        fi
+    done < .env
+    set +a  # 自動exportを無効化
 else
     echo -e "${YELLOW}⚠${NC} .env ファイルが見つかりません"
     echo -e "${YELLOW}→${NC} .env.sample をコピーして .env を作成してください"
