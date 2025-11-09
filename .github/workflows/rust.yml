@@ -82,7 +82,7 @@ jobs:
         run: |
           cargo install cargo-llvm-cov --version 0.6.15
           rustup component add llvm-tools-preview
-          
+
           # Run coverage including integration tests (--ignored)
           # Exclude test files from coverage calculation
           # - e2e_server_tests.rs: requires running server

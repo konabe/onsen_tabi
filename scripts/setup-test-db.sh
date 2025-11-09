@@ -64,7 +64,7 @@ echo ""
 
 # MySQLが利用可能か確認
 echo -e "${GREEN}→${NC} MySQLサーバーへの接続を確認中..."
-if ! mysql -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} -e "SELECT 1;" > /dev/null 2>&1; then
+if ! mysql -h"${DB_HOST}" -P"${DB_PORT}" -u"${DB_USER}" -p"${DB_PASS}" -e "SELECT 1;" > /dev/null 2>&1; then
     echo -e "${RED}✗${NC} MySQLサーバーに接続できません"
     echo -e "${RED}→${NC} MySQLが起動しているか、接続情報が正しいか確認してください"
     exit 1
@@ -74,11 +74,11 @@ echo ""
 
 # テスト用データベースの存在確認
 echo -e "${GREEN}→${NC} テスト用データベースの確認中..."
-DB_EXISTS=$(mysql -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} -e "SHOW DATABASES LIKE '${TEST_DB_NAME}';" | grep ${TEST_DB_NAME} || echo "")
+DB_EXISTS=$(mysql -h"${DB_HOST}" -P"${DB_PORT}" -u"${DB_USER}" -p"${DB_PASS}" -e "SHOW DATABASES LIKE '${TEST_DB_NAME}';" | grep "${TEST_DB_NAME}" || echo "")
 
 if [ -z "$DB_EXISTS" ]; then
     echo -e "${YELLOW}→${NC} テスト用データベースが存在しません。作成します..."
-    mysql -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} <<EOF
+    mysql -h"${DB_HOST}" -P"${DB_PORT}" -u"${DB_USER}" -p"${DB_PASS}" <<EOF
 CREATE DATABASE ${TEST_DB_NAME} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 EOF
     echo -e "${GREEN}✓${NC} テスト用データベース '${TEST_DB_NAME}' を作成しました"
@@ -101,7 +101,7 @@ echo ""
 
 # 確認
 echo -e "${GREEN}→${NC} テーブルの確認..."
-TABLE_COUNT=$(mysql -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} -D${TEST_DB_NAME} -e "SHOW TABLES;" | wc -l)
+TABLE_COUNT=$(mysql -h"${DB_HOST}" -P"${DB_PORT}" -u"${DB_USER}" -p"${DB_PASS}" -D"${TEST_DB_NAME}" -e "SHOW TABLES;" | wc -l)
 echo -e "${GREEN}✓${NC} ${TABLE_COUNT} 個のテーブルが作成されました"
 echo ""
 

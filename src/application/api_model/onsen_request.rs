@@ -163,7 +163,7 @@ mod tests {
         let entity = request.create_entity(1).unwrap();
         assert_eq!(entity.id, 1);
         assert_eq!(entity.name, "元禄の湯");
-        let quality = entity.quality.clone().unwrap();
+        let quality = entity.quality.as_ref().unwrap();
         assert_eq!(quality.cations, vec![Chemical::CaIon, Chemical::NaIon]);
         assert_eq!(
             quality.anions,
@@ -172,12 +172,15 @@ mod tests {
         assert_eq!(quality.inclusions, vec![Chemical::FeIon(FeType::Two)]);
         assert_eq!(entity.spring_quality, "温泉法の温泉");
         assert_eq!(
-            entity.quality.unwrap().to_string(),
+            quality.to_string(),
             "含鉄（Ⅱ）－カルシウム・ナトリウム－炭酸水素塩・塩化物泉"
         );
         assert!(entity.is_day_use);
         assert_eq!(entity.url, "https://www.sekizenkan.co.jp/spa/#ank-spa1");
-        assert_eq!(entity.img_url.unwrap(), "https://placehold.jp/150x150.png");
+        assert_eq!(
+            entity.img_url.as_deref().unwrap(),
+            "https://placehold.jp/150x150.png"
+        );
         assert_eq!(entity.description, "description");
     }
 
@@ -217,7 +220,7 @@ mod tests {
         };
         let entity = request.create_entity(1).unwrap();
         assert_eq!(entity.id, 1);
-        let quality = entity.quality.clone().unwrap();
+        let quality = entity.quality.as_ref().unwrap();
         assert_eq!(quality.cations, vec![Chemical::CaIon, Chemical::NaIon]);
         assert_eq!(
             quality.anions,
@@ -225,7 +228,7 @@ mod tests {
         );
         assert_eq!(quality.inclusions, vec![Chemical::FeIon(FeType::Two)]);
         assert_eq!(
-            entity.quality.unwrap().to_string(),
+            quality.to_string(),
             "含鉄（Ⅱ）－カルシウム・ナトリウム－炭酸水素塩・塩化物強塩泉"
         );
     }
@@ -266,7 +269,7 @@ mod tests {
         };
         let entity = request.create_entity(1).unwrap();
         assert_eq!(entity.id, 1);
-        let quality = entity.quality.clone().unwrap();
+        let quality = entity.quality.as_ref().unwrap();
         assert_eq!(quality.cations, vec![Chemical::CaIon, Chemical::NaIon]);
         assert_eq!(
             quality.anions,
@@ -274,7 +277,7 @@ mod tests {
         );
         assert_eq!(quality.inclusions, vec![Chemical::FeIon(FeType::Normal)]);
         assert_eq!(
-            entity.quality.unwrap().to_string(),
+            quality.to_string(),
             "含鉄－カルシウム・ナトリウム－炭酸水素塩・塩化物泉"
         );
     }
@@ -315,7 +318,7 @@ mod tests {
         };
         let entity = request.create_entity(1).unwrap();
         assert_eq!(entity.id, 1);
-        let quality = entity.quality.clone().unwrap();
+        let quality = entity.quality.as_ref().unwrap();
         assert_eq!(quality.cations, vec![Chemical::CaIon, Chemical::NaIon]);
         assert_eq!(
             quality.anions,
@@ -323,7 +326,7 @@ mod tests {
         );
         assert_eq!(quality.inclusions, vec![Chemical::FeIon(FeType::Two)]);
         assert_eq!(
-            entity.quality.unwrap().to_string(),
+            quality.to_string(),
             "含鉄（Ⅱ）－カルシウム・ナトリウム－炭酸水素塩・塩化物泉"
         );
     }
@@ -364,7 +367,7 @@ mod tests {
         };
         let entity = request.create_entity(1).unwrap();
         assert_eq!(entity.id, 1);
-        let quality = entity.quality.clone().unwrap();
+        let quality = entity.quality.as_ref().unwrap();
         assert_eq!(quality.cations, vec![Chemical::CaIon, Chemical::NaIon]);
         assert_eq!(
             quality.anions,
@@ -372,7 +375,7 @@ mod tests {
         );
         assert_eq!(quality.inclusions, vec![Chemical::FeIon(FeType::Three)]);
         assert_eq!(
-            entity.quality.unwrap().to_string(),
+            quality.to_string(),
             "含鉄（Ⅲ）－カルシウム・ナトリウム－炭酸水素塩・塩化物泉"
         );
     }
@@ -412,7 +415,7 @@ mod tests {
             area_id: Some(1),
         };
         let entity = request.create_entity(1).unwrap();
-        let quality = entity.quality.clone().unwrap();
+        let quality = entity.quality.as_ref().unwrap();
         assert_eq!(quality.cations, vec![Chemical::CaIon, Chemical::NaIon]);
         assert_eq!(
             quality.anions,
@@ -424,7 +427,7 @@ mod tests {
         );
         assert_eq!(entity.spring_quality, "温泉法の温泉");
         assert_eq!(
-            entity.quality.unwrap().to_string(),
+            quality.to_string(),
             "含鉄（Ⅱ）・弱放射能－カルシウム・ナトリウム－炭酸水素塩・塩化物泉"
         );
     }
@@ -464,7 +467,7 @@ mod tests {
             area_id: Some(1),
         };
         let entity = request.create_entity(1).unwrap();
-        let quality = entity.quality.clone().unwrap();
+        let quality = entity.quality.as_ref().unwrap();
         assert_eq!(quality.cations, vec![Chemical::CaIon, Chemical::NaIon]);
         assert_eq!(
             quality.anions,
@@ -476,7 +479,7 @@ mod tests {
         );
         assert_eq!(entity.spring_quality, "温泉法の温泉");
         assert_eq!(
-            entity.quality.unwrap().to_string(),
+            quality.to_string(),
             "含鉄（Ⅱ）・放射能－カルシウム・ナトリウム－炭酸水素塩・塩化物泉"
         );
     }
@@ -519,7 +522,7 @@ mod tests {
         let entity = request.create_entity(1).unwrap();
         assert_eq!(entity.id, 1);
         assert_eq!(entity.name, "元禄の湯");
-        let quality = entity.quality.clone().unwrap();
+        let quality = entity.quality.as_ref().unwrap();
         assert_eq!(quality.cations, vec![Chemical::NaIon, Chemical::CaIon]);
         assert_eq!(
             quality.anions,
@@ -528,12 +531,15 @@ mod tests {
         assert_eq!(quality.inclusions, vec![Chemical::FeIon(FeType::Two)]);
         assert_eq!(entity.spring_quality, "温泉法の温泉");
         assert_eq!(
-            entity.quality.unwrap().to_string(),
+            quality.to_string(),
             "含鉄（Ⅱ）－ナトリウム・カルシウム－塩化物・炭酸水素塩泉"
         );
         assert!(entity.is_day_use);
         assert_eq!(entity.url, "https://www.sekizenkan.co.jp/spa/#ank-spa1");
-        assert_eq!(entity.img_url.unwrap(), "https://placehold.jp/150x150.png");
+        assert_eq!(
+            entity.img_url.as_deref().unwrap(),
+            "https://placehold.jp/150x150.png"
+        );
         assert_eq!(entity.description, "description");
     }
 }
