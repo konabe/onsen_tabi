@@ -62,10 +62,22 @@ jobs:
       - name: Run Clippy
         run: cargo clippy --all-targets --all-features -- -D warnings
 
-      - name: Check for security vulnerabilities
+      - name: Cache cargo-audit
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/cargo-audit
+          key: ${{ runner.os }}-cargo-audit-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-audit-
+
+      - name: Install cargo-audit
         run: |
-          cargo install cargo-audit || true
-          cargo audit || true
+          if ! command -v cargo-audit &> /dev/null; then
+            cargo install cargo-audit
+          fi
+
+      - name: Check for security vulnerabilities
+        run: cargo audit || true
 
   test:
     name: Run Tests
@@ -204,11 +216,25 @@ jobs:
             exit $TEST_RESULT
           fi
 
-      - name: Generate code coverage
+      - name: Cache cargo-tarpaulin
+        if: github.event_name == 'pull_request'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/cargo-tarpaulin
+          key: ${{ runner.os }}-cargo-tarpaulin-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-tarpaulin-
+
+      - name: Install cargo-tarpaulin
         if: github.event_name == 'pull_request'
         run: |
-          cargo install cargo-tarpaulin || true
-          cargo tarpaulin --out Xml || true
+          if ! command -v cargo-tarpaulin &> /dev/null; then
+            cargo install cargo-tarpaulin
+          fi
+
+      - name: Generate code coverage
+        if: github.event_name == 'pull_request'
+        run: cargo tarpaulin --out Xml || true
 
       - name: Upload coverage to Codecov
         if: github.event_name == 'pull_request'
@@ -217,37 +243,8 @@ jobs:
           files: ./cobertura.xml
           fail_ci_if_error: false
 
-  build:
-    name: Build Release
-    runs-on: ubuntu-latest
-    needs: test
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: 1.76.0
-
-      - name: Cache cargo registry
-        uses: actions/cache@v4
-        with:
-          path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Cache cargo index
-        uses: actions/cache@v4
-        with:
-          path: ~/.cargo/git
-          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Build release binary
-        run: cargo build --release
-
-      - name: Upload artifact
+      - name: Upload release binary
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
         uses: actions/upload-artifact@v4
         with:
           name: onsen_tabi-binary
@@ -265,41 +262,7 @@ jobs:
           fetch-depth: 0
 
       - name: Check migration files
-        run: |
-          echo "Checking migration files structure..."
-
-          # 新しく追加されたマイグレーションディレクトリを取得
-          CHANGED_MIGRATIONS=$(git diff --name-only origin/main...HEAD | grep "^migrations/" | sed 's|/[^/]*$||' | sort -u)
-
-          if [ -z "$CHANGED_MIGRATIONS" ]; then
-            echo "No new migrations detected"
-            exit 0
-          fi
-
-          echo "New migrations detected:"
-          echo "$CHANGED_MIGRATIONS"
-
-          # 各マイグレーションディレクトリをチェック
-          EXIT_CODE=0
-          for migration_dir in $CHANGED_MIGRATIONS; do
-            echo "Checking $migration_dir..."
-            
-            if [ ! -f "$migration_dir/up.sql" ]; then
-              echo "❌ Missing up.sql in $migration_dir"
-              EXIT_CODE=1
-            fi
-            
-            if [ ! -f "$migration_dir/down.sql" ]; then
-              echo "❌ Missing down.sql in $migration_dir"
-              EXIT_CODE=1
-            fi
-            
-            if [ -f "$migration_dir/up.sql" ] && [ -f "$migration_dir/down.sql" ]; then
-              echo "✅ Migration files are valid for $migration_dir"
-            fi
-          done
-
-          exit $EXIT_CODE
+        run: ./scripts/check-migrations.sh
 
   guardrail-check:
     name: AI Guardrail Checks
