@@ -206,32 +206,9 @@ jobs:
             exit $TEST_RESULT
           fi
 
-      - name: Cache cargo-tarpaulin
-        if: github.event_name == 'pull_request'
-        uses: actions/cache@v4
-        with:
-          path: ~/.cargo/bin/cargo-tarpaulin
-          key: ${{ runner.os }}-cargo-tarpaulin-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-tarpaulin-
-
-      - name: Install cargo-tarpaulin
-        if: github.event_name == 'pull_request'
-        run: |
-          if ! command -v cargo-tarpaulin &> /dev/null; then
-            cargo install cargo-tarpaulin --version 0.27.3
-          fi
-
-      - name: Generate code coverage
-        if: github.event_name == 'pull_request'
-        run: cargo tarpaulin --out Xml || true
-
-      - name: Upload coverage to Codecov
-        if: github.event_name == 'pull_request'
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./cobertura.xml
-          fail_ci_if_error: false
+      # Note: Code coverage generation with cargo-tarpaulin is skipped due to Rust version constraints.
+      # cargo-tarpaulin requires Rust 1.82+ (via transitive dependencies), but CI uses Rust 1.76.
+      # Consider upgrading Rust version or using alternative coverage tools in the future.
 
       - name: Upload release binary
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
