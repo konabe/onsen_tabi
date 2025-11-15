@@ -125,73 +125,26 @@ mod e2e_app_tests {
         }
         println!("✓ User authenticated");
 
-        // Note: 実際の実装では、レスポンスからJWTトークンを取得する必要があります
-        // let auth_response: AuthResponse = signin_response.into_json().unwrap();
-        // let token = auth_response.access_token;
-
-        // ステップ2: エリア作成
-        println!("Step 2: Create Area");
-        // Note: トークンを使用してエリアを作成
-        // let area_response = client
-        //     .post("/area")
-        //     .header(ContentType::JSON)
-        //     .header(Header::new("Authorization", format!("Bearer {}", token)))
-        //     .json(&json!({
-        //         "name": format!("E2Eテストエリア_{}", timestamp),
-        //         "kana": "いーつーいーてすとえりあ",
-        //         "prefecture": "テスト県",
-        //         "nationalResort": false,
-        //         "village": "テスト村",
-        //         "access": "テスト駅から徒歩5分"
-        //     }))
-        //     .dispatch();
+        // TODO: 完全なE2Eフローの実装
+        // 以下の手順で実装を完了させる:
         //
-        // assert_eq!(area_response.status(), Status::Ok);
-        // let created_area: AreaResponse = area_response.into_json().unwrap();
-        // println!("✓ Area created: ID = {}", created_area.id);
-
-        // ステップ3: ホテル作成
-        println!("Step 3: Create Hotel");
-        // let hotel_response = client
-        //     .post("/hotel")
-        //     .header(ContentType::JSON)
-        //     .header(Header::new("Authorization", format!("Bearer {}", token)))
-        //     .json(&json!({
-        //         "name": format!("E2Eテストホテル_{}", timestamp),
-        //         "hasParking": true,
-        //         "url": "https://example.com/hotel",
-        //         "areaId": created_area.id
-        //     }))
-        //     .dispatch();
+        // 1. レスポンスモデルの定義
+        //    - AuthResponse (access_token, token_type, expires_in)
+        //    - AreaResponse, HotelResponse, OnsenResponse
         //
-        // assert_eq!(hotel_response.status(), Status::Ok);
-        // let created_hotel: HotelResponse = hotel_response.into_json().unwrap();
-        // println!("✓ Hotel created: ID = {}", created_hotel.id);
-
-        // ステップ4: 温泉作成
-        println!("Step 4: Create Onsen");
-        // let onsen_response = client
-        //     .post("/onsen")
-        //     .header(ContentType::JSON)
-        //     .header(Header::new("Authorization", format!("Bearer {}", token)))
-        //     .json(&json!({
-        //         "name": format!("E2Eテスト温泉_{}", timestamp),
-        //         "springQuality": "ナトリウム－塩化物泉",
-        //         "category": "uchiyu",
-        //         "dayUse": true,
-        //         "url": "https://example.com/onsen",
-        //         "description": "E2Eテスト用の温泉です",
-        //         "hotelId": created_hotel.id,
-        //         "areaId": created_area.id
-        //     }))
-        //     .dispatch();
+        // 2. JWTトークンの取得
+        //    let auth_response: AuthResponse = signin_response.into_json().unwrap();
+        //    let token = auth_response.access_token;
         //
-        // assert_eq!(onsen_response.status(), Status::Ok);
-        // let created_onsen: OnsenResponse = onsen_response.into_json().unwrap();
-        // println!("✓ Onsen created: ID = {}", created_onsen.id);
+        // 3. 認証付きリクエストでエリア→ホテル→温泉を順次作成
+        //    - POST /area with Authorization header
+        //    - POST /hotel with areaId
+        //    - POST /onsen with hotelId and areaId
+        //
+        // 4. 各ステップで作成されたリソースのIDを保存し、次のリクエストで使用
+        // 5. 最後に作成したリソースが正しく取得できることを確認
 
-        println!("=== Test Completed ===\n");
-        println!("Note: 完全な実装にはJWTトークンの抽出とレスポンスモデルの定義が必要です");
+        println!("=== Test Completed (Implementation Pending) ===\n");
     }
 
     /// E2Eテスト: 検索と取得のフロー

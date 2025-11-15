@@ -5,7 +5,7 @@ pub mod jwt;
 #[cfg(test)]
 pub use crypto::{create_hash, verify_hash};
 #[cfg(test)]
-pub use jwt::{decode_jwt, encode_jwt, Claims};
+pub use jwt::{decode_jwt_with_secret, encode_jwt_with_secret, Claims};
 
 #[cfg(test)]
 mod crypto_test;

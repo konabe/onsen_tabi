@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use super::super::{create_hash, verify_hash};
+    use crate::application::auth::crypto::{create_hash, verify_hash};
 
     #[test]
     fn test_create_hash_generates_different_hashes() {

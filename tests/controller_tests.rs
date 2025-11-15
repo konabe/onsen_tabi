@@ -157,17 +157,11 @@ mod controller_integration_tests {
 
         assert_eq!(signin_response.status(), Status::Ok);
 
-        // 3. トークンの取得（実装はレスポンスボディからトークンを抽出する必要あり）
-        // let token = signin_response.into_json::<AuthResponse>().unwrap().access_token;
-
-        // 4. トークンを使用してエリア作成（実装例）
-        // let create_response = client
-        //     .post("/area")
-        //     .header(ContentType::JSON)
-        //     .header(Header::new("Authorization", format!("Bearer {}", token)))
-        //     .json(&json!({...}))
-        //     .dispatch();
-        // assert_eq!(create_response.status(), Status::Ok);
+        // TODO: レスポンスからJWTトークンを取得し、認証付きリクエストのテストを実装
+        // 1. AuthResponseの型定義を追加
+        // 2. signin_response.into_json::<AuthResponse>()でトークン取得
+        // 3. Authorizationヘッダーにトークンを含めたPOST /areaリクエストを送信
+        // 4. ステータスコードとレスポンスボディを検証
     }
 
     // GET /hotel のテスト

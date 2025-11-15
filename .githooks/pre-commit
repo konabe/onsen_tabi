@@ -181,14 +181,14 @@ if git diff --cached --name-only | grep -q "^src/domain/"; then
 fi
 
 # unwrap()の使用チェック（テストファイル以外）
-if git diff --cached | grep "^+.*\.unwrap()" | grep -v "test" | grep -v "^+.*expect"; then
+if git diff --cached | grep "^\+.*\.unwrap()" | grep -v "test" | grep -v "^\+.*expect"; then
     echo -e "${YELLOW}⚠️  Found unwrap() usage (consider using expect() with a message)${NC}"
     echo "   Check the lines above"
 fi
 
 # パスワードやシークレットのハードコーディングチェック
 # テストファイルと変数代入（let, const）とpre-commitフック自体とif文は除外
-SECRET_VIOLATIONS=$(git diff --cached | grep -iE "^+.*(password|secret|token).*=.*['\"]" | grep -v "_test\.rs" | grep -v "tests/" | grep -v "let " | grep -v "const " | grep -v "\.githooks/" | grep -v "^-if " || true)
+SECRET_VIOLATIONS=$(git diff --cached | grep -iE "^\+.*(password|secret|token).*=.*['\"]" | grep -v "_test\.rs" | grep -v "tests/" | grep -v "let " | grep -v "const " | grep -v "\.githooks/" | grep -v "^-if " || true)
 if [ -n "$SECRET_VIOLATIONS" ]; then
     echo -e "${RED}❌ Potential hardcoded secret detected${NC}"
     echo "   Secrets should be loaded from environment variables"

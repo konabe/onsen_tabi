@@ -12,6 +12,17 @@ pub struct Claims {
 }
 
 pub fn encode_jwt(email: &str) -> String {
+    let secret = get_secret();
+    encode_jwt_internal(email, &secret)
+}
+
+pub fn decode_jwt(token: &str) -> Option<Claims> {
+    let secret = get_secret();
+    decode_jwt_internal(token, &secret)
+}
+
+/// 内部実装: シークレットキーを指定してJWTをエンコード
+fn encode_jwt_internal(email: &str, secret: &str) -> String {
     let header = Header {
         typ: Some("JWT".to_string()),
         alg: Algorithm::HS256,
@@ -28,19 +39,32 @@ pub fn encode_jwt(email: &str) -> String {
     encode(
         &header,
         &my_claims,
-        &EncodingKey::from_secret(get_secret().as_bytes()),
+        &EncodingKey::from_secret(secret.as_bytes()),
     )
     .unwrap()
 }
 
-pub fn decode_jwt(token: &str) -> Option<Claims> {
+/// 内部実装: シークレットキーを指定してJWTをデコード
+fn decode_jwt_internal(token: &str, secret: &str) -> Option<Claims> {
     decode::<Claims>(
         token,
-        &DecodingKey::from_secret(get_secret().as_bytes()),
+        &DecodingKey::from_secret(secret.as_bytes()),
         &Validation::default(),
     )
     .map(|v| v.claims)
     .ok()
+}
+
+/// テスト用: シークレットキーを指定してJWTをエンコード
+#[cfg(test)]
+pub fn encode_jwt_with_secret(email: &str, secret: &str) -> String {
+    encode_jwt_internal(email, secret)
+}
+
+/// テスト用: シークレットキーを指定してJWTをデコード
+#[cfg(test)]
+pub fn decode_jwt_with_secret(token: &str, secret: &str) -> Option<Claims> {
+    decode_jwt_internal(token, secret)
 }
 
 fn get_secret() -> String {

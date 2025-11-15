@@ -63,11 +63,6 @@ mod repository_integration_tests {
         // エリア一覧取得のテスト
         let areas = get_areas_with_onsen();
 
-        // データベースにエリアが存在することを確認
-        // lenは常に >= 0 なので、型チェックとしての意味しかない
-        // 実際にデータがあることを確認したい場合は !is_empty() を使用
-        assert!(areas.len() == areas.len()); // Type check only
-
         // 各エリアが正しい構造を持つことを確認
         for area in areas {
             assert!(!area.name.is_empty());
@@ -132,9 +127,6 @@ mod repository_integration_tests {
         // ホテル一覧取得のテスト
         let hotels = get_hotels(None);
 
-        // データベースにホテルが存在することを確認（空の可能性もあり）
-        assert!(hotels.len() == hotels.len()); // Type check only
-
         // 各ホテルが正しい構造を持つことを確認
         for hotel in hotels {
             assert!(!hotel.name.is_empty());
@@ -163,9 +155,6 @@ mod repository_integration_tests {
     fn test_onsen_repository_get_onsens() {
         // 温泉一覧取得のテスト
         let onsens = get_onsens(None, None);
-
-        // データベースに温泉が存在することを確認（空の可能性もあり）
-        assert!(onsens.len() == onsens.len()); // Type check only
 
         // 各温泉が正しい構造を持つことを確認
         for onsen in onsens {
@@ -295,12 +284,7 @@ mod repository_integration_tests {
 #[cfg(test)]
 mod repository_unit_tests {
     // データベース接続なしでテストできる部分
-
-    #[test]
-    fn test_repository_module_exists() {
-        // リポジトリモジュールが存在することを確認
-        // placeholder assertion removed (was always true)
-    }
+    // 現在は該当するテストなし
 }
 
 // テスト実行ガイド

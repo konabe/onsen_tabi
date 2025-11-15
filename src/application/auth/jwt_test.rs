@@ -1,21 +1,14 @@
 #[cfg(test)]
 mod tests {
-    use super::super::{decode_jwt, encode_jwt, Claims};
+    use super::super::{decode_jwt_with_secret, encode_jwt_with_secret, Claims};
     use chrono::Utc;
-    use std::env;
 
-    fn setup_test_env() {
-        env::set_var(
-            "JWT_SECRET_KEY",
-            "test_secret_key_for_testing_purposes_only",
-        );
-    }
+    const TEST_SECRET: &str = "test_secret_key_for_testing_purposes_only";
 
     #[test]
     fn test_encode_jwt_creates_valid_token() {
-        setup_test_env();
         let email = "test@example.com";
-        let token = encode_jwt(email);
+        let token = encode_jwt_with_secret(email, TEST_SECRET);
 
         assert!(!token.is_empty());
         assert!(token.contains('.'));
@@ -25,11 +18,10 @@ mod tests {
 
     #[test]
     fn test_decode_jwt_with_valid_token() {
-        setup_test_env();
         let email = "test@example.com";
-        let token = encode_jwt(email);
+        let token = encode_jwt_with_secret(email, TEST_SECRET);
 
-        let claims = decode_jwt(&token);
+        let claims = decode_jwt_with_secret(&token, TEST_SECRET);
         assert!(claims.is_some());
 
         let claims = claims.unwrap();
@@ -40,38 +32,34 @@ mod tests {
 
     #[test]
     fn test_decode_jwt_with_invalid_token() {
-        setup_test_env();
         let invalid_token = "invalid.token.string";
 
-        let claims = decode_jwt(invalid_token);
+        let claims = decode_jwt_with_secret(invalid_token, TEST_SECRET);
         assert!(claims.is_none());
     }
 
     #[test]
     fn test_decode_jwt_with_empty_token() {
-        setup_test_env();
         let empty_token = "";
 
-        let claims = decode_jwt(empty_token);
+        let claims = decode_jwt_with_secret(empty_token, TEST_SECRET);
         assert!(claims.is_none());
     }
 
     #[test]
     fn test_decode_jwt_with_malformed_token() {
-        setup_test_env();
         let malformed_token = "not_a_jwt_at_all";
 
-        let claims = decode_jwt(malformed_token);
+        let claims = decode_jwt_with_secret(malformed_token, TEST_SECRET);
         assert!(claims.is_none());
     }
 
     #[test]
     fn test_jwt_expiration_is_24_hours() {
-        setup_test_env();
         let email = "test@example.com";
-        let token = encode_jwt(email);
+        let token = encode_jwt_with_secret(email, TEST_SECRET);
 
-        let claims = decode_jwt(&token).unwrap();
+        let claims = decode_jwt_with_secret(&token, TEST_SECRET).unwrap();
         let duration = claims.exp - claims.iat;
 
         // 24時間 = 86400秒
@@ -80,7 +68,6 @@ mod tests {
 
     #[test]
     fn test_jwt_contains_correct_email() {
-        setup_test_env();
         let test_emails = vec![
             "user@example.com",
             "admin@test.jp",
@@ -88,21 +75,20 @@ mod tests {
         ];
 
         for email in test_emails {
-            let token = encode_jwt(email);
-            let claims = decode_jwt(&token).unwrap();
+            let token = encode_jwt_with_secret(email, TEST_SECRET);
+            let claims = decode_jwt_with_secret(&token, TEST_SECRET).unwrap();
             assert_eq!(claims.email, email);
         }
     }
 
     #[test]
     fn test_jwt_iat_is_recent() {
-        setup_test_env();
         let email = "test@example.com";
         let now_before = Utc::now().timestamp();
-        let token = encode_jwt(email);
+        let token = encode_jwt_with_secret(email, TEST_SECRET);
         let now_after = Utc::now().timestamp();
 
-        let claims = decode_jwt(&token).unwrap();
+        let claims = decode_jwt_with_secret(&token, TEST_SECRET).unwrap();
 
         // iatは現在時刻の前後数秒以内
         assert!(claims.iat >= now_before);
@@ -111,12 +97,11 @@ mod tests {
 
     #[test]
     fn test_different_tokens_for_same_email() {
-        setup_test_env();
         let email = "test@example.com";
 
-        let token1 = encode_jwt(email);
+        let token1 = encode_jwt_with_secret(email, TEST_SECRET);
         std::thread::sleep(std::time::Duration::from_millis(1001)); // 1秒待つ
-        let token2 = encode_jwt(email);
+        let token2 = encode_jwt_with_secret(email, TEST_SECRET);
 
         // 異なる発行時刻により異なるトークンが生成される
         assert_ne!(token1, token2);
@@ -124,29 +109,24 @@ mod tests {
 
     #[test]
     fn test_jwt_with_special_characters_in_email() {
-        setup_test_env();
         let email = "test+special@example.com";
-        let token = encode_jwt(email);
+        let token = encode_jwt_with_secret(email, TEST_SECRET);
 
-        let claims = decode_jwt(&token).unwrap();
+        let claims = decode_jwt_with_secret(&token, TEST_SECRET).unwrap();
         assert_eq!(claims.email, email);
     }
 
     #[test]
     fn test_decode_jwt_with_wrong_secret() {
-        setup_test_env();
         let email = "test@example.com";
-        let token = encode_jwt(email);
+        let token = encode_jwt_with_secret(email, TEST_SECRET);
 
-        // 異なるシークレットキーを設定
-        env::set_var("JWT_SECRET_KEY", "different_secret_key");
+        // 異なるシークレットキーでデコード
+        let different_secret = "different_secret_key";
 
         // デコードは失敗するはず
-        let claims = decode_jwt(&token);
+        let claims = decode_jwt_with_secret(&token, different_secret);
         assert!(claims.is_none());
-
-        // 元に戻す
-        setup_test_env();
     }
 
     #[test]
