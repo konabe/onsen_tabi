@@ -6,7 +6,7 @@
 
 ## 統計情報
 
-- **総テスト数**: 96（単体テスト61 + RequestGuardテスト8 + Controller統合テスト10 + Repository統合テスト12 + E2Eテスト5）
+- **総テスト数**: 128（単体テスト118 + Controller統合テスト10）
 - **実装済みレイヤー**: Domain, Application, Infrastructure, E2E
 - **統合テスト**: 実装完了（データベース接続必要）
 - **E2Eテスト**: 実装完了（データベース接続必要）

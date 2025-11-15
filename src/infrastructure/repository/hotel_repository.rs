@@ -1,5 +1,8 @@
 use crate::{
-    domain::{hotel_entity::HotelEntity, onsen::onsen_entity::OnsenEntity},
+    domain::{
+        hotel_entity::{HotelEntity, HotelEntityBuilder},
+        onsen::onsen_entity::OnsenEntity,
+    },
     infrastructure::mysql::{
         diesel_connection::establish_connection,
         diesel_model::{diesel_hotel::Hotel, diesel_onsen::Onsen},
@@ -36,12 +39,21 @@ pub fn get_hotel_with_onsen(id: u32) -> Option<HotelEntity> {
         .load(connection)
         .expect("DB error");
     let hotel = &hotels_onsens.first()?.0;
-    let _onsen_entities: Vec<OnsenEntity> = hotels_onsens
+    let onsen_entities: Vec<OnsenEntity> = hotels_onsens
         .iter()
         .filter_map(|r| r.1.clone())
         .map(|onsen| OnsenEntity::create(onsen, None))
         .collect();
-    Some(HotelEntity::from(hotel.clone()))
+
+    HotelEntityBuilder::new()
+        .id(hotel.id)
+        .name(&hotel.name)
+        .has_washitsu(hotel.has_washitsu)
+        .solo_available(hotel.solo_available)
+        .url(&hotel.url)
+        .description(&hotel.description)
+        .onsens(onsen_entities)
+        .build()
 }
 
 pub fn post_hotel(hotel_entity: HotelEntity) -> HotelEntity {
