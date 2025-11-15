@@ -9,6 +9,7 @@ pub mod schema;
 use rocket::fairing::{Fairing, Info, Kind};
 use rocket::http::{Header, Method, Status};
 use rocket::{Request, Response};
+use std::env;
 
 pub struct CORS;
 
@@ -22,6 +23,12 @@ impl Fairing for CORS {
     }
 
     async fn on_response<'r>(&self, request: &'r Request<'_>, response: &mut Response<'r>) {
+        // Get allowed origin from environment variable or use a safe default
+        // Note: Using "*" with credentials is a security risk and blocked by browsers.
+        // In production, set CORS_ALLOWED_ORIGIN to your frontend domain.
+        let allowed_origin =
+            env::var("CORS_ALLOWED_ORIGIN").unwrap_or_else(|_| "http://localhost:3000".to_string());
+
         if request.method() == Method::Options {
             response.set_status(Status::NoContent);
             response.set_header(Header::new(
@@ -30,7 +37,8 @@ impl Fairing for CORS {
             ));
             response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
         }
-        response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
+
+        response.set_header(Header::new("Access-Control-Allow-Origin", allowed_origin));
         response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
     }
 }
